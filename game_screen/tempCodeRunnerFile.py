@@ -1,0 +1,1 @@
+hovered_coordinates != (x, y)
