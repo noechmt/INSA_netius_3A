@@ -507,13 +507,12 @@ class Empty(Cell):
         self.rock_or_dirt_list = ["rock", "dirt", "dirt", "dirt"]
         self.path_sprite = ""
         self.type_sprite = "dirt"
-        """if (self.type_empty == "dirt"):
-            aleatoire = randint(1, 13)"""
-        aleatoire = 0
+        if (self.type_empty == "dirt"):
+            aleatoire = randint(1, 13)
         super().set_aleatoire(aleatoire)
         self.path_sprite = "game_screen/game_screen_sprites/" + \
             self.type_sprite + "_" + str(aleatoire) + ".png"
-        self.sprite = sprites.get_sprites()['dirt_0']['sprite_ori']
+        self.sprite = sprites.get_sprites()['dirt_' + str(self.aleatoire)]['sprite_ori']
         self.sprite_display = ""
         self.update_sprite_size()
         self.display()
@@ -543,7 +542,7 @@ class Empty(Cell):
                 self.sprite, (self.width+2*sqrt(2), self.height+2))"""
         if self.x == 0 and self.y == 0:
             sprites.update_size_sprites(self.width+2*sqrt(2), self.height+2)
-        self.sprite_display = sprites.get_sprites()["dirt_0"]['sprite_display']
+        self.sprite_display = sprites.get_sprites()["dirt_" + str(self.aleatoire)]['sprite_display']
 
     def display(self):
         """if self.type_empty == "tree":

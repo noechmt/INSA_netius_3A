@@ -1,5 +1,6 @@
 # Write a function to write in a file
 import pygame
+import os
 
 class Sprites:
     def __init__(self) -> dict:
@@ -7,13 +8,16 @@ class Sprites:
         self.init_sprites()
     
     def init_sprites(self):
-        self.sprites['dirt_0'] = {'path' : 'game_screen/game_screen_sprites/dirt_0.png',
-                                  'sprite_ori' : pygame.image.load("game_screen/game_screen_sprites/dirt_0.png").convert_alpha(),
-                                  'sprite_display' : pygame.image.load("game_screen/game_screen_sprites/dirt_0.png").convert_alpha()}
+        for name_sprite in os.listdir('Sprites/'):
+            if os.path.isfile(os.path.join('Sprites/', name_sprite)):
+                self.sprites[name_sprite.split('.')[0]] = {'path' : 'Sprites/' + name_sprite,
+                                                        'sprite_ori' : pygame.image.load('Sprites/' + name_sprite).convert_alpha(),
+                                                            'sprite_display' : pygame.image.load('Sprites/' + name_sprite).convert_alpha()}
     
     def update_size_sprites(self, height, width):
-        self.sprites['dirt_0']['sprite_display'] = pygame.transform.scale(
-                self.sprites['dirt_0']['sprite_ori'], (height, width))
+        for key in self.sprites:
+            self.sprites[key]['sprite_display'] = pygame.transform.scale(
+                    self.sprites[key]['sprite_ori'], (height, width))
 
 
     def get_sprites(self):
