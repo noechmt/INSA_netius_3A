@@ -130,7 +130,7 @@ def title_screen():
                         choosing_save = True
                         listeFichiers = choosing_save_window(SCREEN)
 
-                        file = open("Saves/.temp.txt", "w")
+                        file = open("Saves/temp.txt", "w")
                 else:
                     for fichier in listeFichiers:
                         if fichier.is_hovered(pos):

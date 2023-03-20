@@ -1,6 +1,5 @@
-
 from GUI.title_screen import title_screen
-import pygame   
+import pygame
 import sys
 import os
 import ctypes
@@ -20,6 +19,3 @@ if __name__ == "__main__":
         from game_screen.game_screen import game_screen
         game_screen()
     pygame.quit()
-
-
-

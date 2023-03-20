@@ -6,6 +6,7 @@ from random import *
 from math import sqrt, floor
 import random
 import time
+from Class.Sprites import *
 
 SCREEN = None
 
@@ -14,6 +15,7 @@ def set_SCREEN_cell(screen):
     global SCREEN
     SCREEN = screen
 
+sprites = Sprites()
 
 overlay_risk = [
     {"sprite": pygame.image.load(
@@ -25,6 +27,7 @@ overlay_risk = [
     {"sprite": pygame.image.load(
         "risks_sprites/overlay/overlay_3.png").convert_alpha(), "width": 48, "height": 83},
     {"sprite": pygame.image.load("risks_sprites/overlay/overlay_4.png").convert_alpha(), "width": 48, "height": 93}]
+
 
 
 def draw_polygon_alpha(surface, color, points):
@@ -278,7 +281,6 @@ class Cell:  # Une case de la map
     def get_water(self):
         return self.water
 
-
 path_hori = "game_screen/game_screen_sprites/road_straight_hori.png"
 sprite_hori = pygame.image.load(path_hori).convert_alpha()
 
@@ -311,7 +313,6 @@ sprite_turn_verti_left = pygame.image.load(path_verti_left).convert_alpha()
 
 path_verti_right = "game_screen/game_screen_sprites/road_turn_verti_right.png"
 sprite_turn_verti_right = pygame.image.load(path_verti_right).convert_alpha()
-
 
 class Path(Cell):
 
@@ -505,100 +506,14 @@ class Empty(Cell):
         self.tree_or_dirt_list = ["tree", "dirt", "dirt"]
         self.rock_or_dirt_list = ["rock", "dirt", "dirt", "dirt"]
         self.path_sprite = ""
-
-        if boolean_first_generation == 0:
-            # place the trees
-            self.type_empty = random.choice(self.tree_or_dirt_list)
-            if self.type_empty == "tree":
-                self.type_sprite = "tree"
-                self.type = "empty_tree"
-            else:
-                self.type_sprite = "dirt"
-
-            # place the rocks
-            if ((27 < x < 36 and 12 < y < 16) or (27 < x < 31 and 15 < y < 23) or (x > 30 and y > 25) or (x > 35 and y < 5) or (x > 35 and y > 30)):
-                self.type_empty = random.choice(self.rock_or_dirt_list)
-                if self.type_empty == "rock":
-                    self.type_sprite = "rock"
-                    self.type = "empty_rock"
-                else:
-                    self.type_sprite = "dirt"
-
-        # place the water with conditions for sprites
-            # river at the top
-                # line under the first river
-            if (y == x+10 and x < 5) or (y == x+14 and 5 < x < 8) or (y == x+15 and 8 < x < 13) or (y == x+18 and 14 < x < 17) or (y == x+20 and 17 < x < 20):
-                self.type_sprite = "watersiderightD"
-                self.type_empty = "water"
-            elif (y == x+11 and x < 5) or (y == x+15 and 4 < x < 8) or (y == x+16 and (7 < x < 13)) or (x, y) == (13, 31) or (y == x+19 and 13 < x < 17) or (y == x+21 and 16 < x < 19):
-                self.type_sprite = "watersiderightW"
-                self.type_empty = "water"
-            elif (x, y) == (5, 15) or (x, y) == (8, 22) or (x, y) == (13, 28) or (x, y) == (14, 31) or (x, y) == (17, 35):
-                self.type_sprite = "watersidecornerA"
-                self.type_empty = "water"
-            elif ((x, y) == (5, x) and 15 < x < 20) or (x, y) == (8, 23) or (x, y) == (13, 29) or (x, y) == (13, 30) or (x, y) == (14, 32) or (x, y) == (17, 36) or (x, y) == (17, 37):
-                self.type_sprite = "watersideunder"
-                self.type_empty = "water"
-
-            # line behind the first river
-            elif (y == x+19 and x < 10) or (y == x+26 and 9 < x < 14):
-                self.type_sprite = "watersideleftW"
-                self.type_empty = "water"
-            elif (y == x+20 and x < 9) or (y == x+27 and 8 < x < 13):
-                self.type_sprite = "watersideleftD"
-                self.type_empty = "water"
-            elif (x == 9 and 28 < y < 36):
-                self.type_sprite = "watersideupper"
-                self.type_empty = "water"
-
-            elif ((x == y+31 and y < 5) or (x == y+28 and 8 < y < 12)):
-                self.type_sprite = "watersiderightD"
-                self.type_empty = "water"
-            elif ((x == y+30 and y < 6) or (x == y+27 and 8 < y < 13)):
-                self.type_sprite = "watersiderightW"
-                self.type_empty = "water"
-            elif (x, y) == (36, 5):
-                self.type_sprite = "watersidecornerA"
-                self.type_empty = "water"
-            elif ((x == 5 and 15 < y < 20) or (x == 36 and 5 < y < 9)):
-                self.type_sprite = "watersideunder"
-                self.type_empty = "water"
-
-            # line behind the second river
-            elif ((x == y+24 and 8 < y < 16) or (x == y+27 and y < 6)):
-                self.type_sprite = "watersideleftD"
-                self.type_empty = "water"
-            elif ((x == y+25 and 8 < y < 15) or (x == y+28 and y < 6)):
-                self.type_sprite = "watersideleftW"
-                self.type_empty = "water"
-            elif ((x == 33 and 5 < y < 9)):
-                self.type_sprite = "watersideupper"
-                self.type_empty = "water"
-
-            # full water in the second river
-            elif ((x == y+26 and 7 < y < 14) or (x == y+27 and 6 < y < 9) or (x == y+28 and 5 < y < 9) or (x == y+29 and y < 7)):
-                self.type_sprite = "water"
-                self.type_empty = "water"
-
-            # full water in the first river
-            if ((x < 5 and 11+x < y < 19+x) or (4 < x < 8 and 15+x < y < 19+x) or (7 < x < 10 and 16+x < y < 19+x) or (9 < x < 13 and 16+x < y < 26+x)
-                    or (x == 13 and 18+x < y < 26+x) or (13 < x < 17 and 19+x < y < 26+x) or (x == 17 and y == 39)):
-                self.type_sprite = "water"
-                self.type_empty = "water"
-        else:
-            self.type_sprite = "dirt"
-
-        # select the sprites randomly
-        if (self.type_empty == "rock") or (self.type_empty == "tree"):
-            aleatoire = randint(1, 4)
-        elif (self.type_empty == "dirt"):
-            aleatoire = randint(1, 13)
-        else:
-            aleatoire = randint(1, 2)
+        self.type_sprite = "dirt"
+        """if (self.type_empty == "dirt"):
+            aleatoire = randint(1, 13)"""
+        aleatoire = 0
         super().set_aleatoire(aleatoire)
         self.path_sprite = "game_screen/game_screen_sprites/" + \
             self.type_sprite + "_" + str(aleatoire) + ".png"
-        self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
+        self.sprite = sprites.get_sprites()['dirt_0']['sprite_ori']
         self.sprite_display = ""
         self.update_sprite_size()
         self.display()
@@ -607,7 +522,7 @@ class Empty(Cell):
         return self.type_empty
 
     def update_sprite_size(self):
-        if self.type_empty == "tree":
+        """if self.type_empty == "tree":
             if self.aleatoire == 1:
                 self.sprite_display = pygame.transform.scale(
                     self.sprite, (self.width, self.height*42/30))
@@ -625,10 +540,13 @@ class Empty(Cell):
                 self.sprite, (self.width, self.height*35/30))
         else:
             self.sprite_display = pygame.transform.scale(
-                self.sprite, (self.width+2*sqrt(2), self.height+2))
+                self.sprite, (self.width+2*sqrt(2), self.height+2))"""
+        if self.x == 0 and self.y == 0:
+            sprites.update_size_sprites(self.width+2*sqrt(2), self.height+2)
+        self.sprite_display = sprites.get_sprites()["dirt_0"]['sprite_display']
 
     def display(self):
-        if self.type_empty == "tree":
+        """if self.type_empty == "tree":
             if self.aleatoire == 1:
                 SCREEN.blit(
                     self.sprite_display, (self.left, self.top - self.height*12/30))
@@ -646,8 +564,11 @@ class Empty(Cell):
                 self.sprite_display, (self.left, self.top-self.height*5/30))
         else:
             SCREEN.blit(self.sprite_display,
-                        (self.left-sqrt(2), self.top-1))
-        self.display_overlay()
+                        (self.left-sqrt(2), self.top-1))"""
+        if self.left + self.width >= 0 and self.left - self.width <= self.WIDTH_SCREEN and self.top + self.height >= 0 and self.top - self.height <= self.HEIGHT_SCREEN:
+            SCREEN.blit(self.sprite_display,
+                            (self.left-sqrt(2), self.top-1))
+            self.display_overlay()
 
     def clear(self):
         if self.type_empty == "tree":

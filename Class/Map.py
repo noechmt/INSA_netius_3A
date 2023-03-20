@@ -34,15 +34,19 @@ class Map:  # Un ensemble de cellule
         self.offset_top = 0
         self.offset_left = 0
         self.overlay = ""
+        t = time.time()
         self.array = [[Empty(j, i, self.height_land, self.width_land, SCREEN, self) for i in range(
             size)] for j in range(size)]  # tableau de cellule (voir classe cellule) : list
+        print(f"Generation de la map : {time.time() - t}")
         self.walkers = []
         self.migrantQueue = []
         self.laborAdvisorQueue = []
         self.buildings = []
         self.path_graph = nx.DiGraph()
         self.spawn_cell = self.array[39][19]
+        t = time.time()
         self.init_map()
+        print(f"Generation des chemins : {time.time() - t}")
         self.wallet = 3000
         self.update_hover = 0
         self.button_activated = {"house": False, "shovel": False, "road": False,
@@ -99,27 +103,16 @@ class Map:  # Un ensemble de cellule
             self.zoom_coef /= 1.05
             self.height_land /= 1.05
             self.width_land /= 1.05
-        for x in range(40):
-            for y in range(40):
+        for x in range(self.size):
+            for y in range(self.size):
                 self.get_cell(x, y).handle_zoom(zoom_in)
 
     def handle_move(self, move, m):
         SCREEN.fill((0, 0, 0))
-        for x in range(40):
-            for y in range(40):
+        for x in range(self.size):
+            for y in range(self.size):
                 self.get_cell(x, y).handle_move(move, m)
-                # Around the world : verti and hori
-                if self.get_cell(0, 20).left >= 1.25*SCREEN.get_size()[0]:
-                    self.get_cell(x, y).left = -SCREEN.get_size()[0]
-                if self.get_cell(20, 20).left <= -1.25*SCREEN.get_size()[0]:
-                    self.get_cell(x, y).left = SCREEN.get_size()[0]
-                if self.get_cell(0, 0).top >= 1.25*SCREEN.get_size()[1]:
-                    self.get_cell(x, y).top = -SCREEN.get_size()[1]
-                if self.get_cell(39, 39).top <= -1.25*SCREEN.get_size()[1]:
-                    self.get_cell(x, y).top = SCREEN.get_size()[1]
-
                 self.get_cell(x, y).display()
-    # Check if these coordinates are in the map
 
     def inMap(self, x, y):
         return (0 <= x and x <= self.size-1 and 0 <= y and y <= self.size-1)
@@ -179,7 +172,7 @@ class Map:  # Un ensemble de cellule
         self.array[x][y].display()
 
     def get_cell(self, x, y):
-        if (x < 0 or x >= 40) or (y < 0 or y >= 40):
+        if (x < 0 or x >= self.size) or (y < 0 or y >= self.size):
             return None
         return self.array[x][y]
 
@@ -189,8 +182,8 @@ class Map:  # Un ensemble de cellule
         pass
 
     def display_map(self):
-        for i in range(40):
-            for j in range(40):
+        for i in range(self.size):
+            for j in range(self.size):
                 self.array[i][j].display()
 
     def get_overlay(self):
@@ -209,8 +202,8 @@ class Map:  # Un ensemble de cellule
     def display_overlay(self, pushed=1):
         match self.overlay:
             case "grid" | "water":
-                for x in range(40):
-                    for y in range(40):
+                for x in range(self.size):
+                    for y in range(self.size):
                         self.array[x][y].display_overlay()
 
             case "fire" | "collapse":
