@@ -499,3 +499,8 @@ class Engineer(Walker):
 # x decrease -> left
 # y increase -> bot
 # y decrease -> top
+
+
+class Farmer :
+    pass
+
