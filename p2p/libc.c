@@ -49,9 +49,8 @@ void serveur(char * ip, int PORT)
         close(server_fd);
     }
     // Printed the server socket addr and port
-    printf("IP address is: %s\n", inet_ntoa(address.sin_addr));
-    printf("port is: %d\n", (int)ntohs(address.sin_port));
-
+    /*printf("IP address is: %s\n", inet_ntoa(address.sin_addr));
+    printf("port is: %d\n", (int)ntohs(address.sin_port));*/
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
     {
         perror("bind failed");
@@ -64,27 +63,15 @@ void serveur(char * ip, int PORT)
         close(server_fd);
         exit(EXIT_FAILURE);
     }
-    int ch;
+
     pthread_t tid;
     pthread_create(&tid, NULL, &receive_thread, &server_fd); //Creating thread to keep receiving message in real time
 
-
-    do
-    {
-        scanf("%d", &ch);
-        switch (ch)
-        {
-        case 1:
-            printf("yo\n");
-            sending(ip);
-            break;
-        case 0:
-            printf("\nLeaving\n");
-            break;
-        default:
-            printf("\nWrong choice\n");
-        }
-    } while (ch);
+    
+    for(int i =0; i < 10; i++){
+        sending(ip);
+        sleep(2);
+    }
 
     close(server_fd);
 
