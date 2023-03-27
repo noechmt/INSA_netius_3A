@@ -393,7 +393,7 @@ class Prefect(Walker):
                 if not isinstance(j, Cell.Prefecture) and not isinstance(j, Cell.Well) and not j.risk.happened:
                     j.risk.resetEvent()
 
-    def extinguishFire(self):
+    def extinguishFire(self, update=1):
         if self.extinguishCounter < 36:
             self.currentCell.display()
             SCREEN.blit(pygame.transform.scale(self.prefect_working_sprites[self.orientation][self.extinguishCounter % 6], (
@@ -401,8 +401,9 @@ class Prefect(Walker):
             if self.waterCounter > 5:
                 sound_effect["extinguish"].play()
                 self.waterCounter = 0
-            self.waterCounter += 1
-            self.extinguishCounter += 1
+            if update:
+                self.waterCounter += 1
+                self.extinguishCounter += 1
         else:
 
             sound_effect["cooling"].play()

@@ -153,6 +153,8 @@ class Map:  # Un ensemble de cellule
                 i.display()
             if not isinstance(i, Migrant):
                 i.previousCell.display()
+            if isinstance(i, Prefect) and i.isWorking:
+                i.extinguishFire(0)
 
     def update_fire(self):
         for i in self.buildings:

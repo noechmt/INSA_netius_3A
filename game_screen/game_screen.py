@@ -101,17 +101,6 @@ def game_screen():
 
         update_speed = 10 / (speed)
 
-        walker_update_count += 1
-        if walker_update_count >= update_speed:
-            # print(walker_update_count)
-            map.update_walkers()
-            speed_counter_text = fps_font.render(
-                f"{speed * 100:.0f}%", 1, (255, 255, 255))
-            SCREEN.blit(speed_counter_text,
-                        (speed_left, speed_top))
-            # print("break")
-            walker_update_count = 0
-
         fire_update_count += 1
         if fire_update_count >= update_speed:
             map.update_fire()
@@ -349,6 +338,17 @@ def game_screen():
 
         if map.get_overlay() in ("fire", "collapse"):
             map.display_overlay()
+        
+        walker_update_count += 1
+        if walker_update_count >= update_speed:
+            # print(walker_update_count)
+            map.update_walkers()
+            speed_counter_text = fps_font.render(
+                f"{speed * 100:.0f}%", 1, (255, 255, 255))
+            SCREEN.blit(speed_counter_text,
+                        (speed_left, speed_top))
+            # print("break")
+            walker_update_count = 0
 
         map.display_walkers()
         panel.display()
