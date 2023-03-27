@@ -161,17 +161,17 @@ class Map:  # Un ensemble de cellule
                 i.previousCell.display_around()
 
         for i in self.buildings:
-            if not i.risk.happened:
+            if i.risk and not i.risk.happened:
                 i.risk.riskIncrease()
 
     def update_fire(self):
         for i in self.buildings:
-            if i.risk.happened and i.risk.type == "fire":
+            if i.risk and i.risk.happened and i.risk.type == "fire":
                 i.risk.burn()
 
     def update_collapse(self):
         for i in self.buildings:
-            if i.risk.happened and i.risk.type == "collapse":
+            if i.risk and i.risk.happened and i.risk.type == "collapse":
                 i.risk.collapse()
 
     def set_cell_array(self, x, y, cell):

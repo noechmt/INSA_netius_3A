@@ -51,6 +51,7 @@ def game_screen():
         map.display_map()
     else:
         map = Map(SIZE, height_land, width_land)
+        map.array[33][33] = Farm(33, 33, height_land, width_land, SCREEN, map)
         map.set_name_user(name_path)
 
     panel = Panel(SCREEN)

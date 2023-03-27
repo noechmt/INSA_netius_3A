@@ -503,7 +503,7 @@ class Empty(Cell):
         self.type_empty = type_empty  # "dirt", "trees"
         self.type = "empty"
         self.tree_or_dirt_list = ["tree", "dirt", "dirt"]
-        self.rock_or_dirt_list = ["rock", "dirt", "dirt", "dirt"]
+        self.rock_or_dirt_list = ["dirt", "dirt", "dirt"]
         self.path_sprite = ""
 
         if boolean_first_generation == 0:
@@ -590,7 +590,7 @@ class Empty(Cell):
 
         # select the sprites randomly
         if (self.type_empty == "rock") or (self.type_empty == "tree"):
-            aleatoire = randint(1, 4)
+            aleatoire = 1
         elif (self.type_empty == "dirt"):
             aleatoire = randint(1, 13)
         else:
@@ -925,38 +925,86 @@ class EngineerPost(Building):
         self.update_sprite_size()
 
 
+class Crop(Building) : 
+    def __init__(self, x, y, height, width, screen, my_map, farm):
+        super().__init__(x, y, height, width, screen, my_map)
+        self.building = farm
+        self.crop_state = 0
+        self.path_sprite = "game_screen/game_screen_sprites/farm.png"
+        self.sprite = dict((k, pygame.image.load(self.path_sprite[0:-4] + "_" + str(k) + ".png").convert_alpha()) for k in range(5))
+        self.sprite_display = []
+        self.risk = None
+
+
+    def update_sprite_size(self):
+        for i in range(5): 
+            self.sprite_display[i] = pygame.transform.scale(
+                self.sprite[i], (self.width, self.height*50/30))
+            
+            
+
+    def display(self) :
+        pass
+
+
+class FarmPart(Building) : 
+    def __init__(self, x, y, height, width, screen, map, my_farm) :
+        super().__init__(x, y, height, width, screen, map)
+        self.farm = my_farm
+        self.risk = self.farm.risk
+
+    # def display(self) : 
+    #     self.farm.display()
+
+
+
+
+
 class Farm(Building) : 
     def __init__(self, x, y, height, width, screen, my_map):
         super().__init__(x, y, height, width, screen, my_map)
         self.farmer = Farmer(self)
+        self.risk = None
         self.path_sprite = "game_screen/game_screen_sprites/farm.png"
-        self.building_sprite = pygame.image.load(self.path_sprite).convert_alpha()
-
-        self.crop_sprite = dict((k, pygame.image.load(self.path_sprite[0:-4] + str(k) + ".png")) for k in range(5))
+        self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
         self.sprite_display = ""
         self.update_sprite_size()
-        self.type = "farm"
-        self.crop_state = 0
+        self.map.array[self.x -1][self.y] = FarmPart(x,y, height, width, screen, my_map, self) 
+        self.map.array[self.x][self.y -1] = FarmPart(x,y, height, width, screen, my_map, self) 
+        self.map.array[self.x -1][self.y -1] = FarmPart(x,y, height, width, screen, my_map, self) 
+
+        self.crops = []
+        for x in range(2) : 
+            self.crops.append(Crop(x, 2, height, width, screen, my_map, self))
+        for y in range(2) :
+            self.crops.append(Crop(2, y, height, width, screen, my_map, self))
+       
 
     def update_sprite_size(self):
-        if (self.type == "ruin"):
-            self.sprite_display = pygame.transform.scale(
-                self.sprite, (self.width, self.height))
 
-        else:
-            self.sprite_display = pygame.transform.scale(
-                self.sprite, (self.width, self.height*50/30))
-            
-    def crop_grow(self) :
-        if self.farmer.isWorking : 
-            self.crop_state += 1
-            self.crop_state %= 25
+        self.sprite_display = pygame.transform.scale(
+            self.sprite, (self.width * 60/30, self.height*90/30))
+
+
+    def display(self):
+
+        SCREEN.blit(
+            self.sprite_display, (self.left - self.width*0.5, self.top - self.height*2 ))
+        
+
+
+
+     
+
+    
+    
 
     def crop_delivery(self) : 
         self.farmer.leave_building()
-    
-    
-    
+
+
+
+        
 
 
 

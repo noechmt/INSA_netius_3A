@@ -118,6 +118,7 @@ class Walker():
             if isinstance(self.previousCell, Cell.Path):
                 path.remove(self.previousCell)
             self.cell_assignement(random.choice(path))
+
         print("walker is moving on the cell " +
               str(self.currentCell.x) + ";" + str(self.currentCell.y))
 
@@ -178,6 +179,8 @@ class Migrant(Walker):
         # SCREEN.blit(pygame.transform.scale(self.walker_sprites["top"],
         # (self.currentCell.width, self.currentCell.height)), (self.currentCell.left, self.currentCell.top))
         self.spawnCount = 0
+        print("salut")
+        print(self.previousCell)
 
     def display(self):
 
@@ -515,6 +518,8 @@ class Farmer(Walker) :
         
         self.isWorking = False
 
+    def __str__(self):
+        return "Farmer"
          
     def move(self) : 
         self.wait += 1
