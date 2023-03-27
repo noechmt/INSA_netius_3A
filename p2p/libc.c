@@ -42,6 +42,12 @@ void serveur()
     //address.sin_addr.s_addr = inet_addr("192.168.206.185");
     address.sin_port = htons(1234);
 
+    struct linger so_linger;
+    so_linger.l_onoff = 1;
+    so_linger.l_linger = 30;
+    if(setsockopt(server_fd, SOL_SOCKET, SO_LINGER, &so_linger, sizeof(so_linger)) == -1){
+        close(server_fd);
+    }
     //Printed the server socket addr and port
     printf("IP address is: %s\n", inet_ntoa(address.sin_addr));
     printf("port is: %d\n", (int)ntohs(address.sin_port));
@@ -59,6 +65,8 @@ void serveur()
     int ch;
     pthread_t tid;
     pthread_create(&tid, NULL, &receive_thread, &server_fd); //Creating thread to keep receiving message in real time
+    printf("\n*****At any point in time press the following:*****\n1.Send message\n0.Quit\n");
+    printf("\nEnter choice:");
     do
     {
 
@@ -75,6 +83,7 @@ void serveur()
             printf("\nWrong choice\n");
         }
     } while (ch);
+
     close(server_fd);
 }
 
@@ -96,7 +105,7 @@ void sending()
     }
 
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = inet_addr("192.168.206.185"); //INADDR_ANY always gives an IP of 0.0.0.0
+    serv_addr.sin_addr.s_addr = inet_addr("192.168.206.134"); //INADDR_ANY always gives an IP of 0.0.0.0
     serv_addr.sin_port = htons(PORT_server);
 
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
@@ -165,7 +174,7 @@ void receiving(int server_fd)
                 else
                 {
                     valread = recv(i, buffer, sizeof(buffer), 0);
-                    printf("\n%s\n", buffer);
+                    printf("%s\n", buffer);
                     FD_CLR(i, &current_sockets);
                 }
             }

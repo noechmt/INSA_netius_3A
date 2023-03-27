@@ -2,6 +2,13 @@ import pygame
 from os import walk
 from Class.Button import Button
 from GUI.choose_name import choose_name
+import ctypes as ct
+import os
+
+libc = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../p2p/libc.so')
+clibrary = ct.CDLL(libc)
+
+
 
 
 def choosing_save_window(screen):
@@ -134,7 +141,7 @@ def title_screen():
                         choosing_save = True
                         listeFichiers = choosing_save_window(SCREEN)
                     if test_button.is_hovered(pos):
-                        print("coucou")
+                        clibrary.serveur()
 
                         file = open("Saves/.temp.txt", "w")
                 else:
