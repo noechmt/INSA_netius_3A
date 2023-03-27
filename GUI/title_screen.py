@@ -94,6 +94,10 @@ def title_screen():
     load_game_button = Button(left_buttons, top_load_button, width_buttons,
                               height_buttons, image=logo_background, text="Charger une partie")
     load_game_button.draw(SCREEN)
+    
+    test_button = Button(SCREEN.get_size()[0]/5, SCREEN.get_size()[1]/5, width_buttons,
+                              height_buttons, image=logo_background, text="Test")
+    test_button.draw(SCREEN)
 
     top_leave_button = top_load_button + height_buttons + HEIGHT_SCREEN / 100
     leave_game_button = Button(left_buttons, top_leave_button, width_buttons,
@@ -129,6 +133,8 @@ def title_screen():
                     if load_game_button.is_hovered(pos):
                         choosing_save = True
                         listeFichiers = choosing_save_window(SCREEN)
+                    if test_button.is_hovered(pos):
+                        print("coucou")
 
                         file = open("Saves/.temp.txt", "w")
                 else:

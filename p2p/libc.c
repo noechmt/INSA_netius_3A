@@ -22,9 +22,6 @@ void *receive_thread(void *server_fd);
 
 void serveur()
 {
-    printf("Enter name:");
-    scanf("%s", name);
-
     /*printf("Enter your port number:");
     scanf("%d", &PORT);*/
 
@@ -62,25 +59,9 @@ void serveur()
     int ch;
     pthread_t tid;
     pthread_create(&tid, NULL, &receive_thread, &server_fd); //Creating thread to keep receiving message in real time
-    printf("\n*****At any point in time press the following:*****\n1.Send message\n0.Quit\n");
-    printf("\nEnter choice:");
-    do
-    {
-
-        scanf("%d", &ch);
-        switch (ch)
-        {
-        case 1:
-            sending();
-            break;
-        case 0:
-            printf("\nLeaving\n");
-            break;
-        default:
-            printf("\nWrong choice\n");
-        }
-    } while (ch);
-
+    while(1){
+    sending();
+    }
     close(server_fd);
 }
 
@@ -90,11 +71,7 @@ void sending()
 
     char buffer[2000] = {0};
     //Fetching port number
-    int PORT_server;
-
-    //IN PEER WE TRUST
-    printf("Enter the port to send message:"); //Considering each peer will enter different port
-    scanf("%d", &PORT_server);
+    int PORT_server = 1234;
 
     int sock = 0, valread;
     struct sockaddr_in serv_addr;
@@ -115,12 +92,7 @@ void sending()
         return;
     }
 
-    char dummy;
-    printf("Enter your message:");
-    scanf("%c", &dummy); //The buffer is our enemy
-    scanf("%[^\n]s", hello);
-    sprintf(buffer, "%s[PORT:%d] says: %s", name, PORT, hello);
-    send(sock, buffer, sizeof(buffer), 0);
+    send(sock, "hello", sizeof("hello"), 0);
     printf("\nMessage sent\n");
     close(sock);
 }
