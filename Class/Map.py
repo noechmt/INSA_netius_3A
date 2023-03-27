@@ -1,4 +1,5 @@
 from concurrent.futures import thread
+from os import name
 import numpy as np
 import math as m
 import random as rd
@@ -28,6 +29,8 @@ sound_effect["extinguish"].set_volume(0.1)
 
 class Map:  # Un ensemble de cellule
 
+    name_user = ""
+
     def __init__(self, size, height, width):
         self.size = size  # La taille de la map est size*size : int
         self.height_land = height
@@ -40,13 +43,14 @@ class Map:  # Un ensemble de cellule
             size)] for j in range(size)]  # tableau de cellule (voir classe cellule) : list
         print(f"Generation de la map : {time.time() - t}")
         self.walkers = []
+        self.walker_network_buffer = encode.WalkerBuffer()
         self.migrantQueue = []
         self.laborAdvisorQueue = []
         self.buildings = []
         self.path_graph = nx.DiGraph()
-        self.spawn_cell = self.array[100][149]
         t = time.time()
         self.init_map()
+        self.spawn_cell = self.array[100][149]
         print(f"Generation des chemins : {time.time() - t}")
         self.wallet = 3000
         self.update_hover = 0
@@ -54,7 +58,6 @@ class Map:  # Un ensemble de cellule
                                  "prefecture": False, "engineerpost": False, "well": False}
         self.zoom = 1
         self.zoom_coef = 1
-        self.name_user = ""
         self.population = 0
         self.month_index = 0
         self.year = 150
@@ -141,12 +144,14 @@ class Map:  # Un ensemble de cellule
                 if any(house.nb_occupants != 0 for house in self.buildings if isinstance(house, House)):
                     i.leave_building()
 
-        for i in self.walkers:
-            i.move()
-            if self.get_overlay() not in ("fire", "collapse") and not isinstance(i, Prefect) or (isinstance(i, Prefect) and not i.isWorking):
-                i.display()
-            if not isinstance(i, Migrant):
-                i.previousCell.display()
+        if len(self.walkers) != 0:
+            for i in self.walkers:
+                i.move()
+                if self.get_overlay() not in ("fire", "collapse") and not isinstance(i, Prefect) or (isinstance(i, Prefect) and not i.isWorking):
+                    i.display()
+                if not isinstance(i, Migrant):
+                    i.previousCell.display()
+            self.walker_network_buffer.send()
 
         for i in self.buildings:
             if not i.risk.happened:
@@ -240,4 +245,4 @@ class Map:  # Un ensemble de cellule
 
     def set_name_user(self, name_user):
         self.name_user = name_user
-        encode.set_username(name_user)
+        self.walker_network_buffer.username = name_user

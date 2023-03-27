@@ -1,19 +1,23 @@
-USERNAME = ""
-
-def set_username(username):
-   USERNAME = username
-
 def send_data(data):
-   pass
+   print(data)
 
-def build(coordinates, type):
+def build(username, coordinates, type):
    send_data("build;"
-             +USERNAME+";"
-             +str(coordinates.x)+";"+str(coordinates).y+";"
+             +username+";"
+             +str(coordinates)+";"
              +type)
 
-def walker(action, coordinates, type):
-   send_data("walker;"+action+";"
-             +USERNAME+";"
-             +str(coordinates.x)+";"+str(coordinates.y)+";"
+class WalkerBuffer:
+
+   buffer = "walker;"
+   username = ""
+
+   def add(self, action, coordinates, type):
+      self.buffer = (self.buffer+"next;"+action+";"
+             +self.username+";"
+             +str(coordinates[0])+";"+str(coordinates[1])+";"
              +str(type))
+   
+   def send(self):
+      send_data(self.buffer)
+      self.buffer = "walker;"

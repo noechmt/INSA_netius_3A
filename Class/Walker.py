@@ -1,3 +1,4 @@
+import imp
 import Class.Cell as Cell
 import random
 import pygame
@@ -124,12 +125,12 @@ class Walker():
             self.cell_assignement(random.choice(path))
         print("walker is moving on the cell " +
               str(self.currentCell.x) + ";" + str(self.currentCell.y))
-        encode.walker('move', (self.currentCell.x, self.currentCell.y), type(self))
+        self.building.map.walker_network_buffer.add('move', (self.currentCell.x, self.currentCell.y), type(self))
 
     def movePathFinding(self):
         assert len(self.path) != 0
         self.cell_assignement(self.path.pop(0))
-        encode.walker('move', (self.currentCell.x, self.currentCell.y), type(self))
+        self.building.map.walker_network_buffer.add('move', (self.currentCell.x, self.currentCell.y), type(self))
 
     def __getstate__(self):
         state = self.__dict__.copy()

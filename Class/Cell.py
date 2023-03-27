@@ -157,7 +157,7 @@ class Cell:  # Une case de la map
         if isinstance(self, Empty) and self.type_empty != "dirt":
             print("This cell is already taken")
         else:
-            encode.build((self.x, self.y), self.type)
+            encode.build(self.map.name_user, (self.x, self.y), type)
             match type:
                 case "path":
                     self.map.set_cell_array(self.x, self.y, Path(
