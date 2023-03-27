@@ -44,7 +44,7 @@ void serveur()
 
     struct linger so_linger;
     so_linger.l_onoff = 1;
-    so_linger.l_linger = 30;
+    so_linger.l_linger = 1;
     if(setsockopt(server_fd, SOL_SOCKET, SO_LINGER, &so_linger, sizeof(so_linger)) == -1){
         close(server_fd);
     }
@@ -67,23 +67,8 @@ void serveur()
     pthread_create(&tid, NULL, &receive_thread, &server_fd); //Creating thread to keep receiving message in real time
     printf("\n*****At any point in time press the following:*****\n1.Send message\n0.Quit\n");
     printf("\nEnter choice:");
-    do
-    {
-
-        scanf("%d", &ch);
-        switch (ch)
-        {
-        case 1:
-            sending();
-            break;
-        case 0:
-            printf("\nLeaving\n");
-            break;
-        default:
-            printf("\nWrong choice\n");
-        }
-    } while (ch);
-
+    
+    sending();
     close(server_fd);
 }
 
