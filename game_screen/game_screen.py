@@ -99,13 +99,14 @@ def game_screen():
     while run:
         pos = pygame.mouse.get_pos()
 
+        map.display_map()
 
         # Get position of the mouse in the map
         x = round(((pos[1]-map.offset_top-HEIGH_SCREEN/6)/map.height_land - (
             WIDTH_SCREEN/2-WIDTH_SCREEN/12-pos[0]-map.offset_left)/map.width_land))-1
         y = round(((WIDTH_SCREEN/2-WIDTH_SCREEN/12-pos[0]-map.offset_left)/map.width_land + (
             pos[1]-map.offset_top-HEIGH_SCREEN/6)/map.height_land))
-        
+
         move_update += 1
         if move_update % 6 == 0:
             # If mouse is in the top of the screen, we move the map to the top
@@ -115,7 +116,8 @@ def game_screen():
                 panel.display()
             if pos[1] >= HEIGH_SCREEN - 60 and map.offset_top >= -map.get_cell(0, 0).height * SIZE + HEIGH_SCREEN / 1.25:
                 map.offset_top -= 5*(3 - (HEIGH_SCREEN - pos[1]) / 20)/zoom
-                map.handle_move("down", (3 - (HEIGH_SCREEN - pos[1]) / 20) / zoom)
+                map.handle_move(
+                    "down", (3 - (HEIGH_SCREEN - pos[1]) / 20) / zoom)
                 panel.display()
             if pos[0] <= 60 and map.offset_left >= (-map.get_cell(0, 0).width * SIZE / 2) + (WIDTH_SCREEN / 2) / 1.25:
                 map.offset_left -= 5*(3 - pos[0] / 20)/zoom
@@ -124,8 +126,10 @@ def game_screen():
             if pos[0] >= WIDTH_SCREEN - 60 and map.offset_left <= (map.get_cell(0, 0).width * SIZE / 2) - (WIDTH_SCREEN / 2) / 1.25:
                 if not panel.get_road_button().is_hovered(pos) and not panel.get_well_button().is_hovered(pos):
                     if not panel.get_collapse_button().is_hovered(pos) and not panel.get_exit_button().is_hovered(pos):
-                        map.offset_left += 5 * (3 - (WIDTH_SCREEN - pos[0]) / 20)/zoom
-                        map.handle_move("right", (3 - (WIDTH_SCREEN - pos[0]) / 20) / zoom)
+                        map.offset_left += 5 * \
+                            (3 - (WIDTH_SCREEN - pos[0]) / 20)/zoom
+                        map.handle_move(
+                            "right", (3 - (WIDTH_SCREEN - pos[0]) / 20) / zoom)
                         panel.display()
             move_update = 0
         zoom_update += 1
@@ -266,7 +270,7 @@ def game_screen():
                     selection["cells"].clear()
                     selection["is_active"] = 0
 
-            if event.type == pygame.MOUSEMOTION:
+            if event.type == pygame.MOUSEMOTION or True:
                 # Display previous cell without hover
                 if hovered_cell:
                     hovered_cell = map.get_cell(
@@ -366,7 +370,6 @@ def game_screen():
             map.update_collapse()
             fire_upadte_count = 0
 
-        clock.tick(60)
         panel.display()
 
         # Speed display
@@ -436,4 +439,5 @@ def game_screen():
             SCREEN.blit(pn, (WIDTH_SCREEN - WIDTH_SCREEN /
                              13 + WIDTH_SCREEN / 16, HEIGH_SCREEN - HEIGH_SCREEN/8.3))
 
+        clock.tick(FPS)
         pygame.display.flip()
