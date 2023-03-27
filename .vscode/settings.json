@@ -1,5 +1,10 @@
 {
     "files.associations": {
+<<<<<<< HEAD
         "socketmanager.h": "c"
+=======
+        "*.embeddedhtml": "html",
+        "in.h": "c"
+>>>>>>> 03d6edce2100223d1a3c2d404803bd451c3decad
     }
 }
