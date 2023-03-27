@@ -80,7 +80,7 @@ def join_game():
     input_port_font = pygame.font.Font(
         "GUI/Fonts/Title Screen/Berry Rotunda.ttf", 25)
     input_port = InputBox(left_input_port, top_input_port, width_input_port,
-                          height_input_port, input_port_font, 25, "")
+                          height_input_port, input_port_font, 25, "1234")
     input_port.draw(SCREEN)
 
     # Connect button/text
@@ -89,6 +89,7 @@ def join_game():
     (left_text_connect, top_text_connect) = (
         left_menu + 2 * width_menu / 3, top_menu + 2 * height_menu / 3)
     text_connect_font = pygame.font.Font(
+        
         "GUI/Fonts/Title Screen/Berry Rotunda.ttf", 20)
     text_connect = Text(left_text_connect, top_text_connect, width_text_connect,
                          height_text_connect, "Connect", text_connect_font)
@@ -126,12 +127,11 @@ def join_game():
                 if text_back.is_hovered(pos):
                     return False
                 if text_connect.is_hovered(pos):
-                    if input_ip.get_text() != '':
-                        file = open("Saves/.temp.txt", "w")
-                        file.write(input_ip.get_text())
-                        file.close()
+                    if input_ip.get_text() != '' and input_port.get_text() != '':
+                        #Call here the function to connect from IP
+                        #To get IP : input_ip.get_text()
                         return True
-            if (input_port.handle_event(event, SCREEN)):
+            if input_ip.handle_event(event, SCREEN):
                 SCREEN.blit(pygame.transform.scale(
                     menu_background, (width_menu, height_menu)), (left_menu, top_menu))
                 SCREEN.blit(pygame.transform.scale(background_image,
@@ -143,6 +143,25 @@ def join_game():
                 text_port.draw(SCREEN)
                 text_back.draw(SCREEN)
                 text_connect.draw(SCREEN)
+                input_ip.darken = False
+                input_port.darken = False
+                input_ip.draw(SCREEN)
+                input_port.draw(SCREEN)
+
+            if input_port.handle_event(event, SCREEN):
+                SCREEN.blit(pygame.transform.scale(
+                    menu_background, (width_menu, height_menu)), (left_menu, top_menu))
+                SCREEN.blit(pygame.transform.scale(background_image,
+                            (WIDTH_SCREEN, HEIGHT_SCREEN)), (0, 0))
+                SCREEN.blit(pygame.transform.scale(menu_background,
+                            (width_menu, height_menu)), (left_menu, top_menu))
+                text_join.draw(SCREEN)
+                text_ip.draw(SCREEN)
+                text_port.draw(SCREEN)
+                text_back.draw(SCREEN)
+                text_connect.draw(SCREEN)
+                input_ip.darken = False
+                input_port.darken = False
                 input_ip.draw(SCREEN)
                 input_port.draw(SCREEN)
 
