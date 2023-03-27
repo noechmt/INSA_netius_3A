@@ -57,7 +57,6 @@ class Walker():
                 SCREEN.blit(pygame.transform.scale(self.walker_sprites["top"][self.currentSprite % 2], (
                     self.currentCell.width, self.currentCell.height)), (self.currentCell.left, self.currentCell.top))
 
-            self.currentSprite += 1
         # elif self.inBuilding == True :
         #     self.currentCell.display()
 
@@ -121,6 +120,7 @@ class Walker():
             if isinstance(self.previousCell, Cell.Path):
                 path.remove(self.previousCell)
             self.cell_assignement(random.choice(path))
+            self.currentSprite += 1
         print("walker is moving on the cell " +
               str(self.currentCell.x) + ";" + str(self.currentCell.y))
 

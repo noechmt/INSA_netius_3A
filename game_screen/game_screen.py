@@ -349,6 +349,7 @@ def game_screen():
             map.update_collapse()
             fire_update_count = 0
 
+        map.display_walkers()
         panel.display()
 
         # Speed display

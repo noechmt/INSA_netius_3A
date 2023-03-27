@@ -151,6 +151,13 @@ class Map:  # Un ensemble de cellule
             if not i.risk.happened:
                 i.risk.riskIncrease()
 
+    def display_walkers(self):
+        for i in self.walkers:
+            if self.get_overlay() not in ("fire", "collapse") and not isinstance(i, Prefect) or (isinstance(i, Prefect) and not i.isWorking):
+                i.display()
+            if not isinstance(i, Migrant):
+                i.previousCell.display()
+
     def update_fire(self):
         for i in self.buildings:
             if i.risk.happened and i.risk.type == "fire":
