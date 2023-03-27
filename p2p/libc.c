@@ -12,15 +12,15 @@
 
 //INADDR_ANY
 char name[20];
-int PORT;
 
-void sending();
+void sending(char* ip);
+void serveur(char * ip, int PORT);
 void receiving(int server_fd);
 void *receive_thread(void *server_fd);
 
 
 
-void serveur()
+void serveur(char * ip, int PORT)
 {
     /*printf("Enter your port number:");
     scanf("%d", &PORT);*/
@@ -33,6 +33,7 @@ void serveur()
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
         perror("socket failed");
+        close(server_fd);
         exit(EXIT_FAILURE);
     }
     // Forcefully attaching socket to the port
@@ -44,7 +45,7 @@ void serveur()
 
     struct linger so_linger;
     so_linger.l_onoff = 1;
-    so_linger.l_linger = 1;
+    so_linger.l_linger = 30;
     if(setsockopt(server_fd, SOL_SOCKET, SO_LINGER, &so_linger, sizeof(so_linger)) == -1){
         close(server_fd);
     }
@@ -55,25 +56,44 @@ void serveur()
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
     {
         perror("bind failed");
+        close(server_fd);
         exit(EXIT_FAILURE);
     }
     if (listen(server_fd, 5) < 0)
     {
         perror("listen");
+        close(server_fd);
         exit(EXIT_FAILURE);
     }
     int ch;
     pthread_t tid;
     pthread_create(&tid, NULL, &receive_thread, &server_fd); //Creating thread to keep receiving message in real time
-    printf("\n*****At any point in time press the following:*****\n1.Send message\n0.Quit\n");
-    printf("\nEnter choice:");
-    
-    sending();
+
+
+    do
+    {
+        scanf("%d", &ch);
+        switch (ch)
+        {
+        case 1:
+            printf("yo\n");
+            sending(ip);
+            break;
+        case 0:
+            printf("\nLeaving\n");
+            break;
+        default:
+            printf("\nWrong choice\n");
+        }
+    } while (ch);
+
     close(server_fd);
+
+    return;
 }
 
 //Sending messages to port
-void sending()
+void sending(char* ip1)
 {
 
     char buffer[2000] = {0};
@@ -86,20 +106,22 @@ void sending()
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         printf("\n Socket creation error \n");
+        close(sock);
         return;
     }
 
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = inet_addr("192.168.206.134"); //INADDR_ANY always gives an IP of 0.0.0.0
+    serv_addr.sin_addr.s_addr = inet_addr(ip1); //INADDR_ANY always gives an IP of 0.0.0.0
     serv_addr.sin_port = htons(PORT_server);
 
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
+        close(sock);
         printf("\nConnection Failed \n");
         return;
     }
 
-    send(sock, "hello", sizeof("hello"), 0);
+    send(sock, "hello\n", sizeof("hello\n"), 0);
     printf("\nMessage sent\n");
     close(sock);
 }
