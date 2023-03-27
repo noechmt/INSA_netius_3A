@@ -483,7 +483,7 @@ class Empty(Cell):
         self.display()
 
     def __str__(self):
-        return self.type_empty + str(self.aleatoire)
+        return self.type_empty
 
     def update_sprite_size(self):
         """if self.type_empty == "tree":
@@ -593,7 +593,6 @@ class House(Building):  # la maison fils de building (?)
         self.max_occupants = 5
         self.unemployedCount = 0
         self.migrant = Migrant(self)
-        # test_pickle(self.migrant)
         self.risk = RiskEvent("fire", self)
         # Temporary
         self.path_sprite = "game_screen/game_screen_sprites/house_" + \

@@ -65,12 +65,14 @@ class Walker():
         pass
 
     def path_finding(self, start, end):
-        print("Path finding to reach", end, "from", start)
+        print("Path finding to reach", end, "from",
+              start, ":", start.x, start.y)
         try:
             self.path = nx.dijkstra_path(
                 self.building.map.path_graph, start, end)
         except:
             self.path = []
+        print(len(self.path))
         self.isWandering = False
 
     # si la position est différente des coordonnées de la cellule, on change currentCell
@@ -81,7 +83,8 @@ class Walker():
 
     # if (self.building.employees == self.building.required_employees) :
     def leave_building(self):
-        if self.building.type == "ruin" : return
+        if self.building.type == "ruin":
+            return
         self.isWandering = True
         # print(self.isWandering)
         path = self.currentCell.check_cell_around(Cell.Path)
@@ -168,7 +171,7 @@ class Walker():
 class Migrant(Walker):
     def __init__(self, building):
         super().__init__("migrant", building, False)
-        self.cell_assignement(self.currentCell.map.array[27][39])
+        self.cell_assignement(self.currentCell.map.spawn_cell)
         self.currentCell.map.migrantQueue.append(self)
         # building.map.walkers.append(self)
         self.walker_sprites = dict((k, pygame.image.load(
@@ -187,7 +190,7 @@ class Migrant(Walker):
                     self.currentCell.width, self.currentCell.height)), (self.currentCell.left, self.currentCell.top))
                 SCREEN.blit(pygame.transform.scale(self.cart_sprites["right"], (
                     self.currentCell.width, self.currentCell.height)), (self.previousCell.left, self.previousCell.top))
-            if 0 < self.previousCell.x < 39:
+            if 0 < self.previousCell.x < self.currentCell.map.size - 1:
                 self.currentCell.map.array[self.previousCell.x -
                                            1][self.currentCell.y].display()
                 self.currentCell.map.get_cell(
@@ -198,7 +201,7 @@ class Migrant(Walker):
                     self.currentCell.width, self.currentCell.height)), (self.currentCell.left, self.currentCell.top))
                 SCREEN.blit(pygame.transform.scale(self.cart_sprites["left"], (
                     self.currentCell.width, self.currentCell.height)), (self.previousCell.left, self.previousCell.top))
-            if 0 < self.previousCell.x < 39:
+            if 0 < self.previousCell.x < self.currentCell.map.size - 1:
                 self.currentCell.map.array[self.previousCell.x +
                                            1][self.currentCell.y].display()
                 self.currentCell.map.get_cell(
@@ -209,7 +212,7 @@ class Migrant(Walker):
                     self.currentCell.width, self.currentCell.height)), (self.currentCell.left, self.currentCell.top))
                 SCREEN.blit(pygame.transform.scale(self.cart_sprites["bot"], (
                     self.currentCell.width, self.currentCell.height)), (self.previousCell.left, self.previousCell.top))
-            if 0 < self.previousCell.y < 39:
+            if 0 < self.previousCell.y < self.currentCell.map.size - 1:
                 self.currentCell.map.array[self.currentCell.x][self.previousCell.y - 1].display()
                 self.currentCell.map.get_cell(
                     self.currentCell.x, self.previousCell.y-1).display_around()
@@ -219,7 +222,7 @@ class Migrant(Walker):
                     self.currentCell.width, self.currentCell.height)), (self.currentCell.left, self.currentCell.top))
                 SCREEN.blit(pygame.transform.scale(self.cart_sprites["top"], (
                     self.currentCell.width, self.currentCell.height)), (self.previousCell.left, self.previousCell.top))
-            if 0 < self.previousCell.y < 39:
+            if 0 < self.previousCell.y < self.currentCell.map.size - 1:
                 self.currentCell.map.array[self.currentCell.x][self.previousCell.y + 1].display()
                 self.currentCell.map.get_cell(
                     self.currentCell.x, self.previousCell.y+1).display_around()
@@ -232,6 +235,7 @@ class Migrant(Walker):
         return "Migrant"
 
     def move(self):
+        print("move your ass")
         if not self.inBuilding:
             if len(self.path) == 1:
                 self.enter_building()
@@ -312,6 +316,7 @@ class LaborAdvisor(Walker):
 
 class Prefect(Walker):
     risk_reset = True
+
     def __init__(self, current_prefecture):
         super().__init__("prefect", current_prefecture, True)
         self.current_building = current_prefecture
@@ -379,24 +384,24 @@ class Prefect(Walker):
                 if len(self.path) == 0:
                     self.path_finding(self.currentCell, self.building)
                 self.movePathFinding()
-                if self.risk_reset : self.reset_fire_risk()
+                if self.risk_reset:
+                    self.reset_fire_risk()
                 if self.currentCell == self.current_building:
                     self.ttl = 50
             else:
                 super().move()
                 self.ttl -= 1
-                if self.risk_reset : self.reset_fire_risk()
+                if self.risk_reset:
+                    self.reset_fire_risk()
 
     def reset_fire_risk(self):
         cell = self.currentCell.check_cell_around(Cell.Building)
         for i in cell:
             if not isinstance(i, Cell.Prefecture) and not isinstance(i, Cell.Well) and not i.risk.happened:
                 i.risk.resetEvent()
-            for j in i.check_cell_around(Cell.Building) :
+            for j in i.check_cell_around(Cell.Building):
                 if not isinstance(j, Cell.Prefecture) and not isinstance(j, Cell.Well) and not j.risk.happened:
                     j.risk.resetEvent()
-            
-           
 
     def extinguishFire(self):
         if self.extinguishCounter < 36:
