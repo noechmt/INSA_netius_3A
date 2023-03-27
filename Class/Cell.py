@@ -15,6 +15,7 @@ def set_SCREEN_cell(screen):
     global SCREEN
     SCREEN = screen
 
+
 sprites = Sprites()
 
 overlay_risk = [
@@ -27,7 +28,6 @@ overlay_risk = [
     {"sprite": pygame.image.load(
         "risks_sprites/overlay/overlay_3.png").convert_alpha(), "width": 48, "height": 83},
     {"sprite": pygame.image.load("risks_sprites/overlay/overlay_4.png").convert_alpha(), "width": 48, "height": 93}]
-
 
 
 def draw_polygon_alpha(surface, color, points):
@@ -80,43 +80,6 @@ class Cell:  # Une case de la map
     def display(self):
         pass
 
-    def display_around(self):
-        if (self.y+1 < 40 and (self.map.get_cell(self.x, self.y+1).type_empty != "dirt") and self.map.get_cell(self.x, self.y+1).type != "path"):
-            if (self.map.get_cell(self.x, self.y+1).type_empty != "water"):
-                self.map.get_cell(self.x, self.y+1).display()
-                self.map.get_cell(self.x, self.y+1).display_around()
-        if (self.x+1 < 40 and self.map.get_cell(self.x+1, self.y).type_empty != "dirt" and self.map.get_cell(self.x+1, self.y).type != "path"):
-            if (self.map.get_cell(self.x+1, self.y).type_empty != "water"):
-                self.map.get_cell(self.x+1, self.y).display()
-                self.map.get_cell(self.x+1, self.y).display_around()
-        if (self.x+1 < 40 and self.y+1 < 40 and self.map.get_cell(self.x+1, self.y+1).type_empty != "dirt" and self.map.get_cell(self.x+1, self.y+1).type != "path"):
-            if (self.map.get_cell(self.x+1, self.y+1).type_empty != "water"):
-                self.map.get_cell(self.x+1, self.y+1).display()
-                self.map.get_cell(self.x+1, self.y+1).display_around()
-
-    def display_around_shovel(self):
-        if (self.x-1 > 0 and self.y-1 > 0):
-            self.map.get_cell(self.x-1, self.y-1).display()
-        if (self.y-1 > 0):
-            self.map.get_cell(self.x, self.y-1).display()
-        if (self.x-1 > 0):
-            self.map.get_cell(self.x-1, self.y).display()
-        if (self.x-1 > 0 and self.y+1 < 40 and self.map.get_cell(self.x-1, self.y+1).type_empty != "dirt" and self.map.get_cell(self.x-1, self.y+1).type != "path"):
-            self.map.get_cell(self.x-1, self.y+1).display()
-            self.map.get_cell(self.x-1, self.y+1).display_around()
-        if (self.y-1 > 0 and self.x+1 < 40 and self.map.get_cell(self.x+1, self.y-1).type_empty != "dirt" and self.map.get_cell(self.x+1, self.y-1).type != "path"):
-            self.map.get_cell(self.x+1, self.y-1).display()
-            self.map.get_cell(self.x+1, self.y-1).display_around()
-        if (self.y+1 < 40 and self.map.get_cell(self.x, self.y+1).type_empty != "dirt" and self.map.get_cell(self.x, self.y+1).type != "path"):
-            self.map.get_cell(self.x, self.y+1).display()
-            self.map.get_cell(self.x, self.y+1).display_around()
-        if (self.x+1 < 40 and self.map.get_cell(self.x+1, self.y).type_empty != "dirt" and self.map.get_cell(self.x+1, self.y).type != "path"):
-            self.map.get_cell(self.x+1, self.y).display()
-            self.map.get_cell(self.x+1, self.y).display_around()
-        if (self.x+1 < 40 and self.y+1 < 40 and self.map.get_cell(self.x+1, self.y+1).type_empty != "dirt" and self.map.get_cell(self.x+1, self.y+1).type != "path"):
-            self.map.get_cell(self.x+1, self.y+1).display()
-            self.map.get_cell(self.x+1, self.y+1).display_around()
-
     def handle_zoom(self, zoom_in):
         if zoom_in:
             self.height *= 1.05
@@ -126,7 +89,6 @@ class Cell:  # Une case de la map
             self.width /= 1.05
         self.init_screen_coordonates()
         self.update_sprite_size()
-        self.display()
 
     def handle_move(self, move, m):
         if move == "up":
@@ -281,6 +243,7 @@ class Cell:  # Une case de la map
     def get_water(self):
         return self.water
 
+
 path_hori = "game_screen/game_screen_sprites/road_straight_hori.png"
 sprite_hori = pygame.image.load(path_hori).convert_alpha()
 
@@ -313,6 +276,7 @@ sprite_turn_verti_left = pygame.image.load(path_verti_left).convert_alpha()
 
 path_verti_right = "game_screen/game_screen_sprites/road_turn_verti_right.png"
 sprite_turn_verti_right = pygame.image.load(path_verti_right).convert_alpha()
+
 
 class Path(Cell):
 
@@ -508,17 +472,18 @@ class Empty(Cell):
         self.path_sprite = ""
         self.type_sprite = "dirt"
         if (self.type_empty == "dirt"):
-            aleatoire = randint(1, 13)
+            aleatoire = randint(1, 12)
         super().set_aleatoire(aleatoire)
         self.path_sprite = "game_screen/game_screen_sprites/" + \
             self.type_sprite + "_" + str(aleatoire) + ".png"
-        self.sprite = sprites.get_sprites()['dirt_' + str(self.aleatoire)]['sprite_ori']
+        self.sprite = sprites.get_sprites(
+        )['dirt_' + str(self.aleatoire)]['sprite_ori']
         self.sprite_display = ""
         self.update_sprite_size()
         self.display()
 
     def __str__(self):
-        return self.type_empty
+        return self.type_empty + str(self.aleatoire)
 
     def update_sprite_size(self):
         """if self.type_empty == "tree":
@@ -542,7 +507,8 @@ class Empty(Cell):
                 self.sprite, (self.width+2*sqrt(2), self.height+2))"""
         if self.x == 0 and self.y == 0:
             sprites.update_size_sprites(self.width+2*sqrt(2), self.height+2)
-        self.sprite_display = sprites.get_sprites()["dirt_" + str(self.aleatoire)]['sprite_display']
+        self.sprite_display = sprites.get_sprites(
+        )["dirt_" + str(self.aleatoire)]['sprite_display']
 
     def display(self):
         """if self.type_empty == "tree":
@@ -566,7 +532,7 @@ class Empty(Cell):
                         (self.left-sqrt(2), self.top-1))"""
         if self.left + self.width >= 0 and self.left - self.width <= self.WIDTH_SCREEN and self.top + self.height >= 0 and self.top - self.height <= self.HEIGHT_SCREEN:
             SCREEN.blit(self.sprite_display,
-                            (self.left-sqrt(2), self.top-1))
+                        (self.left-sqrt(2), self.top-1))
             self.display_overlay()
 
     def clear(self):
@@ -579,7 +545,6 @@ class Empty(Cell):
             self.map.wallet -= 2
         self.update_sprite_size()
         self.display()
-        # To-do display around
 
     def canBuild(self):
         return self.type_empty == "dirt"

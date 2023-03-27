@@ -127,13 +127,11 @@ class RiskEvent():
         for i in arr:
             if not isinstance(i, Cell.Building):
                 i.display()
-                i.display_around()
             for j in i.check_cell_around(Cell.Cell):
                 if j.x < self.building.x + 2 and j.y < self.building.y + 2:
                     # and not (j in [i.map.array[i.x-1][i.y], i.map.array[i.x - 1][i.y - 1]]) and (isinstance(i, Cell.Prefecture) or isinstance(i, Cell.EngineerPost)):
                     if not isinstance(j, Cell.Building):
                         j.display()
-                        j.display_around()
 
     def __getstate__(self):
         state = self.__dict__.copy()

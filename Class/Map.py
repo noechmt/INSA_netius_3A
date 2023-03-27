@@ -43,7 +43,7 @@ class Map:  # Un ensemble de cellule
         self.laborAdvisorQueue = []
         self.buildings = []
         self.path_graph = nx.DiGraph()
-        self.spawn_cell = self.array[39][19]
+        self.spawn_cell = self.array[100][149]
         t = time.time()
         self.init_map()
         print(f"Generation des chemins : {time.time() - t}")
@@ -93,8 +93,6 @@ class Map:  # Un ensemble de cellule
         self.button_activated = dict.fromkeys(self.button_activated, False)
 
     def handle_zoom(self, zoom_in):
-        SCREEN.fill((0, 0, 0))
-        #self.offset_left, self.offset_top = (0, 0)
         if zoom_in:
             self.zoom_coef *= 1.05
             self.height_land *= 1.05
@@ -108,11 +106,9 @@ class Map:  # Un ensemble de cellule
                 self.get_cell(x, y).handle_zoom(zoom_in)
 
     def handle_move(self, move, m):
-        SCREEN.fill((0, 0, 0))
         for x in range(self.size):
             for y in range(self.size):
                 self.get_cell(x, y).handle_move(move, m)
-                self.get_cell(x, y).display()
 
     def inMap(self, x, y):
         return (0 <= x and x <= self.size-1 and 0 <= y and y <= self.size-1)
@@ -148,10 +144,8 @@ class Map:  # Un ensemble de cellule
             i.move()
             if self.get_overlay() not in ("fire", "collapse") and not isinstance(i, Prefect) or (isinstance(i, Prefect) and not i.isWorking):
                 i.display()
-            i.currentCell.display_around()
             if not isinstance(i, Migrant):
                 i.previousCell.display()
-                i.previousCell.display_around()
 
         for i in self.buildings:
             if not i.risk.happened:

@@ -88,7 +88,7 @@ def game_screen():
     year = map.year
 
     walker_update_count = 0
-    fire_upadte_count = 0
+    fire_update_count = 0
     current_time = ""
     text_last_save = fps_font.render("None", 1, (255, 255, 255))
     rf = fps_font.render(f"rf", 1, (255, 255, 255))
@@ -98,7 +98,7 @@ def game_screen():
     ##############################
     while run:
         pos = pygame.mouse.get_pos()
-
+        SCREEN.fill((0, 0, 0))
         map.display_map()
 
         # Get position of the mouse in the map
@@ -113,16 +113,13 @@ def game_screen():
             if pos[1] <= 60 and map.offset_top <= 0:
                 map.offset_top += 5*(3 - pos[1] / 20)/zoom
                 map.handle_move("up", (3 - pos[1] / 20)/zoom)
-                panel.display()
             if pos[1] >= HEIGH_SCREEN - 60 and map.offset_top >= -map.get_cell(0, 0).height * SIZE + HEIGH_SCREEN / 1.25:
                 map.offset_top -= 5*(3 - (HEIGH_SCREEN - pos[1]) / 20)/zoom
                 map.handle_move(
                     "down", (3 - (HEIGH_SCREEN - pos[1]) / 20) / zoom)
-                panel.display()
             if pos[0] <= 60 and map.offset_left >= (-map.get_cell(0, 0).width * SIZE / 2) + (WIDTH_SCREEN / 2) / 1.25:
                 map.offset_left -= 5*(3 - pos[0] / 20)/zoom
                 map.handle_move("left", (3 - pos[0] / 20)/zoom)
-                panel.display()
             if pos[0] >= WIDTH_SCREEN - 60 and map.offset_left <= (map.get_cell(0, 0).width * SIZE / 2) - (WIDTH_SCREEN / 2) / 1.25:
                 if not panel.get_road_button().is_hovered(pos) and not panel.get_well_button().is_hovered(pos):
                     if not panel.get_collapse_button().is_hovered(pos) and not panel.get_exit_button().is_hovered(pos):
@@ -130,8 +127,16 @@ def game_screen():
                             (3 - (WIDTH_SCREEN - pos[0]) / 20)/zoom
                         map.handle_move(
                             "right", (3 - (WIDTH_SCREEN - pos[0]) / 20) / zoom)
-                        panel.display()
             move_update = 0
+
+        # If the mouse is in the map, we display the hovered cell(s)
+        if selection["is_active"]:
+            for i in selection["cells"]:
+                map.get_cell(i[0], i[1]).handle_hover_button()
+        else:
+            if map.inMap(x, y) and pos[0] < width_wo_panel:
+                map.get_cell(x, y).handle_hover_button()
+
         zoom_update += 1
         for event in pygame.event.get():
             pos = pygame.mouse.get_pos()
@@ -149,71 +154,53 @@ def game_screen():
                 # spawn the grid if is clicked
                     if (panel.get_grid_button().is_hovered(pos)):
                         map.set_overlay("grid")
-                        panel.display()
                     if panel.get_fire_button().is_hovered(pos):
                         map.set_overlay("fire")
-                        panel.display()
                     if panel.get_collapse_button().is_hovered(pos):
                         map.set_overlay("collapse")
-                        panel.display()
                     if (panel.house_button.is_hovered(pos)):
                         panel.set_window("house")
                         map.handle_button("house")
                         map.set_overlay("")
-                        panel.display()
                     if (panel.shovel_button.is_hovered(pos)):
                         panel.set_window("shovel")
                         map.handle_button("shovel")
                         map.set_overlay("")
-                        panel.display()
-                        # map.display_map()
                     if (panel.get_road_button().is_hovered(pos)):
                         panel.set_window("road")
                         map.handle_button("road")
                         map.set_overlay("")
-                        panel.display()
-                        # map.display_map()
                     if (panel.prefecture_button.is_hovered(pos)):
                         panel.set_window("prefecture")
                         map.handle_button("prefecture")
                         map.set_overlay("")
-                        panel.display()
-                        # map.display_map()
                     if (panel.engineerpost_button.is_hovered(pos)):
                         panel.set_window("engineer post")
                         map.handle_button("engineerpost")
                         map.set_overlay("")
-                        panel.display()
-                        # map.display_map()
                     if (panel.well_button.is_hovered(pos)):
                         panel.set_window("well")
                         map.handle_button("well")
                         map.set_overlay("water")
-                        panel.display()
-                        # map.display_map()
                     if (panel.up_button.is_hovered(pos)):
                         if speed_index < 9:
                             speed_index += 1
                             speed = speeds[speed_index]
                             panel.set_played_button()
-                            panel.display()
                     if (panel.down_button.is_hovered(pos)):
                         if (speed_index > 1):
                             speed_index -= 1
                             speed = speeds[speed_index]
                             panel.set_played_button()
-                            panel.display()
                     if (panel.get_pause_button().is_hovered(pos)):
                         if paused == 0:
                             paused = 1
                             speed = speeds[0]
                             panel.set_paused_button()
-                            panel.display()
                         else:
                             paused = 0
                             speed = speeds[speed_index]
                             panel.set_played_button()
-                            panel.display()
 
                     if (panel.get_save_button().is_hovered(pos)):
                         map.month_index = count_month
@@ -233,12 +220,10 @@ def game_screen():
                         if zoom < 2:
                             zoom += 0.05
                             map.handle_zoom(1)
-                            panel.display()
                     if event.button == 5:
                         if zoom > 0.05:
                             zoom -= 0.05
                             map.handle_zoom(0)
-                            panel.display()
                     zoom_update = 0
 
             if event.type == pygame.MOUSEBUTTONUP:
@@ -247,7 +232,6 @@ def game_screen():
                         selected_cell = map.get_cell(i[0], i[1])
                         if map.get_shoveled():
                             selected_cell.clear()
-                            selected_cell.display_around_shovel()
                         elif map.get_housed() and selected_cell.isBuildable():
                             selected_cell.build("house")
                         elif map.get_road_button_activated() and selected_cell.isBuildable():
@@ -264,25 +248,22 @@ def game_screen():
                                         map.get_cell(i[0]+k, i[1]+j).display()
                         else:
                             selected_cell.display()
-                            selected_cell.display_around()
                     # map.buildings.sort(key=lambda i: (i.x, i.y))
                     # print([(i.x, i.y) for i in map.buildings])
                     selection["cells"].clear()
                     selection["is_active"] = 0
 
-            if event.type == pygame.MOUSEMOTION or True:
+            if event.type == pygame.MOUSEMOTION:
                 # Display previous cell without hover
                 if hovered_cell:
                     hovered_cell = map.get_cell(
                         hovered_coordinates[0], hovered_coordinates[1])
                     hovered_cell.display()
-                    hovered_cell.display_around()
                 if map.inMap(x, y) and pos[0] <= width_wo_panel and not selection["is_active"]:
                     hovered_coordinates = (x, y)
                     hovered_cell = map.get_cell(
                         hovered_coordinates[0], hovered_coordinates[1])
                     hovered_cell.handle_hover_button()
-                    # hovered_cell.display_around()
 
                 # Selection : fill the set with hovered cell
                 if map.inMap(x, y) and selection["is_active"]:
@@ -348,7 +329,6 @@ def game_screen():
 
         if map.get_overlay() in ("fire", "collapse"):
             map.display_overlay()
-            panel.display()
 
         walker_update_count += 1
         # print(walker_update_count)
@@ -356,7 +336,6 @@ def game_screen():
         if walker_update_count >= update_speed:
             # print(walker_update_count)
             map.update_walkers()
-            panel.display()
             speed_counter_text = fps_font.render(
                 f"{speed * 100:.0f}%", 1, (255, 255, 255))
             SCREEN.blit(speed_counter_text,
@@ -364,11 +343,11 @@ def game_screen():
             # print("break")
             walker_update_count = 0
 
-        fire_upadte_count += 1
-        if fire_upadte_count >= update_speed:
+        fire_update_count += 1
+        if fire_update_count >= update_speed:
             map.update_fire()
             map.update_collapse()
-            fire_upadte_count = 0
+            fire_update_count = 0
 
         panel.display()
 
