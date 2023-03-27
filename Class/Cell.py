@@ -912,7 +912,7 @@ class EngineerPost(Building):
     def __getstate__(self):
         state = self.__dict__.copy()
         sprite = state.pop("sprite")
-        spriye_display = state.pop("sprite_display")
+        sprite_display = state.pop("sprite_display")
         state["path_sprite"] = self.path_sprite
         return state
 
@@ -923,6 +923,54 @@ class EngineerPost(Building):
         state["sprite_display"] = None
         self.__dict__.update(state)
         self.update_sprite_size()
+
+
+class Farm(Building) : 
+    def __init__(self, x, y, height, width, screen, my_map):
+        super().__init__(x, y, height, width, screen, my_map)
+        self.farmer = Farmer(self)
+        self.path_sprite = "game_screen/game_screen_sprites/farm.png"
+        self.building_sprite = pygame.image.load(self.path_sprite).convert_alpha()
+
+        self.crop_sprite = dict((k, pygame.image.load(self.path_sprite[0:-4] + str(k) + ".png")) for k in range(5))
+        self.sprite_display = ""
+        self.update_sprite_size()
+        self.type = "farm"
+        self.crop_state = 0
+
+    def update_sprite_size(self):
+        if (self.type == "ruin"):
+            self.sprite_display = pygame.transform.scale(
+                self.sprite, (self.width, self.height))
+
+        else:
+            self.sprite_display = pygame.transform.scale(
+                self.sprite, (self.width, self.height*50/30))
+            
+    def crop_grow(self) :
+        if self.farmer.isWorking : 
+            self.crop_state += 1
+            self.crop_state %= 25
+
+    def crop_delivery(self) : 
+        self.farmer.leave_building()
+    
+    
+    
+
+
+
+
+        
+
+
+
+
+
+
+
+
+
 
 
 def test_pickle(xThing, lTested=[]):

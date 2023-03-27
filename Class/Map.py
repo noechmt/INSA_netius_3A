@@ -223,6 +223,12 @@ class Map:  # Un ensemble de cellule
             case _:
                 self.display_map()
 
+    def update_farm(self) :
+        for i in self.buildings :
+            if i.type == "farm" : i.crop_grow()
+            
+            
+
     def get_housed(self):
         return self.button_activated["house"]
 

@@ -501,6 +501,26 @@ class Engineer(Walker):
 # y decrease -> top
 
 
-class Farmer :
-    pass
+class Farmer(Walker) :
+    def __init__(self, farm):
+        super().__init__("farmer",farm, True)
+        self.current_building = farm
+        self.walker_sprites = dict((k, [0, 0])
+                                   for k in ["top", "bot", "left", "right"])
+        for i in self.walker_sprites:
+            for j in range(2):
+                self.walker_sprites[i][j] = pygame.image.load(
+                    "walker_sprites/farmer_sprites/farmer_" + i + "_" + str(j) + ".png").convert_alpha()
+                
+        
+        self.isWorking = False
+
+         
+    def move(self) : 
+        self.wait += 1
+        if self.wait <= 10:
+            return
+        if self.inBuilding : 
+            pass
+
 
