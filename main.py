@@ -1,4 +1,3 @@
-
 from GUI.title_screen import title_screen
 import pygame   
 import sys
