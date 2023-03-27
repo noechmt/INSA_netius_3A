@@ -6,6 +6,7 @@ from random import *
 from math import sqrt, floor
 import random
 import time
+import Class.Encoder as encode
 from Class.Sprites import *
 
 SCREEN = None
@@ -156,6 +157,7 @@ class Cell:  # Une case de la map
         if isinstance(self, Empty) and self.type_empty != "dirt":
             print("This cell is already taken")
         else:
+            encode.build((self.x, self.y), self.type)
             match type:
                 case "path":
                     self.map.set_cell_array(self.x, self.y, Path(

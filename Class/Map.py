@@ -5,6 +5,7 @@ import random as rd
 import networkx as nx
 import _thread as thread
 import time
+import Class.Encoder as encode
 from Class.Cell import *
 
 SCREEN = None
@@ -239,3 +240,4 @@ class Map:  # Un ensemble de cellule
 
     def set_name_user(self, name_user):
         self.name_user = name_user
+        encode.set_username(name_user)
