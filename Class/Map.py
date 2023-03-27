@@ -43,9 +43,9 @@ class Map:  # Un ensemble de cellule
         self.laborAdvisorQueue = []
         self.buildings = []
         self.path_graph = nx.DiGraph()
-        self.spawn_cell = self.array[100][149]
         t = time.time()
         self.init_map()
+        self.spawn_cell = self.array[100][149]
         print(f"Generation des chemins : {time.time() - t}")
         self.wallet = 3000
         self.update_hover = 0
