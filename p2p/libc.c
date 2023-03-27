@@ -13,13 +13,13 @@
 
 // INADDR_ANY
 char name[20];
-int PORT;
 
-int sending();
+void sending(char* ip);
+void serveur(char * ip, int PORT);
 void receiving(int server_fd);
 void *receive_thread(void *server_fd);
 
-void serveur()
+void serveur(char * ip, int PORT)
 {
     /*printf("Enter your port number:");
     scanf("%d", &PORT);*/
@@ -64,20 +64,35 @@ void serveur()
         close(server_fd);
         exit(EXIT_FAILURE);
     }
+    int ch;
     pthread_t tid;
-    pthread_create(&tid, NULL, &receive_thread, &server_fd); // Creating thread to keep receiving message in real time
-    while (1)
+    pthread_create(&tid, NULL, &receive_thread, &server_fd); //Creating thread to keep receiving message in real time
+
+
+    do
     {
-        if (sending() < 0)
+        scanf("%d", &ch);
+        switch (ch)
         {
+        case 1:
+            printf("yo\n");
+            sending(ip);
             break;
+        case 0:
+            printf("\nLeaving\n");
+            break;
+        default:
+            printf("\nWrong choice\n");
         }
-    }
+    } while (ch);
+
     close(server_fd);
+
+    return;
 }
 
-// Sending messages to port
-int sending()
+//Sending messages to port
+void sending(char* ip1)
 {
 
     // Fetching port number
@@ -90,32 +105,25 @@ int sending()
     {
         close(sock);
         printf("\n Socket creation error \n");
-        return -1;
+        close(sock);
+        return;
     }
 
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = inet_addr("192.168.206.185"); // INADDR_ANY always gives an IP of 0.0.0.0
+    serv_addr.sin_addr.s_addr = inet_addr(ip1); //INADDR_ANY always gives an IP of 0.0.0.0
     serv_addr.sin_port = htons(PORT_server);
 
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
-        printf("Waiting for connection\n");
-        sleep(2);
-        return 1;
+        close(sock);
+        printf("\nConnection Failed \n");
+        return;
     }
     scanf("%s", buffer_send);
-    if (strlen(buffer_send) != 0)
-    {
-        if (strncmp(buffer_send, "/quit", strlen("/quit")) == 0)
-        {
-            return -1;
-        }
-        send(sock, buffer_send, sizeof(buffer_send), 0);
-        bzero(buffer_send, 1024);
-    }
-    printf("Message sent\n");
+    send(sock, buffer_send, sizeof(buffer_send), 0);
+    bzero(buffer_send, 1024);
+    printf("\nMessage sent\n");
     close(sock);
-    return 1;
 }
 
 // Calling receiving every 2 seconds
