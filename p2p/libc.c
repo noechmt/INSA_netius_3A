@@ -59,9 +59,22 @@ void serveur()
     int ch;
     pthread_t tid;
     pthread_create(&tid, NULL, &receive_thread, &server_fd); //Creating thread to keep receiving message in real time
-    while(1){
-    sending();
-    }
+    do
+    {
+
+        scanf("%d", &ch);
+        switch (ch)
+        {
+        case 1:
+            sending();
+            break;
+        case 0:
+            printf("\nLeaving\n");
+            break;
+        default:
+            printf("\nWrong choice\n");
+        }
+    } while (ch);
     close(server_fd);
 }
 
