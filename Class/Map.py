@@ -29,9 +29,9 @@ sound_effect["extinguish"].set_volume(0.1)
 
 class Map:  # Un ensemble de cellule
 
-    name_user = ""
+    
 
-    def __init__(self, size, height, width):
+    def __init__(self, size, height, width, owner):
         self.size = size  # La taille de la map est size*size : int
         self.height_land = height
         self.width_land = width
@@ -39,7 +39,7 @@ class Map:  # Un ensemble de cellule
         self.offset_left = 0
         self.overlay = ""
         t = time.time()
-        self.array = [[Empty(j, i, self.height_land, self.width_land, SCREEN, self) for i in range(
+        self.array = [[Empty(j, i, self.height_land, self.width_land, self, owner) for i in range(
             size)] for j in range(size)]  # tableau de cellule (voir classe cellule) : list
         print(f"Generation de la map : {time.time() - t}")
         self.walkers = []
@@ -49,9 +49,6 @@ class Map:  # Un ensemble de cellule
         self.buildings = []
         self.path_graph = nx.DiGraph()
         t = time.time()
-        self.init_map()
-        self.spawn_cell = self.array[100][149]
-        print(f"Generation des chemins : {time.time() - t}")
         self.wallet = 3000
         self.update_hover = 0
         self.button_activated = {"house": False, "shovel": False, "road": False,
@@ -60,13 +57,18 @@ class Map:  # Un ensemble de cellule
         self.zoom_coef = 1
         self.population = 0
         self.month_index = 0
+        self.name_user = owner
         self.year = 150
+
+        self.init_map()
+        self.spawn_cell = self.array[100][149]
+        print(f"Generation des chemins : {time.time() - t}")
 
     def init_map(self):  # Permet d'initialiser le chemin de terre sur la map.
         for i in range(self.size):
             # Initialisation du chemin
             self.array[self.size-m.floor(self.size/3)][i] = Path(self.size-m.floor(
-                self.size/3), i, self.height_land, self.width_land, SCREEN, self)
+                self.size/3), i, self.height_land, self.width_land, self, self.name_user)
         self.display_map()
 
     def __str__(self):
@@ -137,24 +139,27 @@ class Map:  # Un ensemble de cellule
 
         if len(self.migrantQueue) != 0:
             for i in self.migrantQueue:
-                thread.start_new_thread(threading_update, (i,))
+                if i.building.owner == self.name_user: 
+                    thread.start_new_thread(threading_update, (i,))
 
         if len(self.laborAdvisorQueue) != 0:
             for i in self.laborAdvisorQueue:
-                if any(house.nb_occupants != 0 for house in self.buildings if isinstance(house, House)):
-                    i.leave_building()
+                if i.building.owner == self.name_user: 
+                    if any(house.nb_occupants != 0 for house in self.buildings if isinstance(house, House)):
+                        i.leave_building()
 
         if len(self.walkers) != 0:
             for i in self.walkers:
-                i.move()
-                if self.get_overlay() not in ("fire", "collapse") and not isinstance(i, Prefect) or (isinstance(i, Prefect) and not i.isWorking):
-                    i.display()
-                if not isinstance(i, Migrant):
-                    i.previousCell.display()
+                if i.building.owner == self.name_user: 
+                    i.move()
+                    if self.get_overlay() not in ("fire", "collapse") and not isinstance(i, Prefect) or (isinstance(i, Prefect) and not i.isWorking):
+                        i.display()
+                    if not isinstance(i, Migrant):
+                        i.previousCell.display()
             self.walker_network_buffer.send()
 
         for i in self.buildings:
-            if not i.risk.happened:
+            if i.owner == self.name_user and not i.risk.happened:
                 i.risk.riskIncrease()
 
     def update_fire(self):
@@ -243,6 +248,3 @@ class Map:  # Un ensemble de cellule
     def get_name_user(self):
         return self.name_user
 
-    def set_name_user(self, name_user):
-        self.name_user = name_user
-        self.walker_network_buffer.username = name_user

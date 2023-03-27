@@ -49,8 +49,7 @@ def game_screen():
             map = pickle.load(f1)
         map.display_map()
     else:
-        map = Map(SIZE, height_land, width_land)
-        map.set_name_user(name_path)
+        map = Map(SIZE, height_land, width_land, name_path)
 
     panel = Panel(SCREEN)
 
@@ -233,15 +232,15 @@ def game_screen():
                         if map.get_shoveled():
                             selected_cell.clear()
                         elif map.get_housed() and selected_cell.isBuildable():
-                            selected_cell.build("house")
+                            selected_cell.build("house", map.name_user)
                         elif map.get_road_button_activated() and selected_cell.isBuildable():
-                            selected_cell.build("path")
+                            selected_cell.build("path", map.name_user)
                         elif map.get_prefectured() and selected_cell.isBuildable():
-                            selected_cell.build("prefecture")
+                            selected_cell.build("prefecture", map.name_user)
                         elif map.get_engineered() and selected_cell.isBuildable():
-                            selected_cell.build("engineer post")
+                            selected_cell.build("engineer post", map.name_user)
                         elif map.get_welled() and selected_cell.isBuildable():
-                            selected_cell.build("well")
+                            selected_cell.build("well", map.name_user)
                             for k in range(-2, 3):
                                 for j in range(-2, 3):
                                     if (39 >= x+k >= 0 and 39 >= y+j >= 0):

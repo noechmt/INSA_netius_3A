@@ -47,7 +47,7 @@ house_0 = pygame.image.load(
 
 class Cell:  # Une case de la map
 
-    def __init__(self, x, y, height, width, screen, map):
+    def __init__(self, x, y, height, width, map, owner):
         self.x = x
         self.y = y
         self.height = height
@@ -61,6 +61,7 @@ class Cell:  # Une case de la map
         self.hovered = 0
         self.type_empty = None
         self.house_mode = False
+        self.owner = owner
         self.WIDTH_SCREEN, self.HEIGHT_SCREEN = SCREEN.get_size()
         self.init_screen_coordonates()
         self.path_sprite = ""
@@ -153,33 +154,33 @@ class Cell:  # Une case de la map
                         path.append(self.map.get_cell(self.x + i, self.y + j))
         return path
 
-    def build(self, type):
+    def build(self, type, owner):
         if isinstance(self, Empty) and self.type_empty != "dirt":
             print("This cell is already taken")
         else:
-            encode.build(self.map.name_user, (self.x, self.y), type)
+            encode.build(owner, (self.x, self.y), type)
             match type:
                 case "path":
                     self.map.set_cell_array(self.x, self.y, Path(
-                        self.x, self.y, self.height, self.width, SCREEN, self.map))
+                        self.x, self.y, self.height, self.width, self.map, owner))
                     self.map.get_cell(self.x, self.y).handle_sprites()
                     self.map.get_cell(self.x, self.y).display()
                     self.map.wallet -= 4
                 case "house":
                     self.map.set_cell_array(self.x, self.y, House(
-                        self.x, self.y, self.height, self.width, SCREEN, self.map))
+                        self.x, self.y, self.height, self.width, self.map, owner))
                     self.map.wallet -= 10
                 case "well":
                     self.map.set_cell_array(self.x, self.y, Well(
-                        self.x, self.y, self.height, self.width, SCREEN, self.map))
+                        self.x, self.y, self.height, self.width, self.map, owner))
                     self.map.wallet -= 5
                 case "prefecture":
                     self.map.set_cell_array(self.x, self.y, Prefecture(
-                        self.x, self.y, self.height, self.width, SCREEN, self.map))
+                        self.x, self.y, self.height, self.width, self.map, owner))
                     self.map.wallet -= 30
                 case "engineer post":
                     self.map.set_cell_array(self.x, self.y, EngineerPost(
-                        self.x, self.y, self.height, self.width, SCREEN, self.map))
+                        self.x, self.y, self.height, self.width, self.map, owner))
                     self.map.wallet -= 30
             for i in range(-2, 3):
                 for j in range(-2, 3):
@@ -282,8 +283,8 @@ sprite_turn_verti_right = pygame.image.load(path_verti_right).convert_alpha()
 
 class Path(Cell):
 
-    def __init__(self, x, y, height, width, screen, map, path_level=0):
-        super().__init__(x, y, height, width, screen, map)
+    def __init__(self, x, y, height, width, map, owner, path_level=0):
+        super().__init__(x, y, height, width, map, owner)
         self.path_sprite = path_verti
         self.sprite = sprite_verti
         self.sprite_display = ""
@@ -465,8 +466,8 @@ class Path(Cell):
 
 
 class Empty(Cell):
-    def __init__(self, x, y, height, width, screen, map, type_empty="dirt", boolean_first_generation=0):
-        super().__init__(x, y, height, width, screen, map)
+    def __init__(self, x, y, height, width, map, owner, type_empty="dirt", boolean_first_generation=0):
+        super().__init__(x, y, height, width, map, owner)
         self.type_empty = type_empty  # "dirt", "trees"
         self.type = "empty"
         self.tree_or_dirt_list = ["tree", "dirt", "dirt"]
@@ -568,8 +569,8 @@ class Empty(Cell):
 
 
 class Building(Cell):  # un fils de cellule (pas encore sûr de l'utilité)
-    def __init__(self, x, y, height, width, screen, my_map):
-        super().__init__(x, y, height, width, screen, my_map)
+    def __init__(self, x, y, height, width, map, owner):
+        super().__init__(x, y, height, width, map, owner)
         self.map.buildings.append(self)
         self.destroyed = False
         path_around = self.check_cell_around(Path)
@@ -587,8 +588,8 @@ class Building(Cell):  # un fils de cellule (pas encore sûr de l'utilité)
 
 
 class House(Building):  # la maison fils de building (?)
-    def __init__(self, x, y, height, width, screen, my_map, level=0, nb_occupants=0):
-        super().__init__(x, y, height, width, screen, my_map)
+    def __init__(self, x, y, height, width, map, owner, level=0, nb_occupants=0):
+        super().__init__(x, y, height, width, map, owner)
         self.level = level  # niveau de la maison : int
         self.nb_occupants = nb_occupants  # nombre d'occupants: int
         # nombre max d'occupant (dépend du niveau de la maison) : int
@@ -651,8 +652,8 @@ class House(Building):  # la maison fils de building (?)
 
 
 class Well(Building):
-    def __init__(self, x, y, height, width, screen, my_map):
-        super().__init__(x, y, height, width, screen, my_map)
+    def __init__(self, x, y, height, width, map, owner):
+        super().__init__(x, y, height, width, map, owner)
         # le risque est la en stand by
         self.risk = RiskEvent("collapse", self)
         for i in range(-2, 3):
@@ -705,8 +706,8 @@ class Well(Building):
 
 
 class Prefecture(Building):
-    def __init__(self, x, y, height, width, screen, my_map):
-        super().__init__(x, y, height, width, screen, my_map)
+    def __init__(self, x, y, height, width, map, owner):
+        super().__init__(x, y, height, width, map, owner)
         self.labor_advisor = LaborAdvisor(self)
         self.employees = 0
         self.prefect = Prefect(self)
@@ -758,8 +759,8 @@ class Prefecture(Building):
 
 
 class EngineerPost(Building):
-    def __init__(self, x, y, height, width, screen, my_map):
-        super().__init__(x, y, height, width, screen, my_map)
+    def __init__(self, x, y, height, width, map, owner):
+        super().__init__(x, y, height, width, map, owner)
         self.labor_advisor = LaborAdvisor(self)
         self.employees = 0
         self.engineer = Engineer(self)

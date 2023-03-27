@@ -13,8 +13,9 @@ class WalkerBuffer:
    username = ""
 
    def add(self, action, coordinates, type):
-      self.buffer = (self.buffer+"next;"+action+";"
+      self.buffer = (self.buffer+"next;"
              +self.username+";"
+             +action+";"
              +str(coordinates[0])+";"+str(coordinates[1])+";"
              +str(type))
    
