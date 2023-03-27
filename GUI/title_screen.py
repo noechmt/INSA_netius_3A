@@ -3,12 +3,6 @@ from os import walk
 from Class.Button import Button
 from GUI.choose_name import choose_name
 from GUI.join import join_game
-import ctypes as ct
-import os
-
-libc = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../p2p/libc.so')
-clibrary = ct.CDLL(libc)
-
 
 
 
@@ -102,10 +96,6 @@ def title_screen():
     load_game_button = Button(left_buttons, top_load_button, width_buttons,
                               height_buttons, image=logo_background, text="Charger une partie")
     load_game_button.draw(SCREEN)
-    
-    test_button = Button(SCREEN.get_size()[0]/5, SCREEN.get_size()[1]/5, width_buttons,
-                              height_buttons, image=logo_background, text="Test")
-    test_button.draw(SCREEN)
 
     top_join_button = top_load_button + height_buttons + HEIGHT_SCREEN / 100
     join_game_button = Button(left_buttons, top_join_button, width_buttons,
@@ -147,9 +137,6 @@ def title_screen():
                     if load_game_button.is_hovered(pos):
                         choosing_save = True
                         listeFichiers = choosing_save_window(SCREEN)
-                    if test_button.is_hovered(pos):
-                        clibrary.serveur()
-
                         file = open("Saves/.temp.txt", "w")
 
                     if join_game_button.is_hovered(pos):
