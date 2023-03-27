@@ -193,8 +193,6 @@ class Migrant(Walker):
             if 0 < self.previousCell.x < self.currentCell.map.size - 1:
                 self.currentCell.map.array[self.previousCell.x -
                                            1][self.currentCell.y].display()
-                self.currentCell.map.get_cell(
-                    self.previousCell.x-1, self.currentCell.y).display_around()
         elif self.previousCell.x > self.currentCell.x:
             if not self.inBuilding:
                 SCREEN.blit(pygame.transform.scale(self.walker_sprites["left"], (
@@ -204,8 +202,6 @@ class Migrant(Walker):
             if 0 < self.previousCell.x < self.currentCell.map.size - 1:
                 self.currentCell.map.array[self.previousCell.x +
                                            1][self.currentCell.y].display()
-                self.currentCell.map.get_cell(
-                    self.previousCell.x+1, self.currentCell.y).display_around()
         elif self.previousCell.y < self.currentCell.y:
             if not self.inBuilding:
                 SCREEN.blit(pygame.transform.scale(self.walker_sprites["bot"], (
@@ -214,8 +210,6 @@ class Migrant(Walker):
                     self.currentCell.width, self.currentCell.height)), (self.previousCell.left, self.previousCell.top))
             if 0 < self.previousCell.y < self.currentCell.map.size - 1:
                 self.currentCell.map.array[self.currentCell.x][self.previousCell.y - 1].display()
-                self.currentCell.map.get_cell(
-                    self.currentCell.x, self.previousCell.y-1).display_around()
         elif self.previousCell.y > self.currentCell.y:
             if not self.inBuilding:
                 SCREEN.blit(pygame.transform.scale(self.walker_sprites["top"], (
@@ -224,8 +218,6 @@ class Migrant(Walker):
                     self.currentCell.width, self.currentCell.height)), (self.previousCell.left, self.previousCell.top))
             if 0 < self.previousCell.y < self.currentCell.map.size - 1:
                 self.currentCell.map.array[self.currentCell.x][self.previousCell.y + 1].display()
-                self.currentCell.map.get_cell(
-                    self.currentCell.x, self.previousCell.y+1).display_around()
 
         if (len(self.currentCell.check_cell_around(Cell.Path)) >= 2 and not (self.previousCell.x == self.path[0].x or self.previousCell.y == self.path[0].y)) or self.building in self.currentCell.check_cell_around(Cell.House):
             for i in self.currentCell.check_cell_around(Cell.Path):
@@ -235,7 +227,6 @@ class Migrant(Walker):
         return "Migrant"
 
     def move(self):
-        print("move your ass")
         if not self.inBuilding:
             if len(self.path) == 1:
                 self.enter_building()
