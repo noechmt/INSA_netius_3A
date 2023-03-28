@@ -158,7 +158,7 @@ class Cell:  # Une case de la map
         if isinstance(self, Empty) and self.type_empty != "dirt":
             print("This cell is already taken")
         else:
-            encode.build(owner, (self.x, self.y), type)
+            if owner == self.map.name_user: encode.build(owner, self.x, self.y, type)
             match type:
                 case "path":
                     self.map.set_cell_array(self.x, self.y, Path(
@@ -584,17 +584,18 @@ class Empty(Cell):
 class Building(Cell):  # un fils de cellule (pas encore sûr de l'utilité)
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width, map, owner)
-        self.map.buildings.append(self)
         self.destroyed = False
-        path_around = self.check_cell_around(Path)
-        house_around = self.check_cell_around(House)
-        self.path_sprite = ""
-        for j in path_around:
-            self.map.path_graph.add_edge(j, self)
-            self.map.path_graph.add_edge(self, j, weight=2000)
-            if isinstance(self, House) and len(house_around) != 0:
-                for k in house_around:
-                    self.map.path_graph.add_edge(j, k, weight=2000)
+        if owner == map.name_user:
+            self.map.buildings.append(self)
+            path_around = self.check_cell_around(Path)
+            house_around = self.check_cell_around(House)
+            self.path_sprite = ""
+            for j in path_around:
+                self.map.path_graph.add_edge(j, self)
+                self.map.path_graph.add_edge(self, j, weight=2000)
+                if isinstance(self, House) and len(house_around) != 0:
+                    for k in house_around:
+                        self.map.path_graph.add_edge(j, k, weight=2000)
 
     def destroy(self):
         self.destroyed = 1
@@ -617,11 +618,12 @@ class House(Building):  # la maison fils de building (?)
         self.sprite_display = ""
         self.update_sprite_size()
         self.type = "house"
-        house_around = self.check_cell_around(House)
-        for i in house_around:
-            path_around = i.check_cell_around(Path)
-            if len(path_around) != 0:
-                self.map.path_graph.add_edge(i, self, weight=2000)
+        if owner == map.name_user:
+            house_around = self.check_cell_around(House)
+            for i in house_around:
+                path_around = i.check_cell_around(Path)
+                if len(path_around) != 0:
+                    self.map.path_graph.add_edge(i, self, weight=2000)
         self.display()
 
     def __str__(self):

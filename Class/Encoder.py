@@ -1,23 +1,26 @@
-def send_data(data):
-   print(data)
+import json
 
-def build(username, coordinates, type):
-   send_data("build;"
-             +username+";"
-             +str(coordinates)+";"
-             +type)
+
+def send_data(data):
+   print(json.dumps(data))
+
+def build(username, x, y, type):
+   send_data({"header": "build",
+      "username": username,
+      "x": x,
+      "y": y, 
+      "type": type})
 
 class WalkerBuffer:
 
-   buffer = "walker;"
-   username = ""
+   def __init__(self, username):
+      self.buffer = {"header": "walker", "username": username, "array": []}
 
-   def add(self, action, coordinates, type):
-      self.buffer = (self.buffer+"next;"
-             +self.username+";"
-             +action+";"
-             +str(coordinates[0])+";"+str(coordinates[1])+";"
-             +str(type))
+   def add(self, action, x, y, type):
+      self.buffer["array"].append({
+             "action": action,
+             "x": x, "y": y,
+             "type": type})
    
    def send(self):
       send_data(self.buffer)

@@ -174,6 +174,8 @@ def title_screen():
         if (not choose_name()):
             title_screen()
 
+        return True
+
     if window_join:
         # We display again this window if the back button is pressed from choose_name
         if (not join_game()):

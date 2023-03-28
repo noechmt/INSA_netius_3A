@@ -7,6 +7,7 @@ import numpy as np
 from Class.Button import Button
 from Class.Map import *
 from Class.Panel import Panel
+from Class.Wrapper import Wrapper
 import time
 from datetime import datetime
 
@@ -52,7 +53,8 @@ def game_screen():
         map = Map(SIZE, height_land, width_land, name_path)
 
     panel = Panel(SCREEN)
-
+    wrapper = Wrapper(map)
+    wrapper.wrap('{"header": "build", "username": "Louis", "x": 99, "y": 135, "type": "house"}')
     # Dims without left panel
     height_wo_panel = HEIGH_SCREEN
     width_wo_panel = WIDTH_SCREEN - (WIDTH_SCREEN/9)

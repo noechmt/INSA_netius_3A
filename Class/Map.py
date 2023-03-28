@@ -42,7 +42,7 @@ class Map:  # Un ensemble de cellule
         self.array = [[Empty(j, i, self.height_land, self.width_land, self, owner) for i in range(
             size)] for j in range(size)]  # tableau de cellule (voir classe cellule) : list
         self.walkers = []
-        self.walker_network_buffer = encode.WalkerBuffer()
+        self.walker_network_buffer = encode.WalkerBuffer(owner)
         self.migrantQueue = []
         self.laborAdvisorQueue = []
         self.buildings = []

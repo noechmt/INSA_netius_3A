@@ -1,12 +1,17 @@
+import json
+from this import d
+
+
 class Wrapper:
    
    def __init__(self, map):
       self.map = map
 
-   def wrap(data):
-      header, user, array = data.split(";")
-      match header:
+   def wrap(self, data_json):
+      print(data_json)
+      data = json.loads(data_json)
+      match data["header"]:
          case 'build':
-            map.getCell(array[0], array[1]).build(array[3], user)
+            self.map.get_cell(data["x"], data["y"]).build(data["type"], data["username"])
          case 'walker':
             pass

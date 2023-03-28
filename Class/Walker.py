@@ -124,7 +124,7 @@ class Walker():
             self.currentSprite += 1
         print("walker is moving on the cell " +
               str(self.currentCell.x) + ";" + str(self.currentCell.y))
-        self.building.map.walker_network_buffer.add('move', (self.currentCell.x, self.currentCell.y), type(self))
+        self.building.map.walker_network_buffer.add('move', self.currentCell.x, self.currentCell.y, type(self))
 
     def movePathFinding(self):
         assert len(self.path) != 0
