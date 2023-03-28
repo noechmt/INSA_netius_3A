@@ -471,11 +471,15 @@ class Empty(Cell):
         self.type_empty = type_empty  # "dirt", "trees"
         self.type = "empty"
         self.tree_or_dirt_list = ["tree", "dirt", "dirt"]
-        self.rock_or_dirt_list = ["rock", "dirt", "dirt", "dirt"]
         self.path_sprite = ""
         self.type_sprite = "dirt"
+        if randint(1, 3) == 1:
+            self.type_sprite = "tree"
+            self.type_empty = "tree"
         if (self.type_empty == "dirt"):
             aleatoire = randint(1, 12)
+        else:
+            aleatoire = randint(1, 4)
         super().set_aleatoire(aleatoire)
         self.path_sprite = "game_screen/game_screen_sprites/" + \
             self.type_sprite + "_" + str(aleatoire) + ".png"
@@ -489,29 +493,24 @@ class Empty(Cell):
         return self.type_empty
 
     def update_sprite_size(self):
-        """if self.type_empty == "tree":
+        if self.type_empty == "tree":
             if self.aleatoire == 1:
-                self.sprite_display = pygame.transform.scale(
-                    self.sprite, (self.width, self.height*42/30))
+                sprites.update_size_sprites(self.type_sprite + "_" + str(self.aleatoire),
+                                            self.width, self.height*42/30)
             elif self.aleatoire == 2:
-                self.sprite_display = pygame.transform.scale(
-                    self.sprite, (self.width, self.height*41/30))
+                sprites.update_size_sprites(self.type_sprite + "_" + str(self.aleatoire),
+                                            self.width, self.height*41/30)
             elif self.aleatoire == 3:
-                self.sprite_display = pygame.transform.scale(
-                    self.sprite, (self.width, self.height*44/30))
+                sprites.update_size_sprites(self.type_sprite + "_" + str(self.aleatoire),
+                                            self.width, self.height*44/30)
             elif self.aleatoire == 4:
-                self.sprite_display = pygame.transform.scale(
-                    self.sprite, (self.width, self.height*45/30))
-        elif self.type_empty == "rock":
-            self.sprite_display = pygame.transform.scale(
-                self.sprite, (self.width, self.height*35/30))
+                sprites.update_size_sprites(self.type_sprite + "_" + str(self.aleatoire),
+                                            self.width, self.height*45/30)
         else:
-            self.sprite_display = pygame.transform.scale(
-                self.sprite, (self.width+2*sqrt(2), self.height+2))"""
-        if self.x == 0 and self.y == 0:
-            sprites.update_size_sprites(self.width+2*sqrt(2), self.height+2)
+            sprites.update_size_sprites(self.type_sprite + "_" + str(self.aleatoire),
+                                        self.width+2*sqrt(2), self.height+2)
         self.sprite_display = sprites.get_sprites(
-        )["dirt_" + str(self.aleatoire)]['sprite_display']
+        )[str(self.type_sprite) + "_" + str(self.aleatoire)]['sprite_display']
 
     def display(self):
         """if self.type_empty == "tree":
@@ -534,8 +533,22 @@ class Empty(Cell):
             SCREEN.blit(self.sprite_display,
                         (self.left-sqrt(2), self.top-1))"""
         if self.left + self.width >= 0 and self.left - self.width <= self.WIDTH_SCREEN and self.top + self.height >= 0 and self.top - self.height <= self.HEIGHT_SCREEN:
-            SCREEN.blit(self.sprite_display,
-                        (self.left-sqrt(2), self.top-1))
+            if self.type_empty == "tree":
+                if self.aleatoire == 1:
+                    SCREEN.blit(
+                        self.sprite_display, (self.left, self.top - self.height*12/30))
+                elif self.aleatoire == 2:
+                    SCREEN.blit(
+                        self.sprite_display, (self.left, self.top - self.height*11/30))
+                elif self.aleatoire == 3:
+                    SCREEN.blit(
+                        self.sprite_display, (self.left, self.top - self.height*14/30))
+                elif self.aleatoire == 4:
+                    SCREEN.blit(
+                        self.sprite_display, (self.left, self.top - self.height*15/30))
+            else:
+                SCREEN.blit(self.sprite_display,
+                            (self.left-sqrt(2), self.top-1))
             self.display_overlay()
 
     def clear(self):
