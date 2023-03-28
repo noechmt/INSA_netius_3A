@@ -1,8 +1,8 @@
 import json
-
+from p2p.connect import send
 
 def send_data(data):
-   print(json.dumps(data))
+   send(json.dumps(data))
 
 def build(username, x, y, type):
    send_data({"header": "build",

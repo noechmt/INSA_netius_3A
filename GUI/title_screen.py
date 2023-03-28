@@ -136,7 +136,6 @@ def title_screen():
                     if load_game_button.is_hovered(pos):
                         choosing_save = True
                         listeFichiers = choosing_save_window(SCREEN)
-
                         file = open("Saves/.temp.txt", "w")
 
                     if join_game_button.is_hovered(pos):
@@ -172,6 +171,18 @@ def title_screen():
     if window_name:
         # We display again this window if the back button is pressed from choose_name
         if (not choose_name()):
+            title_screen()
+
+    if window_join:
+        # We display again this window if the back button is pressed from choose_name
+        if (not join_game()):
+            title_screen()
+
+        return True
+
+    if window_join:
+        # We display again this window if the back button is pressed from choose_name
+        if (not join_game()):
             title_screen()
 
         return True

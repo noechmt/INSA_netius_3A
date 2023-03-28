@@ -3,6 +3,11 @@ import pygame
 from Class.Button import Button
 from Class.Input_box import InputBox
 from Class.Text import Text
+import ctypes as ct
+import os
+
+libc = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../p2p/libc.so')
+clibrary = ct.CDLL(libc)
 
 
 def join_game():
@@ -127,10 +132,10 @@ def join_game():
                 if text_back.is_hovered(pos):
                     return False
                 if text_connect.is_hovered(pos):
-                    if input_ip.get_text() != '' and input_port.get_text() != '':
-                        #Call here the function to connect from IP
-                        #To get IP : input_ip.get_text()
-                        return True
+                    # if input_ip.get_text() != '' and input_port.get_text() != '':
+                    clibrary.serveur(input_ip.get_text().encode(), input_port.get_text())
+                    
+                    return True
             if input_ip.handle_event(event, SCREEN):
                 SCREEN.blit(pygame.transform.scale(
                     menu_background, (width_menu, height_menu)), (left_menu, top_menu))
