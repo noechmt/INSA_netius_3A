@@ -64,8 +64,19 @@ class Cell:  # Une case de la map
     def update_sprite_size(self):
         pass
 
-    def isBuildable(self):
-        return isinstance(self, Empty) and self.type_empty == "dirt"
+    def isBuildable(self, taille=1):
+        if taille==1:
+            return isinstance(self, Empty) and self.type_empty == "dirt"
+        else:
+            checkedArray = []
+            for x in range(self.x-1, self.x+2):
+                for y in range(self.y-1, self.y+2):
+                    if self.map.inMap(x,y):
+                        checkedArray.append(self.map.get_cell(x,y).isBuildable())
+                    else:
+                        return False
+            return all(checkedArray)
+
 
     def init_screen_coordonates(self):
         # Compute the x and y screen position of the cell
@@ -148,6 +159,9 @@ class Cell:  # Une case de la map
         elif self.map.get_road_button_activated() and not self.isBuildable():
             draw_polygon_alpha(SCREEN, (255, 0, 0, 85),
                                self.get_points_polygone())
+        elif self.map.get_farmed() and not self.isBuildable(3):
+            draw_polygon_alpha(SCREEN, (255, 0, 0, 85),
+                               self.get_points_polygone())
         else:
             draw_polygon_alpha(SCREEN, (0, 0, 0, 85),
                                self.get_points_polygone())
@@ -214,6 +228,10 @@ class Cell:  # Une case de la map
                     self.map.set_cell_array(self.x, self.y, EngineerPost(
                         self.x, self.y, self.height, self.width, SCREEN, self.map))
                     self.map.wallet -= 30
+                case "farm":
+                    self.map.set_cell_array(self.x, self.y, Farm(
+                        self.x, self.y, self.height, self.width, SCREEN, self.map))
+                    self.map.wallet -= 50
             for i in range(-2, 3):
                 for j in range(-2, 3):
                     if (37 > self.x > 3 and 37 > self.y > 3 and self.map.get_cell(self.x+i, self.y+j).type == "well"):
@@ -239,7 +257,7 @@ class Cell:  # Une case de la map
 
     def clear(self):
         if not isinstance(self, Empty) and self.type_empty != "rock" and self.type_empty != "water":
-            if isinstance(self, Building):
+            if isinstance(self, Building) and not (isinstance(self, Farm) or isinstance(self, Crop) or isinstance(self, FarmPart)):
                 self.map.buildings.remove(self)
             for i in self.map.walkers:
                 if i.building == self:
@@ -256,8 +274,33 @@ class Cell:  # Une case de la map
                     self.map.laborAdvisorQueue.remove(i)
                     i.currentCell.display()
             self.type_empty = "dirt"
-            self.map.set_cell_array(self.x, self.y, Empty(
-                self.x, self.y, self.height, self.width, SCREEN, self.map, "dirt", 1))
+            if isinstance(self, Farm) :
+                for i in range(-1, 2) :
+                    for j in range(-1, 2) : 
+                        self.map.buildings.remove(self.map.array[self.x+i][self.y+j])
+                        self.map.set_cell_array(self.x+i, self.y+j, Empty(
+                self.x+i, self.y+j, self.height, self.width, SCREEN, self.map, "dirt", 1))
+            
+            elif isinstance(self, Crop) :
+                for i in range(-1, 2) :
+                    for j in range(-1, 2) : 
+                        self.map.buildings.remove(self.map.array[self.building.x+i][self.building.y+j])
+                        self.map.set_cell_array(self.building.x+i, self.building.y+j, Empty(
+                self.building.x+i, self.building.y+j, self.height, self.width, SCREEN, self.map, "dirt", 1))
+                
+                        
+            elif isinstance(self, FarmPart) :
+                for i in range(-1, 2) :
+                    for j in range(-1, 2) : 
+                        self.map.buildings.remove(self.map.array[self.farm.x+i][self.farm.y+j])
+                        self.map.set_cell_array(self.farm.x+i, self.farm.y+j, Empty(
+                self.farm.x+i, self.farm.y+j, self.height, self.width, SCREEN, self.map, "dirt", 1))
+                         
+            else:         
+                self.map.set_cell_array(self.x, self.y, Empty(
+                    self.x, self.y, self.height, self.width, SCREEN, self.map, "dirt", 1))
+                
+
             arr = self.check_cell_around(Cell)
             for i in arr:
                 if not isinstance(i, Building):
@@ -929,22 +972,59 @@ class Crop(Building) :
     def __init__(self, x, y, height, width, screen, my_map, farm):
         super().__init__(x, y, height, width, screen, my_map)
         self.building = farm
-        self.crop_state = 0
+        self.grow_state = 0
         self.path_sprite = "game_screen/game_screen_sprites/farm.png"
         self.sprite = dict((k, pygame.image.load(self.path_sprite[0:-4] + "_" + str(k) + ".png").convert_alpha()) for k in range(5))
         self.sprite_display = []
-        self.risk = None
-
-
-    def update_sprite_size(self):
         for i in range(5): 
-            self.sprite_display[i] = pygame.transform.scale(
-                self.sprite[i], (self.width, self.height*50/30))
-            
+            self.sprite_display.append(
+                self.sprite[i])
+        self.risk = None
+        self.update_sprite_size()
+
+    def __str__(self):
+        return "Crop"
+
+    def update_sprite_size(self): 
+            self.sprite_display[0] = pygame.transform.scale(
+                self.sprite[0], (self.width * 28/30, self.height))
+            self.sprite_display[1] = pygame.transform.scale(
+                self.sprite[1], (self.width * 29/30, self.height* 28/30))
+            self.sprite_display[2] = pygame.transform.scale(
+                self.sprite[2], (self.width * 30/30, self.height*32/30))
+            self.sprite_display[3] = pygame.transform.scale(
+                self.sprite[3], (self.width*25/30, self.height*35/30))
+            self.sprite_display[4] = pygame.transform.scale(
+                self.sprite[4], (self.width*25/30, self.height*40/30))
+                   
             
 
     def display(self) :
-        pass
+        i = self.grow_state
+        
+        match i//10 :
+            case 0 :
+                # print(self.x,self.y, i//10)
+                SCREEN.blit(
+                    self.sprite_display[0], (self.left , self.top))
+            case 1 :
+                # print(self.x,self.y, i//10)
+                SCREEN.blit(
+                    self.sprite_display[1], (self.left, self.top))
+            case 2 :
+                # print(self.x,self.y, i//10)
+                SCREEN.blit(
+                    self.sprite_display[2], (self.left-self.width*0, self.top-self.height*0.17))
+            case 3 : 
+                # print(self.x,self.y, i//10)
+                SCREEN.blit(
+                    self.sprite_display[3], (self.left+self.width*0.07, self.top-self.height*0.21))
+            case 4 : 
+                # print(self.x,self.y, i//10)
+                SCREEN.blit(
+                    self.sprite_display[4], (self.left+self.width*0.1, self.top-self.height*0.34))
+            
+        
 
 
 class FarmPart(Building) : 
@@ -975,15 +1055,26 @@ class Farm(Building) :
 
         self.crops = []
         for x in range(2) : 
-            self.crops.append(Crop(x, 2, height, width, screen, my_map, self))
-        for y in range(2) :
-            self.crops.append(Crop(2, y, height, width, screen, my_map, self))
+            self.crops.append(Crop(self.x + x - 1,self.y + 2 -1, height, width, screen, my_map, self))
+        for y in (2, 1, 0) :
+            self.crops.append(Crop(self.x + 2 -1, self.y + y -1, height, width, screen, my_map, self))
+        
+        for i in self.crops : 
+            self.map.array[i.x][i.y] = i
+            # print(i.x, i.y)
+        
+        self.update_sprite_size()
        
+
+
+    def __str__(self) : 
+        return "Farm"
+    
 
     def update_sprite_size(self):
 
         self.sprite_display = pygame.transform.scale(
-            self.sprite, (self.width * 60/30, self.height*90/30))
+            self.sprite, (self.width * 60/30, self.height*95/30))
 
 
     def display(self):
@@ -991,13 +1082,18 @@ class Farm(Building) :
         SCREEN.blit(
             self.sprite_display, (self.left - self.width*0.5, self.top - self.height*2 ))
         
+    def crop_grow(self) :
+        for i in self.crops : 
+            if i.grow_state < 49 :
+                i.grow_state +=1
+                i.display()
+                break
+        print(i.x, i.y, i.grow_state)
+            
+        if all(i.grow_state>=49 for i in self.crops) : 
+            for i in self.crops : i.grow_state = 0
 
 
-
-     
-
-    
-    
 
     def crop_delivery(self) : 
         self.farmer.leave_building()
