@@ -37,8 +37,8 @@ def game_screen():
 
     pygame.display.set_caption("Quintus III")
     WIDTH_SCREEN, HEIGH_SCREEN = SCREEN.get_size()
-    height_land = HEIGH_SCREEN/15
-    width_land = WIDTH_SCREEN*sqrt(2)/20
+    height_land = HEIGH_SCREEN/45
+    width_land = WIDTH_SCREEN*sqrt(2)/60
     SIZE = 150
 
     # Load new map or existing one with pickle
@@ -74,7 +74,7 @@ def game_screen():
 
     selection = {"is_active": 0, "start": tuple, "cells": []}
     hovered_cell = None
-    zoom = 1
+    zoom = 0.8
     move = 1
     zoom_update = 0
     move_update = 0
@@ -117,25 +117,28 @@ def game_screen():
             pos[1]-map.offset_top-HEIGH_SCREEN/6)/map.height_land))
 
         move_update += 1
+        move_coeff = 6
         if move_update % 6 == 0:
             # If mouse is in the top of the screen, we move the map to the top
             if pos[1] <= 60 and map.offset_top <= 0:
-                map.offset_top += 5*(3 - pos[1] / 20)/zoom
-                map.handle_move("up", (3 - pos[1] / 20)/zoom)
+                map.offset_top += 5*(3 - pos[1] / 20)/(zoom/move_coeff)
+                map.handle_move("up", (3 - pos[1] / 20)/(zoom/move_coeff))
             if pos[1] >= HEIGH_SCREEN - 60 and map.offset_top >= -map.get_cell(0, 0).height * SIZE + HEIGH_SCREEN / 1.25:
-                map.offset_top -= 5*(3 - (HEIGH_SCREEN - pos[1]) / 20)/zoom
+                map.offset_top -= 5 * \
+                    (3 - (HEIGH_SCREEN - pos[1]) / 20)/(zoom/move_coeff)
                 map.handle_move(
-                    "down", (3 - (HEIGH_SCREEN - pos[1]) / 20) / zoom)
+                    "down", (3 - (HEIGH_SCREEN - pos[1]) / 20) / (zoom/move_coeff))
             if pos[0] <= 60 and map.offset_left >= (-map.get_cell(0, 0).width * SIZE / 2) + (WIDTH_SCREEN / 2) / 1.25:
-                map.offset_left -= 5*(3 - pos[0] / 20)/zoom
-                map.handle_move("left", (3 - pos[0] / 20)/zoom)
+                map.offset_left -= 5*(3 - pos[0] / 20)/(zoom/move_coeff)
+                map.handle_move("left", (3 - pos[0] / 20)/(zoom/move_coeff))
             if pos[0] >= WIDTH_SCREEN - 60 and map.offset_left <= (map.get_cell(0, 0).width * SIZE / 2) - (WIDTH_SCREEN / 2) / 1.25:
                 if not panel.get_road_button().is_hovered(pos) and not panel.get_well_button().is_hovered(pos):
                     if not panel.get_collapse_button().is_hovered(pos) and not panel.get_exit_button().is_hovered(pos):
                         map.offset_left += 5 * \
-                            (3 - (WIDTH_SCREEN - pos[0]) / 20)/zoom
+                            (3 - (WIDTH_SCREEN - pos[0]
+                                  ) / 20)/(zoom/move_coeff)
                         map.handle_move(
-                            "right", (3 - (WIDTH_SCREEN - pos[0]) / 20) / zoom)
+                            "right", (3 - (WIDTH_SCREEN - pos[0]) / 20) / (zoom/move_coeff))
             move_update = 0
 
         # If the mouse is in the map, we display the hovered cell(s)
@@ -226,11 +229,11 @@ def game_screen():
 
                 if zoom_update > 0:
                     if event.button == 4:
-                        if zoom < 2:
+                        if zoom < 1.4:
                             zoom += 0.05
                             map.handle_zoom(1)
                     if event.button == 5:
-                        if zoom > 0.05:
+                        if zoom > 0.6:
                             zoom -= 0.05
                             map.handle_zoom(0)
                     zoom_update = 0
@@ -338,7 +341,7 @@ def game_screen():
 
         if map.get_overlay() in ("fire", "collapse"):
             map.display_overlay()
-        
+
         walker_update_count += 1
         if walker_update_count >= update_speed:
             # print(walker_update_count)
