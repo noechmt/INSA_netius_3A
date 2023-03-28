@@ -463,14 +463,14 @@ class Path(Cell):
 
 
 class Empty(Cell):
-    def __init__(self, x, y, height, width, screen, map, type_empty="dirt", boolean_first_generation=0):
+    def __init__(self, x, y, height, width, screen, map, type_empty="dirt", shoveled=0):
         super().__init__(x, y, height, width, screen, map)
         self.type_empty = type_empty  # "dirt", "trees"
         self.type = "empty"
         self.tree_or_dirt_list = ["tree", "dirt", "dirt"]
         self.path_sprite = ""
         self.type_sprite = "dirt"
-        if randint(1, 3) == 1:
+        if randint(1, 3) == 1 and shoveled == 0:
             self.type_sprite = "tree"
             self.type_empty = "tree"
         if (self.type_empty == "dirt"):
