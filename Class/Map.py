@@ -136,36 +136,25 @@ class Map:  # Un ensemble de cellule
                 i.spawnCount += 1
 
         if len(self.migrantQueue) != 0:
-            for i in self.migrantQueue:
-                if i.building.owner == self.name_user: 
-                    thread.start_new_thread(threading_update, (i,))
+            for migrant in self.migrantQueue:
+                if migrant.owner == self.name_user: 
+                    thread.start_new_thread(threading_update, (migrant,))
 
         if len(self.laborAdvisorQueue) != 0:
-            for i in self.laborAdvisorQueue:
-                if i.building.owner == self.name_user: 
+            for laborAdvisor in self.laborAdvisorQueue:
+                if laborAdvisor.owner == self.name_user: 
                     if any(house.nb_occupants != 0 for house in self.buildings if isinstance(house, House)):
-                        i.leave_building()
+                        laborAdvisor.leave_building()
 
         if len(self.walkers) != 0:
-            for i in self.walkers:
-                if i.building.owner == self.name_user: 
-                    i.move()
-                    if self.get_overlay() not in ("fire", "collapse") and not isinstance(i, Prefect) or (isinstance(i, Prefect) and not i.isWorking):
-                        i.display()
-                    if not isinstance(i, Migrant):
-                        i.previousCell.display()
+            for walker in self.walkers:
+                if walker.owner == self.name_user: 
+                    walker.move()
+                    if self.get_overlay() not in ("fire", "collapse") and not isinstance(walker, Prefect) or (isinstance(walker, Prefect) and not walker.isWorking):
+                        walker.display()
+                    if not isinstance(walker, Migrant):
+                        walker.previousCell.display()
             self.walker_network_buffer.send()
-
-        for i in self.buildings:
-            if i.owner == self.name_user and not i.risk.happened:
-                i.risk.riskIncrease()
-
-    def display_walkers(self):
-        for i in self.walkers:
-            if self.get_overlay() not in ("fire", "collapse") and not isinstance(i, Prefect) or (isinstance(i, Prefect) and not i.isWorking):
-                i.display()
-            if not isinstance(i, Migrant):
-                i.previousCell.display()
 
         for i in self.buildings:
             if i.owner == self.name_user and not i.risk.happened:

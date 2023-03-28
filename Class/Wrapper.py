@@ -1,6 +1,12 @@
 import json
 from this import d
 
+import Class.Walker as Walker
+
+#TODO
+#Protocole d'apparition sur la map :
+#Quand un joueur se connecte il demande aux autres s'ils sont là et en fonction du nombre de réponses
+#un point de spawn est attribué
 
 class Wrapper:
    
@@ -14,4 +20,18 @@ class Wrapper:
          case 'build':
             self.map.get_cell(data["x"], data["y"]).build(data["type"], data["username"])
          case 'walker':
-            pass
+            for walker in data["array"]:
+               if walker["action"] == "move":
+                  match walker["type"]:
+                     case "Migrant":
+                        migrant = Walker.Migrant(None, data["username"])
+                        migrant.currentCell = self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1])
+                        migrant.previousCell = self.map.get_cell(walker["previousCell"][0], walker["previousCell"][1])
+                        print(migrant.previousCell)
+                        self.map.walkers.append(migrant)
+
+                     case "Prefect":
+                        prefect = Walker.Prefect(None, data["username"])
+                        prefect.currentCell = self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1])
+                        prefect.previousCell = self.map.get_cell(walker["previousCell"][0], walker["previousCell"][1])
+                        self.map.walkers.append(prefect)

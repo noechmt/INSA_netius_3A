@@ -14,14 +14,16 @@ def build(username, x, y, type):
 class WalkerBuffer:
 
    def __init__(self, username):
+      self.username = username
       self.buffer = {"header": "walker", "username": username, "array": []}
 
-   def add(self, action, x, y, type):
+   def add(self, action, currentCell, previousCell, type):
       self.buffer["array"].append({
              "action": action,
-             "x": x, "y": y,
+             "currentCell": currentCell,
+             "previousCell": previousCell,
              "type": type})
    
    def send(self):
       send_data(self.buffer)
-      self.buffer = "walker;"
+      self.buffer = {"header": "walker", "username": self.username, "array": []}

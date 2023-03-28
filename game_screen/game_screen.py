@@ -54,7 +54,9 @@ def game_screen():
 
     panel = Panel(SCREEN)
     wrapper = Wrapper(map)
-    wrapper.wrap('{"header": "build", "username": "Louis", "x": 99, "y": 135, "type": "house"}')
+    wrapper.wrap('{"header": "build", "username": "Governor", "x": 99, "y": 135, "type": "house"}')
+    wrapper.wrap('{"header": "walker", "username": "Governor", "array": [{"action": "move", "currentCell": [100, 147], "previousCell": [100, 148], "type": "Migrant"}]}')
+
     # Dims without left panel
     height_wo_panel = HEIGH_SCREEN
     width_wo_panel = WIDTH_SCREEN - (WIDTH_SCREEN/9)
