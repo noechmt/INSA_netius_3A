@@ -35,7 +35,7 @@ def game_screen():
     # print(pygame.mixer.music.get_volume())
     pygame.mixer.music.set_volume(0.05)
 
-    pygame.display.set_caption("Quintus III")
+    pygame.display.set_caption("Netius")
     WIDTH_SCREEN, HEIGH_SCREEN = SCREEN.get_size()
     height_land = HEIGH_SCREEN/45
     width_land = WIDTH_SCREEN*sqrt(2)/60
@@ -96,6 +96,9 @@ def game_screen():
     rn = fps_font.render(f"rn", 1, (255, 255, 255))
     pn = fps_font.render(f"pn", 1, (255, 255, 255))
     ##############################
+
+    
+    map.governor.set_pathfinding(map.get_cell(15, 0))
     while run:
         pos = pygame.mouse.get_pos()
 
@@ -422,6 +425,7 @@ def game_screen():
         if Prefect.risk_reset:
             SCREEN.blit(pn, (WIDTH_SCREEN - WIDTH_SCREEN /
                              13 + WIDTH_SCREEN / 16, HEIGH_SCREEN - HEIGH_SCREEN/8.3))
+        
 
         clock.tick(FPS)
         pygame.display.flip()

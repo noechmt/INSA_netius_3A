@@ -42,7 +42,16 @@ class Map:  # Un ensemble de cellule
         self.buildings = []
         self.path_graph = nx.DiGraph()
         self.init_map()
-        self.spawn_cell = self.array[100][149]
+        self.spawn_cells = [self.array[0][self.size//10],
+                            self.array[0][self.size - self.size//10],
+                            self.array[self.size -
+                                       1][self.size - self.size//10],
+                            self.array[self.size - 1][self.size//10]]
+        # Replace 0 with the player number - 1
+        self.spawn_cell = self.spawn_cells[0]
+        # Init a governor at spawn_cell
+        self.governor = Governor(self.spawn_cell)
+        self.walkers.append(self.governor) # To-do spawn at the city-hall
         self.wallet = 3000
         self.update_hover = 0
         self.button_activated = {"house": False, "shovel": False, "road": False,
@@ -55,10 +64,47 @@ class Map:  # Un ensemble de cellule
         self.year = 150
 
     def init_map(self):  # Permet d'initialiser le chemin de terre sur la map.
-        for i in range(self.size):
-            # Initialisation du chemin
-            self.array[self.size-m.floor(self.size/3)][i] = Path(self.size-m.floor(
-                self.size/3), i, self.height_land, self.width_land, SCREEN, self)
+        # Generate the init path of player 1 (top of the map)
+        for x in range(self.size // 10):
+            self.array[x][self.size // 10] = Path(
+                x, self.size // 10, self.height_land, self.width_land, SCREEN, self)
+            self.array[x][self.size // 10].handle_sprites()
+        for y in range((self.size // 10) + 1):
+            self.array[self.size // 10][y] = Path(
+                self.size // 10, y, self.height_land, self.width_land, SCREEN, self)
+            self.array[self.size // 10][y].handle_sprites()
+
+        # Generate the init path of player 2 (left of the map)
+        for x in range(self.size // 10):
+            self.array[x][self.size - (self.size // 10)] = Path(
+                x, self.size - (self.size // 10), self.height_land, self.width_land, SCREEN, self)
+            self.array[x][self.size - (self.size // 10)].handle_sprites()
+        for y in range((self.size // 10)):
+            self.array[self.size // 10][(self.size - 1) - y] = Path(
+                self.size // 10, (self.size - 1) - y, self.height_land, self.width_land, SCREEN, self)
+            self.array[self.size // 10][(self.size - 1) - y].handle_sprites()
+
+        # Generate the init path of player 3 (bottom of the map)
+        for x in range(self.size - (self.size // 10), self.size):
+            self.array[x][self.size - (self.size // 10)] = Path(
+                x, self.size - (self.size // 10), self.height_land, self.width_land, SCREEN, self)
+            self.array[x][self.size - (self.size // 10)].handle_sprites()
+        for y in range((self.size // 10)):
+            self.array[self.size - (self.size // 10)][(self.size - 1) - y] = Path(
+                self.size - (self.size // 10), (self.size - 1) - y, self.height_land, self.width_land, SCREEN, self)
+            self.array[self.size - (self.size // 10)
+                       ][(self.size - 1) - y].handle_sprites()
+
+        # Generate the init path of player 4 (right of the map)
+        for x in range(self.size - (self.size // 10), self.size):
+            self.array[x][self.size // 10] = Path(
+                x, self.size // 10, self.height_land, self.width_land, SCREEN, self)
+            self.array[x][self.size // 10].handle_sprites()
+        for y in range((self.size // 10) + 1):
+            self.array[self.size - (self.size // 10)][y] = Path(
+                self.size - (self.size // 10), y, self.height_land, self.width_land, SCREEN, self)
+            self.array[self.size - (self.size // 10)][y].handle_sprites()
+
         self.display_map()
 
     def __str__(self):
@@ -141,7 +187,8 @@ class Map:  # Un ensemble de cellule
             if self.get_overlay() not in ("fire", "collapse") and not isinstance(i, Prefect) or (isinstance(i, Prefect) and not i.isWorking):
                 i.display()
             if not isinstance(i, Migrant):
-                i.previousCell.display()
+                if i.previousCell is not None:
+                    i.previousCell.display()
 
         for i in self.buildings:
             if not i.risk.happened:
@@ -152,7 +199,8 @@ class Map:  # Un ensemble de cellule
             if self.get_overlay() not in ("fire", "collapse") and not isinstance(i, Prefect) or (isinstance(i, Prefect) and not i.isWorking):
                 i.display()
             if not isinstance(i, Migrant):
-                i.previousCell.display()
+                if i.previousCell is not None:
+                    i.previousCell.display()
             if isinstance(i, Prefect) and i.isWorking:
                 i.extinguishFire(0)
 
@@ -176,8 +224,6 @@ class Map:  # Un ensemble de cellule
         return self.array[x][y]
 
     def display(self):
-        """print(np.array([[(self.array[i][j].type_of_cell)
-              for i in range(self.size)] for j in range(self.size)]))"""
         pass
 
     def display_map(self):

@@ -44,17 +44,21 @@ class Walker():
 
     def display(self):
         if not self.inBuilding and self.building.map.get_overlay() not in ("fire", "collapse"):
-            if self.previousCell.x < self.currentCell.x:
+            if self.previousCell is not None:
+                if self.previousCell.x < self.currentCell.x:
+                    SCREEN.blit(pygame.transform.scale(self.walker_sprites["right"][self.currentSprite % 2], (
+                        self.currentCell.width, self.currentCell.height)), (self.currentCell.left, self.currentCell.top))
+                elif self.previousCell.x > self.currentCell.x:
+                    SCREEN.blit(pygame.transform.scale(self.walker_sprites["left"][self.currentSprite % 2], (
+                        self.currentCell.width, self.currentCell.height)), (self.currentCell.left, self.currentCell.top))
+                elif self.previousCell.y < self.currentCell.y:
+                    SCREEN.blit(pygame.transform.scale(self.walker_sprites["bot"][self.currentSprite % 2], (
+                        self.currentCell.width, self.currentCell.height)), (self.currentCell.left, self.currentCell.top))
+                elif self.previousCell.y > self.currentCell.y:
+                    SCREEN.blit(pygame.transform.scale(self.walker_sprites["top"][self.currentSprite % 2], (
+                        self.currentCell.width, self.currentCell.height)), (self.currentCell.left, self.currentCell.top))
+            else:
                 SCREEN.blit(pygame.transform.scale(self.walker_sprites["right"][self.currentSprite % 2], (
-                    self.currentCell.width, self.currentCell.height)), (self.currentCell.left, self.currentCell.top))
-            elif self.previousCell.x > self.currentCell.x:
-                SCREEN.blit(pygame.transform.scale(self.walker_sprites["left"][self.currentSprite % 2], (
-                    self.currentCell.width, self.currentCell.height)), (self.currentCell.left, self.currentCell.top))
-            elif self.previousCell.y < self.currentCell.y:
-                SCREEN.blit(pygame.transform.scale(self.walker_sprites["bot"][self.currentSprite % 2], (
-                    self.currentCell.width, self.currentCell.height)), (self.currentCell.left, self.currentCell.top))
-            elif self.previousCell.y > self.currentCell.y:
-                SCREEN.blit(pygame.transform.scale(self.walker_sprites["top"][self.currentSprite % 2], (
                     self.currentCell.width, self.currentCell.height)), (self.currentCell.left, self.currentCell.top))
 
         # elif self.inBuilding == True :
@@ -443,7 +447,7 @@ class Prefect(Walker):
 
 class Engineer(Walker):
     def __init__(self, engineerPost):
-        super().__init__("engineer", engineerPost, True)
+        super().__init__("engineer", engineerPost, False)
         self.current_building = engineerPost
         # self.walker_sprites = dict((k,pygame.image.load("walker_sprites/engineer_sprites/engineer_" + k + ".png")) for k in ["top","bot","left","right"])
         self.walker_sprites = dict((k, [0, 0])
@@ -479,6 +483,45 @@ class Engineer(Walker):
         for i in cell:
             if not isinstance(i, Cell.EngineerPost):
                 i.risk.resetEvent()
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state.pop("walker_sprites")
+        return state
+
+    def __setstate__(self, state):
+        super().__setstate__(state)
+        self.__dict__.update(state)
+
+
+class Governor(Walker):
+
+    def __init__(self, current_city_hall):
+        super().__init__("Governor", current_city_hall, False)
+        self.current_building = current_city_hall
+        self.orientation = None
+        self.walker_sprites = dict((k, [0, 0])
+                                   for k in ["top", "bot", "left", "right"])
+        for i in self.walker_sprites:
+            for j in range(2):
+                self.walker_sprites[i][j] = pygame.image.load(
+                    "walker_sprites/governor_sprites/governor_" + i + "_" + str(j) + ".png").convert_alpha()
+        print(self.walker_sprites)
+
+    def set_pathfinding(self, cell_to_go):
+        # Set the pathfinding to the cell_to_go
+        print("Set !")
+        self.path_finding(self.currentCell, cell_to_go)
+
+    def move(self):
+        # move the governor one cell
+        if len(self.path) != 0:
+            self.movePathFinding()
+            self.currentSprite += 1
+    
+    def display(self):
+        super().display()
+    
 
     def __getstate__(self):
         state = self.__dict__.copy()
