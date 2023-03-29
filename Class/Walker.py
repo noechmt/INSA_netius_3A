@@ -510,7 +510,6 @@ class Governor(Walker):
 
     def set_pathfinding(self, cell_to_go):
         # Set the pathfinding to the cell_to_go
-        print("Set !")
         self.path_finding(self.currentCell, cell_to_go)
 
     def move(self):
@@ -518,9 +517,6 @@ class Governor(Walker):
         if len(self.path) != 0:
             self.movePathFinding()
             self.currentSprite += 1
-    
-    def display(self):
-        super().display()
     
 
     def __getstate__(self):

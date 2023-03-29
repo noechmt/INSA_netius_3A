@@ -186,9 +186,9 @@ class Map:  # Un ensemble de cellule
             i.move()
             if self.get_overlay() not in ("fire", "collapse") and not isinstance(i, Prefect) or (isinstance(i, Prefect) and not i.isWorking):
                 i.display()
-            if not isinstance(i, Migrant):
+            """if not isinstance(i, Migrant):
                 if i.previousCell is not None:
-                    i.previousCell.display()
+                    i.previousCell.display()"""
 
         for i in self.buildings:
             if not i.risk.happened:
@@ -198,9 +198,9 @@ class Map:  # Un ensemble de cellule
         for i in self.walkers:
             if self.get_overlay() not in ("fire", "collapse") and not isinstance(i, Prefect) or (isinstance(i, Prefect) and not i.isWorking):
                 i.display()
-            if not isinstance(i, Migrant):
+            """if not isinstance(i, Migrant):
                 if i.previousCell is not None:
-                    i.previousCell.display()
+                    i.previousCell.display()"""
             if isinstance(i, Prefect) and i.isWorking:
                 i.extinguishFire(0)
 

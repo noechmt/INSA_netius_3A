@@ -19,8 +19,10 @@ class Panel():
         pass
 
     def init_sprites(self):
-        self.figure_1 = pygame.image.load(
+        self.governor_off = pygame.image.load(
             "game_screen/game_screen_sprites/figure_2.png").convert_alpha()
+        self.governor_on = pygame.image.load(
+            "game_screen/game_screen_sprites/figure_4.png").convert_alpha()
         self.background = pygame.image.load(
             "game_screen/game_screen_sprites/panel_background.png").convert_alpha()
         self.overlays = pygame.image.load(
@@ -101,6 +103,7 @@ class Panel():
                                   34.75*self.height_screen/80, 1.25*self.width_screen/48, 1.5*self.height_screen/40, self.button_save_sprite)
         self.exit_button = Button(self.width_screen - self.width_screen / 13 + self.width_screen / 48, 0.25*self.height_screen +
                                   41*self.height_screen/80, 1.5*self.width_screen/48, 1.75*self.height_screen/40, self.button_exit_sprite)
+        self.governor_button = Button(179.6*self.width_screen/192, self.height_screen/20, self.width_screen/22, self.height_screen/12, self.governor_off)
 
     def display(self):
         for i in range(2):
@@ -112,8 +115,9 @@ class Panel():
         # self.screen.blit(pygame.transform.scale(self.overlays, (self.width_screen/18,
         #                                                       self.height_screen/36)), (11*self.width_screen/12+5, self.height_screen/32+2))
 
-        self.screen.blit(pygame.transform.scale(
-            self.figure_1, (81, 91)), (180*self.width_screen/192, self.height_screen/16))
+        self.governor_button.draw(self.screen)
+        """self.screen.blit(pygame.transform.scale(
+            self.governor, (81, 91)), (180*self.width_screen/192, self.height_screen/16))"""
 
         draw_rect_alpha(self.screen, (255, 255, 255, 127), (177*self.width_screen/192-2,
                         0.25*self.height_screen-2, (self.width_screen)/48+4, (self.height_screen)/40+4))
@@ -238,3 +242,12 @@ class Panel():
 
     def get_exit_button(self):
         return self.exit_button
+    
+    def get_governor_button(self):
+        return self.governor_button
+    
+    def set_governor_sprite(self, on):
+        if on:
+            self.governor_button.change_image(self.governor_on)
+        else:
+            self.governor_button.change_image(self.governor_off)

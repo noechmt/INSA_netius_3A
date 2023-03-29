@@ -78,6 +78,7 @@ def game_screen():
     move = 1
     zoom_update = 0
     move_update = 0
+    governor_movements = 0
 
     count_day = 0
     count_month = map.month_index
@@ -97,8 +98,6 @@ def game_screen():
     pn = fps_font.render(f"pn", 1, (255, 255, 255))
     ##############################
 
-    
-    map.governor.set_pathfinding(map.get_cell(15, 0))
     while run:
         pos = pygame.mouse.get_pos()
 
@@ -161,42 +160,48 @@ def game_screen():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    if map.inMap(x, y) and not selection["is_active"] and pos[0] < width_wo_panel:
+                    if governor_movements == True:
+                        if map.inMap(x, y):
+                            map.governor.set_pathfinding(map.get_cell(x, y))
+                    elif map.inMap(x, y) and not selection["is_active"] and pos[0] < width_wo_panel:
                         selection["start"] = (x, y)
                         selection["cells"].append((x, y))
                         selection["is_active"] = 1
 
-                # spawn the grid if is clicked
-                    if (panel.get_grid_button().is_hovered(pos)):
-                        map.set_overlay("grid")
-                    if panel.get_fire_button().is_hovered(pos):
-                        map.set_overlay("fire")
-                    if panel.get_collapse_button().is_hovered(pos):
-                        map.set_overlay("collapse")
-                    if (panel.house_button.is_hovered(pos)):
-                        panel.set_window("house")
-                        map.handle_button("house")
-                        map.set_overlay("")
-                    if (panel.shovel_button.is_hovered(pos)):
-                        panel.set_window("shovel")
-                        map.handle_button("shovel")
-                        map.set_overlay("")
-                    if (panel.get_road_button().is_hovered(pos)):
-                        panel.set_window("road")
-                        map.handle_button("road")
-                        map.set_overlay("")
-                    if (panel.prefecture_button.is_hovered(pos)):
-                        panel.set_window("prefecture")
-                        map.handle_button("prefecture")
-                        map.set_overlay("")
-                    if (panel.engineerpost_button.is_hovered(pos)):
-                        panel.set_window("engineer post")
-                        map.handle_button("engineerpost")
-                        map.set_overlay("")
-                    if (panel.well_button.is_hovered(pos)):
-                        panel.set_window("well")
-                        map.handle_button("well")
-                        map.set_overlay("water")
+                    if (panel.get_governor_button().is_hovered(pos)):
+                        governor_movements = not governor_movements
+                        panel.set_governor_sprite(governor_movements)
+                    if not governor_movements:
+                        if (panel.get_grid_button().is_hovered(pos)):
+                            map.set_overlay("grid")
+                        if panel.get_fire_button().is_hovered(pos):
+                            map.set_overlay("fire")
+                        if panel.get_collapse_button().is_hovered(pos):
+                            map.set_overlay("collapse")
+                        if (panel.house_button.is_hovered(pos)):
+                            panel.set_window("house")
+                            map.handle_button("house")
+                            map.set_overlay("")
+                        if (panel.shovel_button.is_hovered(pos)):
+                            panel.set_window("shovel")
+                            map.handle_button("shovel")
+                            map.set_overlay("")
+                        if (panel.get_road_button().is_hovered(pos)):
+                            panel.set_window("road")
+                            map.handle_button("road")
+                            map.set_overlay("")
+                        if (panel.prefecture_button.is_hovered(pos)):
+                            panel.set_window("prefecture")
+                            map.handle_button("prefecture")
+                            map.set_overlay("")
+                        if (panel.engineerpost_button.is_hovered(pos)):
+                            panel.set_window("engineer post")
+                            map.handle_button("engineerpost")
+                            map.set_overlay("")
+                        if (panel.well_button.is_hovered(pos)):
+                            panel.set_window("well")
+                            map.handle_button("well")
+                            map.set_overlay("water")
                     if (panel.up_button.is_hovered(pos)):
                         if speed_index < 9:
                             speed_index += 1
@@ -310,11 +315,14 @@ def game_screen():
                 panel.get_fire_button().handle_hover_button(pos, SCREEN)
                 panel.get_collapse_button().handle_hover_button(pos, SCREEN)
                 panel.get_exit_button().handle_hover_button(pos, SCREEN)
+                panel.get_governor_button().handle_hover_button(pos, SCREEN)
 
             if event.type == pygame.KEYDOWN:
                 if pygame.key.get_pressed()[pygame.K_ESCAPE]:
                     panel.set_window("none")
                     map.handle_esc()
+                    governor_movements = False
+                    panel.set_governor_sprite(governor_movements)
 
                 if pygame.key.get_pressed()[pygame.K_r]:
                     Prefect.risk_reset = not Prefect.risk_reset
