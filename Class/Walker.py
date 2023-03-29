@@ -506,16 +506,21 @@ class Governor(Walker):
             for j in range(2):
                 self.walker_sprites[i][j] = pygame.image.load(
                     "walker_sprites/governor_sprites/governor_" + i + "_" + str(j) + ".png").convert_alpha()
-        print(self.walker_sprites)
 
     def set_pathfinding(self, cell_to_go):
         # Set the pathfinding to the cell_to_go
+        print("Before pathfinding :", self.currentCell.x, self.currentCell.y)
         self.path_finding(self.currentCell, cell_to_go)
+        print("After pathfinding :", self.currentCell.x, self.currentCell.y)
+        self.display()
+        
 
     def move(self):
         # move the governor one cell
         if len(self.path) != 0:
+            print("Before move :", self.currentCell.x, self.currentCell.y)
             self.movePathFinding()
+            print("After move :", self.currentCell.x, self.currentCell.y)
             self.currentSprite += 1
     
 

@@ -203,7 +203,9 @@ class Cell:  # Une case de la map
                                        self.get_points_polygone())
 
     def clear(self):
-        if not isinstance(self, Empty) and self.type_empty != "rock" and self.type_empty != "water":
+        if isinstance(self, Path) and self.x == self.map.governor.currentCell.x and self.y == self.map.governor.currentCell.y:
+            pass
+        elif not isinstance(self, Empty) and self.type_empty != "rock" and self.type_empty != "water":
             if isinstance(self, Building):
                 self.map.buildings.remove(self)
             for i in self.map.walkers:

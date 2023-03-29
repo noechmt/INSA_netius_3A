@@ -169,6 +169,8 @@ def game_screen():
                         selection["is_active"] = 1
 
                     if (panel.get_governor_button().is_hovered(pos)):
+                        panel.set_window("none")
+                        map.handle_esc()
                         governor_movements = not governor_movements
                         panel.set_governor_sprite(governor_movements)
                     if not governor_movements:
@@ -365,6 +367,7 @@ def game_screen():
             walker_update_count = 0
 
         map.display_walkers()
+        map.governor.display()
         panel.display()
 
         # Speed display
