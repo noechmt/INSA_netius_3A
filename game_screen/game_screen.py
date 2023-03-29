@@ -369,12 +369,12 @@ def game_screen():
                         (speed_left, speed_top))
             # print("break")
             walker_update_count = 0
-        
+
         if governor_update_count >= update_speed // 4:
-            map.governor.move()
+            if map.governor.move():
+                map.center_camera_governor()
             governor_update_count = 0
 
-        map.center_camera_governor()
         map.governor.display()
         map.display_walkers()
         panel.display()
@@ -445,7 +445,6 @@ def game_screen():
         if Prefect.risk_reset:
             SCREEN.blit(pn, (WIDTH_SCREEN - WIDTH_SCREEN /
                              13 + WIDTH_SCREEN / 16, HEIGH_SCREEN - HEIGH_SCREEN/8.3))
-        
 
         clock.tick(FPS)
         pygame.display.flip()
