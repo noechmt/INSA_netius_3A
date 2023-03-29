@@ -50,8 +50,7 @@ class Map:  # Un ensemble de cellule
         # Replace 0 with the player number - 1
         self.spawn_cell = self.spawn_cells[0]
         # Init a governor at spawn_cell
-        self.governor = Governor(self.spawn_cell)
-        self.walkers.append(self.governor) # To-do spawn at the city-hall
+        self.governor = Governor(self.spawn_cell) # To-do spawn at the city-hall
         self.wallet = 3000
         self.update_hover = 0
         self.button_activated = {"house": False, "shovel": False, "road": False,
@@ -121,6 +120,15 @@ class Map:  # Un ensemble de cellule
             s += "\n"
         return s
 
+    def center_camera_governor(self):
+        # Center the scene into the cell where the governor is, it is a 2.5D game
+        self.offset_left = (SCREEN.get_width()/2 - SCREEN.get_width()/12) + self.width_land*self.governor.currentCell.x/2 \
+            - self.width_land*self.governor.currentCell.y/2 - SCREEN.get_width()/2.25 #2.25 because the panel take 1/4 of the screen so it needs to be centered
+        self.offset_top = SCREEN.get_height()/2 - SCREEN.get_height()/6 - self.governor.currentCell.x*self.height_land/2 \
+            - self.governor.currentCell.y*self.height_land/2
+        self.init_screen_coordinates()
+
+
     def count_population(self):
         self.population = 0
         for b in self.buildings:
@@ -146,6 +154,12 @@ class Map:  # Un ensemble de cellule
         for x in range(self.size):
             for y in range(self.size):
                 self.get_cell(x, y).handle_zoom(zoom_in)
+
+    def init_screen_coordinates(self):
+        for x in range(self.size):
+            for y in range(self.size):
+                self.get_cell(x, y).init_screen_coordonates()
+
 
     def handle_move(self, move, m):
         for x in range(self.size):

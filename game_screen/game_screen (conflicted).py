@@ -360,7 +360,7 @@ def game_screen():
 
         walker_update_count += 1
         governor_update_count += 1
-        if walker_update_count >= update_speed // 2:
+        if walker_update_count >= update_speed:
             # print(walker_update_count)
             map.update_walkers()
             speed_counter_text = fps_font.render(
@@ -370,13 +370,14 @@ def game_screen():
             # print("break")
             walker_update_count = 0
         
-        if governor_update_count >= update_speed // 4:
+        # Divide by the times you want it to be faster than walker
+        if governor_update_count >= update_speed / 4:
             map.governor.move()
             governor_update_count = 0
 
-        map.center_camera_governor()
-        map.governor.display()
         map.display_walkers()
+        map.governor.display()
+        map.center_camera_governor()
         panel.display()
 
         # Speed display
