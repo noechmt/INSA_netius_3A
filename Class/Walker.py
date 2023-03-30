@@ -5,6 +5,9 @@ import pygame
 import networkx as nx
 
 
+
+
+
 def rm_dup_list(x):
     return list(dict.fromkeys(x))
 
@@ -106,7 +109,7 @@ class Walker():
         self.previousCell.display()
         print("walker enters")
 
-        if not isinstance(self, Prefect) and not isinstance(self, Engineer):
+        if not isinstance(self, Prefect) and not isinstance(self, Engineer) and not isinstance(self, Farmer):
             self.building.map.walkers.remove(self)
 
     def move(self):
@@ -507,25 +510,35 @@ class Engineer(Walker):
 class Farmer(Walker) :
     def __init__(self, farm):
         super().__init__("farmer",farm, True)
-        self.current_building = farm
+        self.building = farm
         self.walker_sprites = dict((k, [0, 0])
                                    for k in ["top", "bot", "left", "right"])
         for i in self.walker_sprites:
             for j in range(2):
                 self.walker_sprites[i][j] = pygame.image.load(
                     "walker_sprites/farmer_sprites/farmer_" + i + "_" + str(j) + ".png").convert_alpha()
+        self.delivering = False
                 
-        
-        self.isWorking = False
 
     def __str__(self):
         return "Farmer"
-         
+        
     def move(self) : 
-        self.wait += 1
-        if self.wait <= 10:
-            return
-        if self.inBuilding : 
-            pass
-
+        if self.delivering : 
+            if len(self.path) == 1 : 
+                self.path_finding(self, self.path[0], self.building)
+                self.delivering = False
+                self.movePathFinding()
+            else :
+                self.movePathFinding()
+        
+        else : 
+            if len(self.path) == 1 :
+                self.enter_building()
+            else :
+                self.movePathFinding()
+        
+        
+        
+    
 

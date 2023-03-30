@@ -381,6 +381,14 @@ class Path(Cell):
             house_around_house = j.check_cell_around(House)
             for k in house_around_house:
                 self.map.path_graph.add_edge(j, k, weight=2000)
+        
+        farm_around = self.check_cell_around(FarmPart)
+        for l in farm_around:
+            self.map.path_graph.add_edge(self, k)
+            self.map.path_graph.add_edge(j, self, weight=2000)
+            farm_around_farm = i.check_cell_around(Farm)
+            for m in farm_around_farm :
+                self.map.path_graph.add_edge(l, m, weight=2000)
 
     def update_sprite_size(self):
         self.sprite_display = pygame.transform.scale(
@@ -1092,11 +1100,25 @@ class Farm(Building) :
             
         if all(i.grow_state>=49 for i in self.crops) : 
             for i in self.crops : i.grow_state = 0
+            if all(not isinstance(i, Prefecture) for i in self.map.buildings) : return
+            
+            for i in self.map.buildings : 
+                if isinstance(i, Prefecture) : 
+                    tmpPath = nx.dijkstra_path(self.map.path_graph, self, i)
+                    if len(self.farmer.path) < tmpPath : self.farmer.path = tmpPath
+            self.farmer.delivering = True
+            self.farmer.leave_building()
+            
+            
+class Granary(Building) :
+    def __init__(self, x, y, height, width, screen, my_map):
+        super().__init__(x, y, height, width, screen, my_map)
+        
 
 
+        
 
-    def crop_delivery(self) : 
-        self.farmer.leave_building()
+
 
 
 
