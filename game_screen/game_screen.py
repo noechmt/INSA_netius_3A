@@ -8,7 +8,6 @@ from Class.Button import Button
 from Class.Map import *
 from Class.Panel import Panel
 from Class.Wrapper import Wrapper
-from p2p.connect import listener
 import time
 from datetime import datetime
 
@@ -101,7 +100,6 @@ def game_screen():
     pn = fps_font.render(f"pn", 1, (255, 255, 255))
     ##############################
     while run:
-        wrapper.wrap(listener())
         
         pos = pygame.mouse.get_pos()
 

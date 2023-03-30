@@ -225,7 +225,7 @@ class Cell:  # Une case de la map
                     i.currentCell.display()
             self.type_empty = "dirt"
             self.map.set_cell_array(self.x, self.y, Empty(
-                self.x, self.y, self.height, self.width, SCREEN, self.map, "dirt", 1))
+                self.x, self.y, self.height, self.width, self.map, self.owner, "dirt", 1))
             arr = self.check_cell_around(Cell)
             for i in arr:
                 if not isinstance(i, Building):

@@ -19,6 +19,11 @@ class Wrapper:
       match data["header"]:
          case 'build':
             self.map.get_cell(data["x"], data["y"]).build(data["type"], data["username"])
+         case 'clear':
+            self.map.get_cell(data["x"], data["y"]).clear()
+         case 'levelup':
+            self.map.get_cell(data["x"], data["y"]).nextLevel()
+            assert(self.map.get_cell(data["x"], data["y"]).level == data["level"])
          case 'walker':
             for walker in data["array"]:
                if walker["action"] == "move":
@@ -29,6 +34,12 @@ class Wrapper:
                         migrant.previousCell = self.map.get_cell(walker["previousCell"][0], walker["previousCell"][1])
                         print(migrant.previousCell)
                         self.map.walkers.append(migrant)
+
+                     case "Labor Advisor":
+                        laborAdvisor = Walker.LaborAdvisor(None, data["username"])
+                        laborAdvisor.currentCell = self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1])
+                        laborAdvisor.previousCell = self.map.get_cell(walker["previousCell"][0], walker["previousCell"][1])
+                        self.map.walkers.append(laborAdvisor)
 
                      case "Prefect":
                         prefect = Walker.Prefect(None, data["username"])

@@ -1,8 +1,7 @@
 import json
-from p2p.connect import send
 
 def send_data(data):
-   send(json.dumps(data))
+   json.dumps(data)
 
 def build(username, x, y, type):
    send_data({"header": "build",
@@ -10,6 +9,19 @@ def build(username, x, y, type):
       "x": x,
       "y": y, 
       "type": type})
+
+def levelup(username, x, y, level):
+   send_data({"header": "levelup",
+      "username": username,
+      "x": x,
+      "y": y, 
+      "level": level})
+   
+def clear(username, x, y, level):
+   send_data({"header": "clear",
+      "username": username,
+      "x": x,
+      "y": y})
 
 class WalkerBuffer:
 

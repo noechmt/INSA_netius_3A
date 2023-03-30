@@ -34,7 +34,7 @@ class Map:  # Un ensemble de cellule
         self.offset_top = -10000
         self.offset_left = 0
         self.overlay = ""
-        self.array = [[Empty(j, i, self.height_land, self.width_land, SCREEN, self) for i in range(
+        self.array = [[Empty(j, i, self.height_land, self.width_land, self, self.name_user) for i in range(
             size)] for j in range(size)]  # tableau de cellule (voir classe cellule) : list
         self.walkers = []
         self.migrantQueue = []
