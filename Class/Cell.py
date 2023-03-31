@@ -193,12 +193,15 @@ class Cell:  # Une case de la map
 
     # Return an cell array which match with the class type (ex: Path, Prefecture (not a string)) in argument
     def check_cell_around(self, type):
+        print("farmPart", self.x, self.y)
         path = []
         for i in range(-1, 2):
             for j in range(-1, 2):
                 if abs(i) != abs(j) and self.map.inMap(self.x + i, self.y + j):
                     if isinstance(self.map.get_cell(self.x + i, self.y + j), type):
+                        print("chemin ? ", self.map.get_cell(self.x + i, self.y + j))
                         path.append(self.map.get_cell(self.x + i, self.y + j))
+        
         return path
 
     def build(self, type):
@@ -384,11 +387,8 @@ class Path(Cell):
         
         farm_around = self.check_cell_around(FarmPart)
         for l in farm_around:
-            self.map.path_graph.add_edge(self, k)
-            self.map.path_graph.add_edge(j, self, weight=2000)
-            farm_around_farm = i.check_cell_around(Farm)
-            for m in farm_around_farm :
-                self.map.path_graph.add_edge(l, m, weight=2000)
+            self.map.path_graph.add_edge(self, l.farm)
+            
 
     def update_sprite_size(self):
         self.sprite_display = pygame.transform.scale(
@@ -1044,6 +1044,12 @@ class FarmPart(Building) :
     # def display(self) : 
     #     self.farm.display()
 
+        path_around = self.check_cell_around(Path)
+        for i in path_around:
+            if len(path_around) != 0:
+                self.map.path_graph.add_edge(i, self.farm, weight=2000)
+        self.display()
+
 
 
 
@@ -1057,19 +1063,30 @@ class Farm(Building) :
         self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
         self.sprite_display = ""
         self.update_sprite_size()
-        self.map.array[self.x -1][self.y] = FarmPart(x,y, height, width, screen, my_map, self) 
-        self.map.array[self.x][self.y -1] = FarmPart(x,y, height, width, screen, my_map, self) 
-        self.map.array[self.x -1][self.y -1] = FarmPart(x,y, height, width, screen, my_map, self) 
+        self.farmParts = []
+        self.map.array[self.x -1][self.y] = FarmPart(self.x -1,self.y, height, width, screen, my_map, self)
+        self.farmParts.append(self.map.array[self.x -1][self.y])
+        self.map.array[self.x][self.y -1] = FarmPart(self.x,self.y-1, height, width, screen, my_map, self) 
+        self.farmParts.append(self.map.array[self.x][self.y-1])
+        self.map.array[self.x -1][self.y -1] = FarmPart(self.x-1,self.y-1, height, width, screen, my_map, self) 
+        self.farmParts.append(self.map.array[self.x -1][self.y-1])
+        for i in self.farmParts :
+            print(i.x, i.y)
+
 
         self.crops = []
         for x in range(2) : 
             self.crops.append(Crop(self.x + x - 1,self.y + 2 -1, height, width, screen, my_map, self))
+            self.map.array[self.x+x-1][self.y+2-1] = self.crops[len(self.crops)-1]
         for y in (2, 1, 0) :
             self.crops.append(Crop(self.x + 2 -1, self.y + y -1, height, width, screen, my_map, self))
+            self.map.array[self.x+2-1][self.y+y-1] = self.crops[len(self.crops)-1]
         
-        for i in self.crops : 
-            self.map.array[i.x][i.y] = i
-            # print(i.x, i.y)
+        # for i in self.crops : 
+        #     self.map.array[i.x][i.y] = i
+        #     # print(i.x, i.y)
+
+        
         
         self.update_sprite_size()
        
@@ -1096,19 +1113,21 @@ class Farm(Building) :
                 i.grow_state +=1
                 i.display()
                 break
-        print(i.x, i.y, i.grow_state)
+        # print(i.x, i.y, i.grow_state)
             
         if all(i.grow_state>=49 for i in self.crops) : 
             for i in self.crops : i.grow_state = 0
             if all(not isinstance(i, Prefecture) for i in self.map.buildings) : return
             
-            for i in self.map.buildings : 
-                if isinstance(i, Prefecture) : 
-                    tmpPath = nx.dijkstra_path(self.map.path_graph, self, i)
-                    if len(self.farmer.path) < tmpPath : self.farmer.path = tmpPath
-            self.farmer.delivering = True
-            self.farmer.leave_building()
             
+            self.farmer.delivering = True
+            print("aslureagzea")
+            self.farmer.leave_building()
+            for i in self.map.buildings :
+                if isinstance(i, Prefecture) : 
+                        tmpPath = nx.dijkstra_path(self.map.path_graph, self.farmer.currentCell, i)
+                        if len(self.farmer.path) > len(tmpPath) : self.farmer.path = tmpPath
+                
             
 class Granary(Building) :
     def __init__(self, x, y, height, width, screen, my_map):

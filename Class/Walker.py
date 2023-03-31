@@ -107,7 +107,7 @@ class Walker():
         self.inBuilding = True
         self.currentCell.display()
         self.previousCell.display()
-        print("walker enters")
+        
 
         if not isinstance(self, Prefect) and not isinstance(self, Engineer) and not isinstance(self, Farmer):
             self.building.map.walkers.remove(self)
@@ -524,9 +524,11 @@ class Farmer(Walker) :
         return "Farmer"
         
     def move(self) : 
+        if len(self.path == 0) : 
+            return
         if self.delivering : 
             if len(self.path) == 1 : 
-                self.path_finding(self, self.path[0], self.building)
+                self.path_finding(self.path[0], self.building)
                 self.delivering = False
                 self.movePathFinding()
             else :
@@ -535,10 +537,29 @@ class Farmer(Walker) :
         else : 
             if len(self.path) == 1 :
                 self.enter_building()
+                self.path = []
             else :
                 self.movePathFinding()
         
+    def leave_building(self):
+        if self.building.type == "ruin" : return
+                # print(self.isWandering)
+        path = []
+        for i in self.building.farmParts :
+            path += i.check_cell_around(Cell.Path)
+            print(i.x, i.y)
         
+        if len(path) == 0:
+            return
+        self.cell_assignement(random.choice(path))
+        self.inBuilding = False
+        # if not isinstance(self, Prefect) and not isinstance(self, Engineer) :
+        if not self.alive:
+            self.building.map.walkers.append(self)
+            self.alive = True
+
+        print("Walker is leaving the building on the cell " +
+              str(self.currentCell.x) + ";" + str(self.currentCell.y))
         
     
 
