@@ -193,13 +193,13 @@ class Cell:  # Une case de la map
 
     # Return an cell array which match with the class type (ex: Path, Prefecture (not a string)) in argument
     def check_cell_around(self, type):
-        print("farmPart", self.x, self.y)
+        # print("farmPart", self.x, self.y)
         path = []
         for i in range(-1, 2):
             for j in range(-1, 2):
                 if abs(i) != abs(j) and self.map.inMap(self.x + i, self.y + j):
                     if isinstance(self.map.get_cell(self.x + i, self.y + j), type):
-                        print("chemin ? ", self.map.get_cell(self.x + i, self.y + j))
+                        # print("chemin ? ", self.map.get_cell(self.x + i, self.y + j))
                         path.append(self.map.get_cell(self.x + i, self.y + j))
         
         return path
@@ -1121,7 +1121,7 @@ class Farm(Building) :
             
             
             self.farmer.delivering = True
-            print("aslureagzea")
+            # print("aslureagzea")
             self.farmer.leave_building()
             for i in self.map.buildings :
                 if isinstance(i, Prefecture) : 
@@ -1132,6 +1132,28 @@ class Farm(Building) :
 class Granary(Building) :
     def __init__(self, x, y, height, width, screen, my_map):
         super().__init__(x, y, height, width, screen, my_map)
+        self.risk = None
+        self.path_sprite1 = "game_screen/game_screen_sprites/granary_floor.png"
+        self.path_sprite2 = "game_screen/game_screen_sprites/granary_body.png"
+        self.sprite = [pygame.image.load(self.path_sprite1).convert_alpha(), pygame.image.load(self.path_sprite2).convert_alpha()]
+        self.sprite_display = [None,None]
+        self.update_sprite_size()
+
+    def update_sprite_size(self):
+        
+        self.sprite_display[0] = pygame.transform.scale(
+            self.sprite[0], (self.width * 148/30, self.height*60/30))
+        self.sprite_display[1] = pygame.transform.scale(
+            self.sprite[0], (self.width * 95/30, self.height*109/30))
+    
+    def display(self) :
+
+        SCREEN.blit(
+            self.sprite_display[0], (self.left, self.top))
+        # SCREEN.blit(
+        #     self.sprite_display, (self.left, self.top)) 
+
+
         
 
 

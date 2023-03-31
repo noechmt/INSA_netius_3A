@@ -51,7 +51,8 @@ def game_screen():
         map.display_map()
     else:
         map = Map(SIZE, height_land, width_land)
-        map.array[33][33] = Farm(33, 33, height_land, width_land, SCREEN, map)
+        # map.array[33][33] = Farm(33, 33, height_land, width_land, SCREEN, map)
+        map.array[33][33] = Granary(33, 33, height_land, width_land, SCREEN, map)
         # map.array[37][37] = Crop(37, 37, height_land, width_land, SCREEN, map, map.array[33][33])
         # print(map.array[33][33])
         # print(map.array[34][34])
