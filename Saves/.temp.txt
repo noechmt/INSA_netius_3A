@@ -1,4 +1,0 @@
-<<<<<<< HEAD
-Governor
-=======
->>>>>>> data_encoder
