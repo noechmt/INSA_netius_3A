@@ -55,7 +55,7 @@ class Map:  # Un ensemble de cellule
         self.wallet = 5000
         self.update_hover = 0
         self.button_activated = {"house": False, "shovel": False, "road": False,
-                                 "prefecture": False, "engineerpost": False, "well": False}
+                                 "prefecture": False, "engineerpost": False, "well": False, "farm" : False, "granary" : False}
         self.zoom = 1
         self.zoom_coef = 1
         self.name_user = ""
@@ -206,7 +206,7 @@ class Map:  # Un ensemble de cellule
                     i.previousCell.display()"""
 
         for i in self.buildings:
-            if not i.risk.happened:
+            if i.risk and not i.risk.happened:
                 i.risk.riskIncrease()
 
     def display_walkers(self):
@@ -221,12 +221,12 @@ class Map:  # Un ensemble de cellule
 
     def update_fire(self):
         for i in self.buildings:
-            if i.risk.happened and i.risk.type == "fire":
+            if i.risk and i.risk.happened and i.risk.type == "fire":
                 i.risk.burn()
 
     def update_collapse(self):
         for i in self.buildings:
-            if i.risk.happened and i.risk.type == "collapse":
+            if i.risk and i.risk.happened and i.risk.type == "collapse":
                 i.risk.collapse()
 
     def set_cell_array(self, x, y, cell):
@@ -276,6 +276,15 @@ class Map:  # Un ensemble de cellule
             case _:
                 self.display_map()
 
+    def update_farm(self) :
+        for i in self.buildings :
+            if isinstance(i, Farm) : 
+                if i.farmer.isWandering : return
+                i.crop_grow()
+                
+            
+            
+
     def get_housed(self):
         return self.button_activated["house"]
 
@@ -293,6 +302,12 @@ class Map:  # Un ensemble de cellule
 
     def get_welled(self):
         return self.button_activated["well"]
+    
+    def get_farmed(self):
+        return self.button_activated["farm"]
+    
+    def get_granaried(self):
+        return self.button_activated["granary"]
 
     def get_height_land(self):
         return self.height_land

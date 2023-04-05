@@ -50,6 +50,10 @@ def game_screen():
         map.display_map()
     else:
         map = Map(SIZE, height_land, width_land)
+        # map.array[33][33] = Farm(33, 33, height_land, width_land, SCREEN, map)
+        # map.array[37][37] = Crop(37, 37, height_land, width_land, SCREEN, map, map.array[33][33])
+        # print(map.array[33][33])
+        # print(map.array[34][34])
         map.set_name_user(name_path)
 
     panel = Panel(SCREEN)
@@ -91,6 +95,7 @@ def game_screen():
     walker_update_count = 0
     governor_update_count = 0
     fire_update_count = 0
+    farm_update_count = 0
     current_time = ""
     text_last_save = fps_font.render("None", 1, (255, 255, 255))
     rf = fps_font.render(f"rf", 1, (255, 255, 255))
@@ -207,6 +212,18 @@ def game_screen():
                             panel.set_window("well")
                             map.handle_button("well")
                             map.set_overlay("water")
+
+                    if (panel.farm_button.is_hovered(pos)):
+                        panel.set_window("farm")
+                        map.handle_button("farm")
+                        panel.display()
+                        # map.display_map()
+                    if (panel.granary_button.is_hovered(pos)):
+                        panel.set_window("granary")
+                        map.handle_button("granary")
+                        panel.display()
+
+
                     if (panel.up_button.is_hovered(pos)):
                         if speed_index < 9:
                             speed_index += 1
@@ -265,6 +282,10 @@ def game_screen():
                             selected_cell.build("prefecture")
                         elif map.get_engineered() and selected_cell.isBuildable():
                             selected_cell.build("engineer post")
+                        elif map.get_farmed() and selected_cell.isBuildable("Farm"):
+                            selected_cell.build("farm")
+                        elif map.get_granaried() and selected_cell.isBuildable("Granary"):
+                            selected_cell.build("granary")
                         elif map.get_welled() and selected_cell.isBuildable():
                             selected_cell.build("well")
                             for k in range(-2, 3):
@@ -313,6 +334,8 @@ def game_screen():
                 panel.get_prefecture_button().handle_hover_button(pos, SCREEN)
                 panel.get_engineerpost_button().handle_hover_button(pos, SCREEN)
                 panel.get_well_button().handle_hover_button(pos, SCREEN)
+                panel.get_farm_button().handle_hover_button(pos, SCREEN)
+                panel.get_granary_button().handle_hover_button(pos, SCREEN)
                 panel.get_up_button().handle_hover_button(pos, SCREEN)
                 panel.get_down_button().handle_hover_button(pos, SCREEN)
                 panel.get_pause_button().handle_hover_button(pos, SCREEN)
@@ -374,6 +397,12 @@ def game_screen():
             if map.governor.move():
                 map.center_camera_governor()
             governor_update_count = 0
+
+
+        farm_update_count+=1
+        if farm_update_count >= update_speed * 1.5 : 
+            map.update_farm()
+            farm_update_count = 0
 
         map.governor.display()
         map.display_walkers()
