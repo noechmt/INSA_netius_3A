@@ -117,6 +117,8 @@ int main(int argc, char **argv)
     pthread_create(&tid2, NULL, &receive_thread, &local_fd); // Creating thread to keep receiving message in real time
     while (1)
     {
+        /*sending_local("hello");
+        sleep(2);*/
         /*if (sending(argv[1], 1234) < 0)
         {
             break;
@@ -155,8 +157,9 @@ int sending(char *ip_adress, int port, char* msg)
         {
             return -1;
         }
-        send(sock, msg, sizeof(msg), 0);
-        bzero(msg, 1024);
+        if(send(sock, msg, sizeof(msg), 0)<0){
+            perror("send error ");
+        };
     }
     printf("Message transmis\n");
     close(sock);
@@ -188,8 +191,9 @@ int sending_local(char* msg)
         {
             return -1;
         }
-        send(sock_local, msg, sizeof(msg), 0);
-        bzero(msg, 1024);
+        if(send(sock_local, msg, sizeof(msg), 0)<0){
+            perror("send error ");
+        }
     }
     close(sock_local);
     return 1;
@@ -229,7 +233,6 @@ void receiving(int fd)
             perror("Error");
             exit(EXIT_FAILURE);
         }
-
         for (int i = 0; i < FD_SETSIZE; i++)
         {
             if (FD_ISSET(i, &ready_sockets))
@@ -246,16 +249,19 @@ void receiving(int fd)
                     }
                     FD_SET(client_socket, &current_sockets);
                 }
-                if (i == LOCAL_FD)
+                else if (i == LOCAL_FD)
                 {
                     valread = recv(i, buffer, sizeof(buffer), 0);
+                    printf("test\n");
                     sending("192.168.1.32", 1234, buffer);
                     FD_CLR(i, &current_sockets);
                 }
                 else
                 {
                     valread = recv(i, buffer, sizeof(buffer), 0);
+                    printf("receive %s\n", buffer);
                     sending_local(buffer);
+                    sending("192.168.1.32", 1234, buffer);
                     FD_CLR(i, &current_sockets);
                 }
             }
