@@ -1,11 +1,15 @@
-import ctypes as ct
-import os
 import threading as thread
+from socket_python import *
+print("ok")
+server = set_server()
 
-libc = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'libc.so')
-clibrary = ct.CDLL(libc)
-IP = b"192.168.206.185"
-str2="None"
-server_fd = clibrary.serveur(IP, ct.c_int(1234))
+client = set_client()
+data = "je suis une data"
 
-clibrary.serveur(b"192.168.206.134",ct.c_int(1234))
+thread_send= thread.Thread(target=send_data, args=(client, data,))
+thread_send.start()
+thread_recv = thread.Thread(target=recv_data, args=(server,))
+thread_recv.start()
+print("ok")
+    
+    

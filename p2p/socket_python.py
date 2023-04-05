@@ -10,7 +10,7 @@ class MySocket:
         if sock is None:
             self.sock = socket.socket(
                             socket.AF_INET, socket.SOCK_STREAM)
-            #self.sock.setblocking(False)
+            self.sock.setblocking(False)
         else:
             self.sock = sock
 
@@ -34,7 +34,7 @@ class MySocket:
         self.conn, self.addr = self.sock.accept()
 
     def myreceive(self):
-        recv = self.conn.recv(5, socket.MSG_WAITALL)
+        recv = self.conn.recv(2048, socket.MSG_WAITALL)
         return recv.decode()
         
 
@@ -43,6 +43,7 @@ def set_server():
     server.bind("127.0.0.1", 1235)
     server.listen(4)
     server.accept()
+
     return server
     
     
@@ -57,6 +58,7 @@ def send_data(socket, data):
     
 def recv_data(socket):
     recv = socket.myreceive()
+    print(recv)
     socket.data += recv
     return recv
     
