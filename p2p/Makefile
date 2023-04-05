@@ -1,2 +1,3 @@
 make : 
-	gcc -fPIC -shared -Wall -o libc.so libc.c
+	gcc -Wall -o libc libc.c
+	gcc -Wall -o local_connect local_connect.c
