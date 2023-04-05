@@ -17,6 +17,9 @@ class Wrapper:
       print(data_json)
       data = json.loads(data_json)
       match data["header"]:
+         case 'join':
+            #Add here spawnpoints checker
+            pass
          case 'build':
             self.map.get_cell(data["x"], data["y"]).build(data["type"], data["username"])
          case 'clear':
@@ -29,20 +32,14 @@ class Wrapper:
                if walker["action"] == "move":
                   match walker["type"]:
                      case "Migrant":
-                        migrant = Walker.Migrant(None, data["username"])
-                        migrant.currentCell = self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1])
-                        migrant.previousCell = self.map.get_cell(walker["previousCell"][0], walker["previousCell"][1])
-                        print(migrant.previousCell)
-                        self.map.walkers.append(migrant)
-
+                        walker_ghost = Walker.Migrant(None, data["username"])
                      case "Labor Advisor":
-                        laborAdvisor = Walker.LaborAdvisor(None, data["username"])
-                        laborAdvisor.currentCell = self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1])
-                        laborAdvisor.previousCell = self.map.get_cell(walker["previousCell"][0], walker["previousCell"][1])
-                        self.map.walkers.append(laborAdvisor)
-
+                        walker_ghost = Walker.LaborAdvisor(None, data["username"])
                      case "Prefect":
-                        prefect = Walker.Prefect(None, data["username"])
-                        prefect.currentCell = self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1])
-                        prefect.previousCell = self.map.get_cell(walker["previousCell"][0], walker["previousCell"][1])
-                        self.map.walkers.append(prefect)
+                        walker_ghost = Walker.Prefect(None, data["username"])
+                     case "Engineer":
+                        walker_ghost = Walker.Engineer(None, data["username"])
+                  
+                  walker_ghost.currentCell = self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1])
+                  walker_ghost.previousCell = self.map.get_cell(walker["previousCell"][0], walker["previousCell"][1])
+                  walker_ghost.map.walkers.append(walker_ghost)

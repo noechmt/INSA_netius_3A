@@ -154,6 +154,10 @@ class Cell:  # Une case de la map
                         path.append(self.map.get_cell(self.x + i, self.y + j))
         return path
 
+    def buy(self, owner):
+        if not self.owner:
+            self.map.
+
     def build(self, type, owner):
         if isinstance(self, Empty) and self.type_empty != "dirt":
             print("This cell is already taken")

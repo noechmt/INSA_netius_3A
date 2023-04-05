@@ -3,6 +3,11 @@ import json
 def send_data(data):
    json.dumps(data)
 
+def join(username):
+   send_data({"header": "join",
+      "username": username
+   })
+
 def build(username, x, y, type):
    send_data({"header": "build",
       "username": username,
@@ -17,7 +22,7 @@ def levelup(username, x, y, level):
       "y": y, 
       "level": level})
    
-def clear(username, x, y, level):
+def clear(username, x, y):
    send_data({"header": "clear",
       "username": username,
       "x": x,

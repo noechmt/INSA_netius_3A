@@ -39,7 +39,7 @@ class Map:  # Un ensemble de cellule
         self.offset_left = -3000
         self.overlay = ""
         t = time.time()
-        self.array = [[Empty(j, i, self.height_land, self.width_land, self, owner) for i in range(
+        self.array = [[Empty(j, i, self.height_land, self.width_land, self, None) for i in range(
             size)] for j in range(size)]  # tableau de cellule (voir classe cellule) : list
         self.walkers = []
         self.walker_network_buffer = encode.WalkerBuffer(owner)
