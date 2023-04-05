@@ -1,13 +1,13 @@
-import socket
-
 from socket_python import *
     
+server = set_server()
 
-s1 = MySocket()
-s1.bind("127.0.0.1", 1235)
-s1.listen()
-s1.accept()
-sleep(1)
-s1.myreceive()
-sleep(3)
-s1.close()
+for i in range(20) :
+    print("\nRecved data : ",recv_data(server))
+    print("\nServer.data : ",server.data)
+    sleep(1)
+    if i % 5 == 0 :
+        get_data(server)
+
+
+close_socket(server)

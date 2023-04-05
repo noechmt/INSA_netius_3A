@@ -13,7 +13,7 @@
 
 // INADDR_ANY
 char name[20];
-int PORT = 1235;
+int PORT = 1236;
 
 int sending();
 void receiving(int server_fd);
@@ -37,7 +37,7 @@ int main()
     // Forcefully attaching socket to the port
 
     address.sin_family = AF_INET;
-    address.sin_addr.s_addr = inet_addr("127.0.0.2");
+    address.sin_addr.s_addr = inet_addr("127.0.0.1");
     // address.sin_addr.s_addr = inet_addr("192.168.206.185");
     address.sin_port = htons(PORT);
 
