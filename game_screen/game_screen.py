@@ -39,7 +39,7 @@ def game_screen():
     WIDTH_SCREEN, HEIGH_SCREEN = SCREEN.get_size()
     height_land = HEIGH_SCREEN/45
     width_land = WIDTH_SCREEN*sqrt(2)/60
-    SIZE = 150
+    SIZE = 75
 
     # Load new map or existing one with pickle
     file = open("Saves/temp.txt", "r")
