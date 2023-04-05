@@ -13,13 +13,13 @@
 
 // INADDR_ANY
 char name[20];
-int PORT = 1234;
+int PORT = 1235;
 
 int sending();
 void receiving(int server_fd);
 void *receive_thread(void *server_fd);
 
-int main(int argc, char** argv)
+int main()
 {
     /*printf("Enter your port number:");
     scanf("%d", &PORT);*/
@@ -37,7 +37,7 @@ int main(int argc, char** argv)
     // Forcefully attaching socket to the port
 
     address.sin_family = AF_INET;
-    address.sin_addr.s_addr = inet_addr(argv[1]);
+    address.sin_addr.s_addr = inet_addr("127.0.0.2");
     // address.sin_addr.s_addr = inet_addr("192.168.206.185");
     address.sin_port = htons(PORT);
 
@@ -99,7 +99,7 @@ int sending()
 
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
-        printf("Waiting for connection\n");
+        //printf("Waiting for connection\n");
         sleep(2);
         return 1;
     }
