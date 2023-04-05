@@ -15,6 +15,7 @@
 char name[20];
 int PORT = 1234;
 int LOCAL_PORT = 1236;
+int LOCAL_FD;
 
 int sending(char *adress, int port);
 void local_connect(int local_fd);
@@ -80,7 +81,7 @@ int main(int argc, char **argv)
         close(local_fd);
         exit(EXIT_FAILURE);
     }
-
+    LOCAL_FD = local_fd;
     local_connect(local_fd);
     // Forcefully attaching socket to the port
 
@@ -210,7 +211,6 @@ void receiving(int fd)
                 if (i == fd)
                 {
                     int client_socket;
-                    printf("%i\n", fd);
                     if ((client_socket = accept(fd, (struct sockaddr *)&address,
                                                 (socklen_t *)&addrlen)) < 0)
                     {
@@ -222,7 +222,9 @@ void receiving(int fd)
                 else
                 {
                     valread = recv(i, buffer, sizeof(buffer), 0);
-                    sending("127.0.0.1", 1235);
+                    if(fd != LOCAL_FD){
+                        send(LOCAL_FD, buffer, sizeof(buffer), 0);
+                    }
                     FD_CLR(i, &current_sockets);
                 }
             }
