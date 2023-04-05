@@ -6,6 +6,7 @@ MSGLEN =  10
 class MySocket:
     
     def __init__(self, sock=None):
+        self.data = []
         if sock is None:
             self.sock = socket.socket(
                             socket.AF_INET, socket.SOCK_STREAM)
@@ -22,9 +23,10 @@ class MySocket:
     def listen(self):
         self.sock.listen(1)
 
-    def mysend(self, msg):
-        sent = self.sock.send(b"hello")
-        
+    def mysend(self, data):
+        sent = self.sock.send(data)
+        return sent
+    
     def close(self):
         self.sock.close()
         
@@ -33,5 +35,34 @@ class MySocket:
 
     def myreceive(self):
         recv = self.conn.recv(5, socket.MSG_WAITALL)
-        print(recv.decode())
+        return recv.decode()
+        
+
+def set_server():
+    server= MySocket()
+    server.bind("127.0.0.1", 1235)
+    server.listen(4)
+    server.accept()
+    return server
     
+    
+def set_client():
+    client = MySocket()
+    client.connect("127.0.0.1", 1236)
+    return client
+    
+
+def send_data(socket, data):
+    socket.mysend(data)
+    
+def recv_data(socket):
+    recv = socket.myreceive()
+    socket.data += recv
+    
+def get_data(socket):
+    tmp = socket.data 
+    socket.data = []
+    return tmp
+
+def close_socket(socket):
+    socket.close()

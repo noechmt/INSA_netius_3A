@@ -99,7 +99,7 @@ int sending()
 
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
-        printf("Waiting for connection\n");
+        //printf("Waiting for connection\n");
         sleep(2);
         return 1;
     }
