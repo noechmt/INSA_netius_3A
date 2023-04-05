@@ -32,9 +32,11 @@ class InputBox:
 
     def handle_event(self, event, screen):
         if event.type == pygame.MOUSEBUTTONDOWN:
+            
             # If the user clicked on the input_box rect.
             if self.rect.collidepoint(event.pos):
                 # Toggle the active variable.
+                print("Input mouse down")
                 self.active = not self.active
             else:
                 self.active = False
