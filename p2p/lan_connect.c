@@ -14,21 +14,22 @@
 // INADDR_ANY
 char name[20];
 int PORT = 1234;
-int LOCAL_PORT = 1235;
+int LOCAL_PORT = 1236;
 
-int sending();
+int sending(char *adress, int port);
 void local_connect(int local_fd);
-void receiving(int server_fd);
+void receiving(int fd);
 void receiving_local(int local_fd);
-void *receive_thread(void *server_fd);
-void *receive_local_thread(void* local_fd);
+void *receive_thread(void *fd);
+void *receive_local_thread(void *local_fd);
 
-void local_connect(int local_fd){
+void local_connect(int local_fd)
+{
 
     struct sockaddr_in address_local;
     address_local.sin_family = AF_INET;
     address_local.sin_addr.s_addr = inet_addr("127.0.0.1");
-    address_local.sin_port = htons(LOCAL_PORT);
+    address_local.sin_port = htons(1236);
 
     struct linger so_linger;
     so_linger.l_onoff = 1;
@@ -52,9 +53,10 @@ void local_connect(int local_fd){
     }
 }
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-    if(argc < 1){
+    if (argc < 2)
+    {
         printf("argument pls\n");
         return 0;
     }
@@ -72,11 +74,14 @@ int main(int argc, char** argv)
         exit(EXIT_FAILURE);
     }
 
-    if ((local_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1 ){
+    if ((local_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+    {
         perror("local socket failed");
         close(local_fd);
         exit(EXIT_FAILURE);
     }
+
+    local_connect(local_fd);
     // Forcefully attaching socket to the port
 
     address.sin_family = AF_INET;
@@ -109,12 +114,12 @@ int main(int argc, char** argv)
         close(server_fd);
         exit(EXIT_FAILURE);
     }
-    pthread_t tid;
+    pthread_t tid, tid2;
     pthread_create(&tid, NULL, &receive_thread, &server_fd); // Creating thread to keep receiving message in real time
-    pthread_create(&tid, NULL, &receive_thread, &local_fd); // Creating thread to keep receiving message in real time
+    pthread_create(&tid2, NULL, &receive_thread, &local_fd);  // Creating thread to keep receiving message in real time
     while (1)
     {
-        if (sending(argv[1]) < 0)
+        if (sending(argv[1], 1234) < 0)
         {
             break;
         }
@@ -124,11 +129,10 @@ int main(int argc, char** argv)
 }
 
 // Sending messages to port
-int sending(char* ip_adress)
+int sending(char *ip_adress, int port)
 {
 
     // Fetching port number
-    int PORT_server = 1235;
 
     int sock = 0;
     struct sockaddr_in serv_addr;
@@ -139,11 +143,10 @@ int sending(char* ip_adress)
         printf("\n Socket creation error \n");
         return -1;
     }
-
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = inet_addr(ip_adress); // INADDR_ANY always gives an IP of 0.0.0.0
-    serv_addr.sin_port = htons(PORT_server);
-    printf("Waiting for connection\n");
+    serv_addr.sin_port = htons(port);
+    //printf("Waiting for connection\n");
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
         sleep(2);
@@ -165,9 +168,9 @@ int sending(char* ip_adress)
 }
 
 // Calling receiving every 2 seconds
-void *receive_thread(void *server_fd)
+void *receive_thread(void *fd)
 {
-    int s_fd = *((int *)server_fd);
+    int s_fd = *((int *)fd);
     while (1)
     {
         sleep(2);
@@ -176,7 +179,7 @@ void *receive_thread(void *server_fd)
 }
 
 // Receiving messages on our port
-void receiving(int server_fd)
+void receiving(int fd)
 {
     struct sockaddr_in address;
     int valread;
@@ -186,7 +189,7 @@ void receiving(int server_fd)
 
     // Initialize my current set
     FD_ZERO(&current_sockets);
-    FD_SET(server_fd, &current_sockets);
+    FD_SET(fd, &current_sockets);
     int k = 0;
     while (1)
     {
@@ -204,11 +207,11 @@ void receiving(int server_fd)
             if (FD_ISSET(i, &ready_sockets))
             {
 
-                if (i == server_fd)
+                if (i == fd)
                 {
                     int client_socket;
-
-                    if ((client_socket = accept(server_fd, (struct sockaddr *)&address,
+                    printf("%i\n", fd);
+                    if ((client_socket = accept(fd, (struct sockaddr *)&address,
                                                 (socklen_t *)&addrlen)) < 0)
                     {
                         perror("accept");
@@ -219,8 +222,7 @@ void receiving(int server_fd)
                 else
                 {
                     valread = recv(i, buffer, sizeof(buffer), 0);
-                    printf("%s\n", buffer);
-                    sending("localhost");
+                    sending("127.0.0.1", 1235);
                     FD_CLR(i, &current_sockets);
                 }
             }

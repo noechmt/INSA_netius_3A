@@ -81,7 +81,7 @@ int sending()
 {
 
     // Fetching port number
-    int PORT_server = 1235;
+    int PORT_server = 1236;
 
     int sock = 0;
     struct sockaddr_in serv_addr;
@@ -99,7 +99,7 @@ int sending()
 
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
-        printf("Waiting for connection\n");
+        //printf("Waiting for connection\n");
         sleep(2);
         return 1;
     }
