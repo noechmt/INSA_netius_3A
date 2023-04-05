@@ -1166,7 +1166,10 @@ class Farm(Building) :
             
             self.farmer.delivering = True
             # print("aslureagzea")
-            self.farmer.leave_building()
+            ingraph = self.farmer.leave_building()
+            # if not ingraph : 
+            #     print("salut")
+            #     return
             for i in self.map.buildings :
                 if isinstance(i, Granary) : 
                         tmpPath = nx.dijkstra_path(self.map.path_graph, self.farmer.currentCell, i)

@@ -554,7 +554,7 @@ class Farmer(Walker) :
             print(i.x, i.y)
         
         if len(path) == 0:
-            return
+            return 0
         self.cell_assignement(random.choice(path))
         self.inBuilding = False
         # if not isinstance(self, Prefect) and not isinstance(self, Engineer) :
