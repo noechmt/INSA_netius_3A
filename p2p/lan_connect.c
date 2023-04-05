@@ -23,6 +23,7 @@ void receiving(int fd);
 void receiving_local(int local_fd);
 void *receive_thread(void *fd);
 void *receive_local_thread(void *local_fd);
+int sending_local();
 
 void local_connect(int local_fd)
 {
@@ -30,16 +31,8 @@ void local_connect(int local_fd)
     struct sockaddr_in address_local;
     address_local.sin_family = AF_INET;
     address_local.sin_addr.s_addr = inet_addr("127.0.0.1");
-    address_local.sin_port = htons(1236);
+    address_local.sin_port = htons(LOCAL_PORT);
 
-    struct linger so_linger;
-    so_linger.l_onoff = 1;
-    so_linger.l_linger = 1;
-
-    if (setsockopt(local_fd, SOL_SOCKET, SO_LINGER, &so_linger, sizeof(so_linger)) == -1)
-    {
-        close(local_fd);
-    }
     if (bind(local_fd, (struct sockaddr *)&address_local, sizeof(address_local)) < 0)
     {
         perror("bind failed");
@@ -98,6 +91,11 @@ int main(int argc, char **argv)
         close(local_fd);
     }
 
+    if (setsockopt(local_fd, SOL_SOCKET, SO_LINGER, &so_linger, sizeof(so_linger)) == -1)
+    {
+        close(local_fd);
+    }
+
     // Printed the server socket addr and port
     printf("IP address is: %s\n", inet_ntoa(address.sin_addr));
     printf("port is: %d\n", (int)ntohs(address.sin_port));
@@ -113,11 +111,12 @@ int main(int argc, char **argv)
     {
         perror("listen");
         close(server_fd);
+        close(local_fd);
         exit(EXIT_FAILURE);
     }
     pthread_t tid, tid2;
     pthread_create(&tid, NULL, &receive_thread, &server_fd); // Creating thread to keep receiving message in real time
-    pthread_create(&tid2, NULL, &receive_thread, &local_fd);  // Creating thread to keep receiving message in real time
+    pthread_create(&tid2, NULL, &receive_thread, &local_fd); // Creating thread to keep receiving message in real time
     while (1)
     {
         if (sending(argv[1], 1234) < 0)
@@ -147,7 +146,7 @@ int sending(char *ip_adress, int port)
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = inet_addr(ip_adress); // INADDR_ANY always gives an IP of 0.0.0.0
     serv_addr.sin_port = htons(port);
-    //printf("Waiting for connection\n");
+    // printf("Waiting for connection\n");
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
         sleep(2);
@@ -165,6 +164,38 @@ int sending(char *ip_adress, int port)
     }
     printf("Message sent\n");
     close(sock);
+    return 1;
+}
+
+int sending_local(char* msg)
+{
+    int sock_local = 0;
+    struct sockaddr_in serv_addr;
+    if ((sock_local = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    {
+        close(sock_local);
+        printf("\n Socket creation error \n");
+        return -1;
+    }
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); // INADDR_ANY always gives an IP of 0.0.0.0
+    serv_addr.sin_port = htons(1235);
+    // printf("Waiting for connection\n");
+    if (connect(sock_local, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+    {
+        sleep(2);
+        return 1;
+    }
+    if (strlen(msg) != 0)
+    {
+        if (strncmp(msg, "/quit", strlen("/quit")) == 0)
+        {
+            return -1;
+        }
+        send(sock_local, msg, sizeof(msg), 0);
+        bzero(msg, 1024);
+    }
+    close(sock_local);
     return 1;
 }
 
@@ -222,9 +253,7 @@ void receiving(int fd)
                 else
                 {
                     valread = recv(i, buffer, sizeof(buffer), 0);
-                    if(fd != LOCAL_FD){
-                        send(LOCAL_FD, buffer, sizeof(buffer), 0);
-                    }
+                    sending_local(buffer);
                     FD_CLR(i, &current_sockets);
                 }
             }
