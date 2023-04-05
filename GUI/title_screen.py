@@ -4,7 +4,6 @@ from Class.Button import Button
 from GUI.choose_name import choose_name
 from GUI.join import join_game
 
-
 def choosing_save_window(screen):
     # Background for the choice
     (width_menu, height_menu) = (
@@ -62,7 +61,7 @@ def title_screen():
         background_image, (WIDTH_SCREEN, HEIGHT_SCREEN)), (0, 0))
 
     # Create the rectangle for the menu
-    (width_menu, height_menu) = (WIDTH_SCREEN / 5, HEIGHT_SCREEN / 2.5)
+    (width_menu, height_menu) = (WIDTH_SCREEN / 5, HEIGHT_SCREEN / 3)
     (left_menu, top_menu) = (2 * WIDTH_SCREEN / 5, HEIGHT_SCREEN / 3)
     menu_background = pygame.image.load(
         "GUI/Images/Title screen/Menu_background.jpg")
@@ -101,7 +100,7 @@ def title_screen():
                               height_buttons, image=logo_background, text="Rejoindre une partie")
     join_game_button.draw(SCREEN)
 
-    top_leave_button = top_join_button + height_buttons + HEIGHT_SCREEN / 100
+    top_leave_button = top_load_button + height_buttons + HEIGHT_SCREEN / 100
     leave_game_button = Button(left_buttons, top_leave_button, width_buttons,
                                height_buttons, image=logo_background, text="Quittez le jeu")
     leave_game_button.draw(SCREEN)
@@ -173,6 +172,7 @@ def title_screen():
         # We display again this window if the back button is pressed from choose_name
         if (not choose_name()):
             title_screen()
+
         return True
 
     if window_join:

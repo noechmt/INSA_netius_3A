@@ -15,7 +15,6 @@ def set_SCREEN_cell(screen):
     global SCREEN
     SCREEN = screen
 
-
 sprites = Sprites()
 
 overlay_risk = [
@@ -28,6 +27,7 @@ overlay_risk = [
     {"sprite": pygame.image.load(
         "risks_sprites/overlay/overlay_3.png").convert_alpha(), "width": 48, "height": 83},
     {"sprite": pygame.image.load("risks_sprites/overlay/overlay_4.png").convert_alpha(), "width": 48, "height": 93}]
+
 
 
 def draw_polygon_alpha(surface, color, points):
@@ -46,12 +46,13 @@ house_0 = pygame.image.load(
 
 class Cell:  # Une case de la map
 
-    def __init__(self, x, y, height, width, screen, map):
+    def __init__(self, x, y, height, width, map, owner):
         self.x = x
         self.y = y
         self.height = height
         self.width = width
         self.map = map
+        self.owner = owner
         self.type = ""
         self.water = 0
         self.sprite = ""
@@ -104,6 +105,43 @@ class Cell:  # Une case de la map
     def display(self):
         pass
 
+    def display_around(self):
+        if (self.y+1 < 40 and (self.map.get_cell(self.x, self.y+1).type_empty != "dirt") and self.map.get_cell(self.x, self.y+1).type != "path"):
+            if (self.map.get_cell(self.x, self.y+1).type_empty != "water"):
+                self.map.get_cell(self.x, self.y+1).display()
+                self.map.get_cell(self.x, self.y+1).display_around()
+        if (self.x+1 < 40 and self.map.get_cell(self.x+1, self.y).type_empty != "dirt" and self.map.get_cell(self.x+1, self.y).type != "path"):
+            if (self.map.get_cell(self.x+1, self.y).type_empty != "water"):
+                self.map.get_cell(self.x+1, self.y).display()
+                self.map.get_cell(self.x+1, self.y).display_around()
+        if (self.x+1 < 40 and self.y+1 < 40 and self.map.get_cell(self.x+1, self.y+1).type_empty != "dirt" and self.map.get_cell(self.x+1, self.y+1).type != "path"):
+            if (self.map.get_cell(self.x+1, self.y+1).type_empty != "water"):
+                self.map.get_cell(self.x+1, self.y+1).display()
+                self.map.get_cell(self.x+1, self.y+1).display_around()
+
+    def display_around_shovel(self):
+        if (self.x-1 > 0 and self.y-1 > 0):
+            self.map.get_cell(self.x-1, self.y-1).display()
+        if (self.y-1 > 0):
+            self.map.get_cell(self.x, self.y-1).display()
+        if (self.x-1 > 0):
+            self.map.get_cell(self.x-1, self.y).display()
+        if (self.x-1 > 0 and self.y+1 < 40 and self.map.get_cell(self.x-1, self.y+1).type_empty != "dirt" and self.map.get_cell(self.x-1, self.y+1).type != "path"):
+            self.map.get_cell(self.x-1, self.y+1).display()
+            self.map.get_cell(self.x-1, self.y+1).display_around()
+        if (self.y-1 > 0 and self.x+1 < 40 and self.map.get_cell(self.x+1, self.y-1).type_empty != "dirt" and self.map.get_cell(self.x+1, self.y-1).type != "path"):
+            self.map.get_cell(self.x+1, self.y-1).display()
+            self.map.get_cell(self.x+1, self.y-1).display_around()
+        if (self.y+1 < 40 and self.map.get_cell(self.x, self.y+1).type_empty != "dirt" and self.map.get_cell(self.x, self.y+1).type != "path"):
+            self.map.get_cell(self.x, self.y+1).display()
+            self.map.get_cell(self.x, self.y+1).display_around()
+        if (self.x+1 < 40 and self.map.get_cell(self.x+1, self.y).type_empty != "dirt" and self.map.get_cell(self.x+1, self.y).type != "path"):
+            self.map.get_cell(self.x+1, self.y).display()
+            self.map.get_cell(self.x+1, self.y).display_around()
+        if (self.x+1 < 40 and self.y+1 < 40 and self.map.get_cell(self.x+1, self.y+1).type_empty != "dirt" and self.map.get_cell(self.x+1, self.y+1).type != "path"):
+            self.map.get_cell(self.x+1, self.y+1).display()
+            self.map.get_cell(self.x+1, self.y+1).display_around()
+
     def handle_zoom(self, zoom_in):
         if zoom_in:
             self.height *= 1.05
@@ -113,6 +151,7 @@ class Cell:  # Une case de la map
             self.width /= 1.05
         self.init_screen_coordonates()
         self.update_sprite_size()
+        self.display()
 
     def handle_move(self, move, m):
         if move == "up":
@@ -189,33 +228,33 @@ class Cell:  # Une case de la map
             match type:
                 case "path":
                     self.map.set_cell_array(self.x, self.y, Path(
-                        self.x, self.y, self.height, self.width, SCREEN, self.map))
+                        self.x, self.y, self.height, self.width, self.map, self.owner))
                     self.map.get_cell(self.x, self.y).handle_sprites()
                     self.map.get_cell(self.x, self.y).display()
                     self.map.wallet -= 4
                 case "house":
                     self.map.set_cell_array(self.x, self.y, House(
-                        self.x, self.y, self.height, self.width, SCREEN, self.map))
+                        self.x, self.y, self.height, self.width, self.map, self.owner))
                     self.map.wallet -= 10
                 case "well":
                     self.map.set_cell_array(self.x, self.y, Well(
-                        self.x, self.y, self.height, self.width, SCREEN, self.map))
+                        self.x, self.y, self.height, self.width, self.map, self.owner))
                     self.map.wallet -= 5
                 case "prefecture":
                     self.map.set_cell_array(self.x, self.y, Prefecture(
-                        self.x, self.y, self.height, self.width, SCREEN, self.map))
+                        self.x, self.y, self.height, self.width, self.map, self.owner))
                     self.map.wallet -= 30
                 case "engineer post":
                     self.map.set_cell_array(self.x, self.y, EngineerPost(
-                        self.x, self.y, self.height, self.width, SCREEN, self.map))
+                        self.x, self.y, self.height, self.width, self.map, self.owner))
                     self.map.wallet -= 30
                 case "farm":
                     self.map.set_cell_array(self.x, self.y, Farm(
-                        self.x, self.y, self.height, self.width, SCREEN, self.map))
+                        self.x, self.y, self.height, self.width, self.map, self.owner))
                     self.map.wallet -= 100
                 case "granary":
                     self.map.set_cell_array(self.x, self.y, Granary(
-                        self.x, self.y, self.height, self.width, SCREEN, self.map))
+                        self.x, self.y, self.height, self.width, self.map, self.owner))
                     self.map.wallet -= 100
             for i in range(-2, 3):
                 for j in range(-2, 3):
@@ -244,8 +283,6 @@ class Cell:  # Une case de la map
         if isinstance(self, Path) and self.x == self.map.governor.currentCell.x and self.y == self.map.governor.currentCell.y:
             pass
         elif not isinstance(self, Empty) and self.type_empty != "rock" and self.type_empty != "water":
-            if isinstance(self, Building):
-                self.map.buildings.remove(self)
             for i in self.map.walkers:
                 if i.building == self:
                     self.map.walkers.remove(i)
@@ -262,29 +299,28 @@ class Cell:  # Une case de la map
                     i.currentCell.display()
             self.type_empty = "dirt"
 
-
-
             if isinstance(self, Granary) :
                 for i in range(-1, 1) :
                     for j in range(-1, 1) : 
                         # print(self.map.array[self.x+i][self.y+j].x, self.map.array[self.x+i][self.y+j].y)
                         self.map.buildings.remove(self.map.array[self.x+i][self.y+j])
                         self.map.set_cell_array(self.x+i, self.y+j, Empty(
-                self.x+i, self.y+j, self.height, self.width, SCREEN, self.map, "dirt", 1))
+                self.x+i, self.y+j, self.height, self.width, self.map, self.owner, "dirt", 1))
                         
             elif isinstance(self, GranaryPart) :
+                print(self.map.buildings)
                 for i in range(-1, 1) :
                     for j in range(-1, 1) : 
                         self.map.buildings.remove(self.map.array[self.granary.x+i][self.granary.y+j])
                         self.map.set_cell_array(self.granary.x+i, self.granary.y+j, Empty(
-                self.granary.x+i, self.granary.y+j, self.height, self.width, SCREEN, self.map, "dirt", 1))
+                self.granary.x+i, self.granary.y+j, self.height, self.width, self.map, self.owner, "dirt", 1))
                 
-            if isinstance(self, Farm) :
+            elif isinstance(self, Farm) :
                 for i in range(-1, 2) :
                     for j in range(-1, 2) : 
                         self.map.buildings.remove(self.map.array[self.x+i][self.y+j])
                         self.map.set_cell_array(self.x+i, self.y+j, Empty(
-                self.x+i, self.y+j, self.height, self.width, SCREEN, self.map, "dirt", 1))
+                self.x+i, self.y+j, self.height, self.width, self.map, self.owner, "dirt", 1))
 
             
             elif isinstance(self, Crop) :
@@ -292,7 +328,7 @@ class Cell:  # Une case de la map
                     for j in range(-1, 2) : 
                         self.map.buildings.remove(self.map.array[self.building.x+i][self.building.y+j])
                         self.map.set_cell_array(self.building.x+i, self.building.y+j, Empty(
-                self.building.x+i, self.building.y+j, self.height, self.width, SCREEN, self.map, "dirt", 1))
+                self.building.x+i, self.building.y+j, self.height, self.width, self.map, self.owner, "dirt", 1))
                 
                         
             elif isinstance(self, FarmPart) :
@@ -300,11 +336,13 @@ class Cell:  # Une case de la map
                     for j in range(-1, 2) : 
                         self.map.buildings.remove(self.map.array[self.farm.x+i][self.farm.y+j])
                         self.map.set_cell_array(self.farm.x+i, self.farm.y+j, Empty(
-                self.farm.x+i, self.farm.y+j, self.height, self.width, SCREEN, self.map, "dirt", 1))
-                         
-            else:         
+                self.farm.x+i, self.farm.y+j, self.height, self.width, self.map, self.owner, "dirt", 1))  
+
+            else:
+                if isinstance(self, Building):
+                    self.map.buildings.remove(self)        
                 self.map.set_cell_array(self.x, self.y, Empty(
-                    self.x, self.y, self.height, self.width, SCREEN, self.map, "dirt", 1))
+                    self.x, self.y, self.height, self.width, self.map, self.owner, "dirt", 1))
                 
 
             arr = self.check_cell_around(Cell)
@@ -326,7 +364,6 @@ class Cell:  # Une case de la map
 
     def get_water(self):
         return self.water
-
 
 path_hori = "game_screen/game_screen_sprites/road_straight_hori.png"
 sprite_hori = pygame.image.load(path_hori).convert_alpha()
@@ -361,11 +398,10 @@ sprite_turn_verti_left = pygame.image.load(path_verti_left).convert_alpha()
 path_verti_right = "game_screen/game_screen_sprites/road_turn_verti_right.png"
 sprite_turn_verti_right = pygame.image.load(path_verti_right).convert_alpha()
 
-
 class Path(Cell):
 
-    def __init__(self, x, y, height, width, screen, map, path_level=0):
-        super().__init__(x, y, height, width, screen, map)
+    def __init__(self, x, y, height, width, map, owner, path_level=0):
+        super().__init__(x, y, height, width, map, owner)
         self.path_sprite = path_verti
         self.sprite = sprite_verti
         self.sprite_display = ""
@@ -672,8 +708,8 @@ class Empty(Cell):
 
 
 class Building(Cell):  # un fils de cellule (pas encore sûr de l'utilité)
-    def __init__(self, x, y, height, width, screen, my_map):
-        super().__init__(x, y, height, width, screen, my_map)
+    def __init__(self, x, y, height, width, map, owner):
+        super().__init__(x, y, height, width,  map, owner)
         self.map.buildings.append(self)
         self.destroyed = False
         path_around = self.check_cell_around(Path)
@@ -692,14 +728,15 @@ class Building(Cell):  # un fils de cellule (pas encore sûr de l'utilité)
 
 
 class House(Building):  # la maison fils de building (?)
-    def __init__(self, x, y, height, width, screen, my_map, level=0, nb_occupants=0):
-        super().__init__(x, y, height, width, screen, my_map)
+    def __init__(self, x, y, height, width, map, owner, level=0, nb_occupants=0):
+        super().__init__(x, y, height, width, map, owner)
         self.level = level  # niveau de la maison : int
         self.nb_occupants = nb_occupants  # nombre d'occupants: int
         # nombre max d'occupant (dépend du niveau de la maison) : int
         self.max_occupants = 5
         self.unemployedCount = 0
         self.migrant = Migrant(self)
+        # test_pickle(self.migrant)
         self.risk = RiskEvent("fire", self)
         # Temporary
         self.path_sprite = "game_screen/game_screen_sprites/house_" + \
@@ -756,8 +793,8 @@ class House(Building):  # la maison fils de building (?)
 
 
 class Well(Building):
-    def __init__(self, x, y, height, width, screen, my_map):
-        super().__init__(x, y, height, width, screen, my_map)
+    def __init__(self, x, y, height, width, map, owner):
+        super().__init__(x, y, height, width, map, owner)
         # le risque est la en stand by
         self.risk = RiskEvent("collapse", self)
         for i in range(-2, 3):
@@ -810,8 +847,8 @@ class Well(Building):
 
 
 class Prefecture(Building):
-    def __init__(self, x, y, height, width, screen, my_map):
-        super().__init__(x, y, height, width, screen, my_map)
+    def __init__(self, x, y, height, width, map, owner):
+        super().__init__(x, y, height, width, map, owner)
         self.labor_advisor = LaborAdvisor(self)
         self.employees = 0
         self.prefect = Prefect(self)
@@ -863,8 +900,8 @@ class Prefecture(Building):
 
 
 class EngineerPost(Building):
-    def __init__(self, x, y, height, width, screen, my_map):
-        super().__init__(x, y, height, width, screen, my_map)
+    def __init__(self, x, y, height, width, map, owner):
+        super().__init__(x, y, height, width, map, owner)
         self.labor_advisor = LaborAdvisor(self)
         self.employees = 0
         self.engineer = Engineer(self)
@@ -917,8 +954,8 @@ class EngineerPost(Building):
 
 
 class Crop(Building) : 
-    def __init__(self, x, y, height, width, screen, my_map, farm):
-        super().__init__(x, y, height, width, screen, my_map)
+    def __init__(self, x, y, height, width, map, owner, farm):
+        super().__init__(x, y, height, width, map, owner)
         self.building = farm
         self.grow_state = 0
         self.path_sprite = "game_screen/game_screen_sprites/farm.png"
@@ -971,13 +1008,11 @@ class Crop(Building) :
                 # print(self.x,self.y, i//10)
                 SCREEN.blit(
                     self.sprite_display[4], (self.left+self.width*0.1, self.top-self.height*0.34))
-            
-        
 
 
 class FarmPart(Building) : 
-    def __init__(self, x, y, height, width, screen, map, my_farm) :
-        super().__init__(x, y, height, width, screen, map)
+    def __init__(self, x, y, height, width, map, owner, my_farm) :
+        super().__init__(x, y, height, width, map, owner)
         self.farm = my_farm
         self.risk = self.farm.risk
 
@@ -991,12 +1026,9 @@ class FarmPart(Building) :
         self.display()
 
 
-
-
-
 class Farm(Building) : 
-    def __init__(self, x, y, height, width, screen, my_map):
-        super().__init__(x, y, height, width, screen, my_map)
+    def __init__(self, x, y, height, width, map, owner):
+        super().__init__(x, y, height, width, map, owner)
         self.farmer = Farmer(self)
         self.risk = None
         self.path_sprite = "game_screen/game_screen_sprites/farm.png"
@@ -1004,11 +1036,11 @@ class Farm(Building) :
         self.sprite_display = ""
         self.update_sprite_size()
         self.farmParts = []
-        self.map.array[self.x -1][self.y] = FarmPart(self.x -1,self.y, height, width, screen, my_map, self)
+        self.map.array[self.x -1][self.y] = FarmPart(self.x -1,self.y, height, width, map, owner, self)
         self.farmParts.append(self.map.array[self.x -1][self.y])
-        self.map.array[self.x][self.y -1] = FarmPart(self.x,self.y-1, height, width, screen, my_map, self) 
+        self.map.array[self.x][self.y -1] = FarmPart(self.x,self.y-1, height, width, map, owner, self) 
         self.farmParts.append(self.map.array[self.x][self.y-1])
-        self.map.array[self.x -1][self.y -1] = FarmPart(self.x-1,self.y-1, height, width, screen, my_map, self) 
+        self.map.array[self.x -1][self.y -1] = FarmPart(self.x-1,self.y-1, height, width, map, owner, self) 
         self.farmParts.append(self.map.array[self.x -1][self.y-1])
         for i in self.farmParts :
             print(i.x, i.y)
@@ -1016,10 +1048,10 @@ class Farm(Building) :
 
         self.crops = []
         for x in range(2) : 
-            self.crops.append(Crop(self.x + x - 1,self.y + 2 -1, height, width, screen, my_map, self))
+            self.crops.append(Crop(self.x + x - 1,self.y + 2 -1, height, width, map, owner, self))
             self.map.array[self.x+x-1][self.y+2-1] = self.crops[len(self.crops)-1]
         for y in (2, 1, 0) :
-            self.crops.append(Crop(self.x + 2 -1, self.y + y -1, height, width, screen, my_map, self))
+            self.crops.append(Crop(self.x + 2 -1, self.y + y -1, height, width, map, owner, self))
             self.map.array[self.x+2-1][self.y+y-1] = self.crops[len(self.crops)-1]
         
         # for i in self.crops : 
@@ -1076,8 +1108,8 @@ class Farm(Building) :
                 
             
 class Granary(Building) :
-    def __init__(self, x, y, height, width, screen, my_map):
-        super().__init__(x, y, height, width, screen, my_map)
+    def __init__(self, x, y, height, width, map, owner):
+        super().__init__(x, y, height, width, map, owner)
         self.risk = None
         self.path_sprite1 = "game_screen/game_screen_sprites/granary_floor.png"
         self.path_sprite2 = "game_screen/game_screen_sprites/granary_body.png"
@@ -1085,9 +1117,9 @@ class Granary(Building) :
         self.sprite_display = [None,None]
         self.update_sprite_size()
 
-        self.map.array[self.x -1][self.y] = GranaryPart(self.x -1,self.y, height, width, screen, my_map, self)
-        self.map.array[self.x][self.y -1] = GranaryPart(self.x,self.y -1, height, width, screen, my_map, self)
-        self.map.array[self.x -1][self.y -1] = GranaryPart(self.x -1,self.y -1, height, width, screen, my_map, self)
+        self.map.array[self.x -1][self.y] = GranaryPart(self.x -1,self.y, height, width, map, owner, self)
+        self.map.array[self.x][self.y -1] = GranaryPart(self.x,self.y -1, height, width, map, owner,  self)
+        self.map.array[self.x -1][self.y -1] = GranaryPart(self.x -1,self.y -1, height, width, map, owner, self)
 
     def update_sprite_size(self):
         
@@ -1104,8 +1136,8 @@ class Granary(Building) :
             self.sprite_display[1], (self.left-self.width*0.18, self.top-self.height*2)) 
         
 class GranaryPart(Building): 
-    def __init__(self, x, y, height, width, screen, my_map, mygranary):
-        super().__init__(x, y, height, width, screen, my_map)
+    def __init__(self, x, y, height, width, map, owner, mygranary):
+        super().__init__(x, y, height, width, map, owner)
         self.granary = mygranary
         self.risk = self.granary.risk
     

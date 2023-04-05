@@ -49,12 +49,11 @@ def game_screen():
             map = pickle.load(f1)
         map.display_map()
     else:
-        map = Map(SIZE, height_land, width_land)
+        map = Map(SIZE, height_land, width_land, name_path)
         # map.array[33][33] = Farm(33, 33, height_land, width_land, SCREEN, map)
         # map.array[37][37] = Crop(37, 37, height_land, width_land, SCREEN, map, map.array[33][33])
         # print(map.array[33][33])
         # print(map.array[34][34])
-        map.set_name_user(name_path)
 
     panel = Panel(SCREEN)
 
@@ -82,6 +81,7 @@ def game_screen():
     move = 1
     zoom_update = 0
     move_update = 0
+    fire_update_count = 0
     governor_movements = 0
 
     count_day = 0
@@ -94,7 +94,7 @@ def game_screen():
 
     walker_update_count = 0
     governor_update_count = 0
-    fire_update_count = 0
+    fire_upadte_count = 0
     farm_update_count = 0
     current_time = ""
     text_last_save = fps_font.render("None", 1, (255, 255, 255))
@@ -125,7 +125,7 @@ def game_screen():
             WIDTH_SCREEN/2-WIDTH_SCREEN/12-pos[0]-map.offset_left)/map.width_land))-1
         y = round(((WIDTH_SCREEN/2-WIDTH_SCREEN/12-pos[0]-map.offset_left)/map.width_land + (
             pos[1]-map.offset_top-HEIGH_SCREEN/6)/map.height_land))
-
+        
         move_update += 1
         move_coeff = 6
         if move_update % 6 == 0:
@@ -151,8 +151,8 @@ def game_screen():
                             map.handle_move(
                                 "right", (3 - (WIDTH_SCREEN - pos[0]) / 20) / (zoom/move_coeff))
             move_update = 0
-
-        # If the mouse is in the map, we display the hovered cell(s)
+        
+         # If the mouse is in the map, we display the hovered cell(s)
         if selection["is_active"]:
             for i in selection["cells"]:
                 map.get_cell(i[0], i[1]).handle_hover_button()
@@ -217,29 +217,30 @@ def game_screen():
                     if (panel.farm_button.is_hovered(pos)):
                         panel.set_window("farm")
                         map.handle_button("farm")
-                        panel.display()
+
                         # map.display_map()
                     if (panel.granary_button.is_hovered(pos)):
                         panel.set_window("granary")
                         map.handle_button("granary")
-                        panel.display()
-
 
                     if (panel.up_button.is_hovered(pos)):
                         if speed_index < 9:
                             speed_index += 1
                             speed = speeds[speed_index]
                             panel.set_played_button()
+
                     if (panel.down_button.is_hovered(pos)):
                         if (speed_index > 1):
                             speed_index -= 1
                             speed = speeds[speed_index]
                             panel.set_played_button()
+
                     if (panel.get_pause_button().is_hovered(pos)):
                         if paused == 0:
                             paused = 1
                             speed = speeds[0]
                             panel.set_paused_button()
+
                         else:
                             paused = 0
                             speed = speeds[speed_index]
@@ -263,10 +264,12 @@ def game_screen():
                         if zoom < 1.4:
                             zoom += 0.05
                             map.handle_zoom(1)
+
                     if event.button == 5:
                         if zoom > 0.6:
                             zoom -= 0.05
                             map.handle_zoom(0)
+
                     zoom_update = 0
 
             if event.type == pygame.MOUSEBUTTONUP:
@@ -381,6 +384,12 @@ def game_screen():
 
         if map.get_overlay() in ("fire", "collapse"):
             map.display_overlay()
+
+        # fire_upadte_count += 1
+        # if fire_upadte_count >= update_speed:
+        #     map.update_fire()
+        #     map.update_collapse()
+        #     fire_upadte_count = 0
 
         walker_update_count += 1
         governor_update_count += 1

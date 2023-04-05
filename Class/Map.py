@@ -27,14 +27,15 @@ sound_effect["extinguish"].set_volume(0.1)
 
 class Map:  # Un ensemble de cellule
 
-    def __init__(self, size, height, width):
+    def __init__(self, size, height, width, username):
         self.size = size  # La taille de la map est size*size : int
         self.height_land = height
         self.width_land = width
+        self.name_user = username
         self.offset_top = 0
         self.offset_left = 0
         self.overlay = ""
-        self.array = [[Empty(j, i, self.height_land, self.width_land, SCREEN, self) for i in range(
+        self.array = [[Empty(j, i, self.height_land, self.width_land, self, username) for i in range(
             size)] for j in range(size)]  # tableau de cellule (voir classe cellule) : list
         self.walkers = []
         self.migrantQueue = []
@@ -58,7 +59,6 @@ class Map:  # Un ensemble de cellule
                                  "prefecture": False, "engineerpost": False, "well": False, "farm" : False, "granary" : False}
         self.zoom = 1
         self.zoom_coef = 1
-        self.name_user = ""
         self.population = 0
         self.month_index = 0
         self.year = 150
@@ -67,42 +67,42 @@ class Map:  # Un ensemble de cellule
         # Generate the init path of player 1 (top of the map)
         for x in range(self.size // 10):
             self.array[x][self.size // 10] = Path(
-                x, self.size // 10, self.height_land, self.width_land, SCREEN, self)
+                x, self.size // 10, self.height_land, self.width_land, self, self.name_user)
             self.array[x][self.size // 10].handle_sprites()
         for y in range((self.size // 10) + 1):
             self.array[self.size // 10][y] = Path(
-                self.size // 10, y, self.height_land, self.width_land, SCREEN, self)
+                self.size // 10, y, self.height_land, self.width_land, self, self.name_user)
             self.array[self.size // 10][y].handle_sprites()
 
         # Generate the init path of player 2 (left of the map)
         for x in range(self.size // 10):
             self.array[x][self.size - (self.size // 10)] = Path(
-                x, self.size - (self.size // 10), self.height_land, self.width_land, SCREEN, self)
+                x, self.size - (self.size // 10), self.height_land, self.width_land, self, None)
             self.array[x][self.size - (self.size // 10)].handle_sprites()
         for y in range((self.size // 10)):
             self.array[self.size // 10][(self.size - 1) - y] = Path(
-                self.size // 10, (self.size - 1) - y, self.height_land, self.width_land, SCREEN, self)
+                self.size // 10, (self.size - 1) - y, self.height_land, self.width_land, self, None)
             self.array[self.size // 10][(self.size - 1) - y].handle_sprites()
 
         # Generate the init path of player 3 (bottom of the map)
         for x in range(self.size - (self.size // 10), self.size):
             self.array[x][self.size - (self.size // 10)] = Path(
-                x, self.size - (self.size // 10), self.height_land, self.width_land, SCREEN, self)
+                x, self.size - (self.size // 10), self.height_land, self.width_land, self, None)
             self.array[x][self.size - (self.size // 10)].handle_sprites()
         for y in range((self.size // 10)):
             self.array[self.size - (self.size // 10)][(self.size - 1) - y] = Path(
-                self.size - (self.size // 10), (self.size - 1) - y, self.height_land, self.width_land, SCREEN, self)
+                self.size - (self.size // 10), (self.size - 1) - y, self.height_land, self.width_land, self, None)
             self.array[self.size - (self.size // 10)
                        ][(self.size - 1) - y].handle_sprites()
 
         # Generate the init path of player 4 (right of the map)
         for x in range(self.size - (self.size // 10), self.size):
             self.array[x][self.size // 10] = Path(
-                x, self.size // 10, self.height_land, self.width_land, SCREEN, self)
+                x, self.size // 10, self.height_land, self.width_land, self, None)
             self.array[x][self.size // 10].handle_sprites()
         for y in range((self.size // 10) + 1):
             self.array[self.size - (self.size // 10)][y] = Path(
-                self.size - (self.size // 10), y, self.height_land, self.width_land, SCREEN, self)
+                self.size - (self.size // 10), y, self.height_land, self.width_land, self, None)
             self.array[self.size - (self.size // 10)][y].handle_sprites()
 
         self.display_map()
@@ -317,6 +317,3 @@ class Map:  # Un ensemble de cellule
 
     def get_name_user(self):
         return self.name_user
-
-    def set_name_user(self, name_user):
-        self.name_user = name_user
