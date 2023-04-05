@@ -37,7 +37,7 @@ int main()
     // Forcefully attaching socket to the port
 
     address.sin_family = AF_INET;
-    address.sin_addr.s_addr = inet_addr("127.0.0.2");
+    address.sin_addr.s_addr = inet_addr("127.0.0.1");
     // address.sin_addr.s_addr = inet_addr("192.168.206.185");
     address.sin_port = htons(PORT);
 
@@ -81,7 +81,7 @@ int sending()
 {
 
     // Fetching port number
-    int PORT_server = 1235;
+    int PORT_server = 1236;
 
     int sock = 0;
     struct sockaddr_in serv_addr;
