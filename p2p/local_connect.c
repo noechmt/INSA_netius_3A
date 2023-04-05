@@ -13,7 +13,7 @@
 
 // INADDR_ANY
 char name[20];
-int PORT = 1236;
+int PORT = 1235;
 
 int sending();
 void receiving(int server_fd);

@@ -10,7 +10,7 @@ class MySocket:
         if sock is None:
             self.sock = socket.socket(
                             socket.AF_INET, socket.SOCK_STREAM)
-            self.sock.setblocking(False)
+            # self.sock.setblocking(False)
         else:
             self.sock = sock
 
@@ -38,9 +38,9 @@ class MySocket:
         return recv.decode()
         
 
-def set_server():
+def set_server(port):
     server= MySocket()
-    server.bind("127.0.0.1", 1235)
+    server.bind("127.0.0.1", port)
     server.listen(4)
     server.accept()
 
