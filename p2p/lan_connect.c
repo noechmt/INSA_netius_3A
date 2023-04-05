@@ -16,6 +16,7 @@ char name[20];
 int PORT = 1234;
 int LOCAL_PORT = 1236;
 int LOCAL_FD;
+char IP[25];
 
 int sending(char *adress, int port, char* msg);
 void local_connect(int local_fd);
@@ -54,7 +55,8 @@ int main(int argc, char **argv)
     }
     /*printf("Enter your port number:");
     scanf("%d", &PORT);*/
-
+    strncpy(IP, argv[1], strlen(argv[1]));
+    printf("%s\n", IP);
     int server_fd, local_fd;
     struct sockaddr_in address;
 
@@ -250,21 +252,14 @@ void receiving(int fd)
                     }
                     FD_SET(client_socket, &current_sockets);
                 }
-                else if (i == LOCAL_FD)
-                {
-                    valread = recv(i, buffer, sizeof(buffer), 0);
-                    printf("test\n");
-                    sending("192.168.1.32", 1234, buffer);
-                    FD_CLR(i, &current_sockets);
-                }
                 else
                 {
                     valread = recv(i, buffer, sizeof(buffer), 0);
-                    if(strcmp(inet_ntoa(address.sin_addr), "127.0.0.7") == 0){
+                    if(strcmp(inet_ntoa(address.sin_addr), "127.0.0.1") != 0){
                         sending_local(buffer);
                     }
                     else{
-                        sending("192.168.1.32", 1234, buffer);
+                        sending(IP, 1234, buffer);
                     }                   
                     FD_CLR(i, &current_sockets);
                 }
