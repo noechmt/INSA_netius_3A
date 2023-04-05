@@ -168,6 +168,7 @@ int sending(char *ip_adress, int port, char* msg)
 
 int sending_local(char* msg)
 {
+
     int sock_local = 0;
     struct sockaddr_in serv_addr;
     if ((sock_local = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -259,9 +260,12 @@ void receiving(int fd)
                 else
                 {
                     valread = recv(i, buffer, sizeof(buffer), 0);
-                    printf("receive %s\n", buffer);
-                    sending_local(buffer);
-                    sending("192.168.1.32", 1234, buffer);
+                    if(strcmp(inet_ntoa(address.sin_addr), "127.0.0.7") == 0){
+                        sending_local(buffer);
+                    }
+                    else{
+                        sending("192.168.1.32", 1234, buffer);
+                    }                   
                     FD_CLR(i, &current_sockets);
                 }
             }
