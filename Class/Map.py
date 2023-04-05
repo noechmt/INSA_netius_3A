@@ -34,10 +34,8 @@ class Map:  # Un ensemble de cellule
         self.offset_top = 0
         self.offset_left = 0
         self.overlay = ""
-        print("salut1")
         self.array = [[Empty(j, i, self.height_land, self.width_land, SCREEN, self) for i in range(
             size)] for j in range(size)]  # tableau de cellule (voir classe cellule) : list
-        print("salut2")
         self.walkers = []
         self.migrantQueue = []
         self.laborAdvisorQueue = []
@@ -48,7 +46,7 @@ class Map:  # Un ensemble de cellule
         self.wallet = 3000
         self.update_hover = 0
         self.button_activated = {"house": False, "shovel": False, "road": False,
-                                 "prefecture": False, "engineerpost": False, "well": False, "farm" : False}
+                                 "prefecture": False, "engineerpost": False, "well": False, "farm" : False, "granary" : False}
         self.zoom = 1
         self.zoom_coef = 1
         self.name_user = ""
@@ -254,6 +252,9 @@ class Map:  # Un ensemble de cellule
     
     def get_farmed(self):
         return self.button_activated["farm"]
+    
+    def get_granaried(self):
+        return self.button_activated["granary"]
 
     def get_height_land(self):
         return self.height_land

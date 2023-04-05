@@ -72,7 +72,9 @@ class Panel():
         self.button_exit_sprite = pygame.image.load(
             "game_screen/game_screen_sprites/paneling_exit.png").convert_alpha()
         self.farm_button_sprite = pygame.image.load(
-            "game_screen/game_screen_sprites/farm_button.png").convert_alpha()
+            "game_screen/game_screen_sprites/farm_paneling.png").convert_alpha()
+        self.granary_button_sprite = pygame.image.load(
+            "game_screen/game_screen_sprites/granary_paneling.png").convert_alpha()
 
     def init_buttons(self):
         self.grid_button = Button(177*self.width_screen/192, 0.320*self.height_screen,
@@ -95,6 +97,8 @@ class Panel():
                                   self.width_screen/48, self.height_screen/40, self.well_button_sprite)
         self.farm_button = Button(177*self.width_screen/192, 0.350*self.height_screen,
                                   self.width_screen/48, self.height_screen/40, self.farm_button_sprite)
+        self.granary_button = Button(182*self.width_screen/192, 0.350*self.height_screen,
+                                  self.width_screen/48, self.height_screen/40, self.granary_button_sprite)
         self.up_button = Button(
             177*self.width_screen/192, 0.25*self.height_screen+12*self.height_screen/80, self.width_screen/48, self.height_screen/40, self.button_up_sprite)
         self.down_button = Button(
@@ -145,6 +149,8 @@ class Panel():
                                                             self.width_screen/48+4, self.height_screen/40+3))
         draw_rect_alpha(self.screen, (255, 255, 255, 127), (177*self.width_screen/192-1.5, 0.350*self.height_screen-1.5,
                                                             self.width_screen/48+4, self.height_screen/40+3))
+        draw_rect_alpha(self.screen, (255, 255, 255, 127), (182*self.width_screen/192-1.5, 0.350*self.height_screen-1.5,
+                                                            self.width_screen/48+4, self.height_screen/40+3))
 
         self.screen.blit(pygame.transform.scale(self.window_current, (self.width_screen /
                                                                       12-10, self.height_screen/17)), (11*self.width_screen/12+5, 0.18*self.height_screen))
@@ -168,6 +174,8 @@ class Panel():
         self.well_button.draw(self.screen)
 
         self.farm_button.draw(self.screen)
+
+        self.granary_button.draw(self.screen)
 
         draw_rect_alpha(self.screen, (25, 25, 25, 127), (self.width_screen*(11/12)+2,
                         self.height_screen*(8/17), self.width_screen/12-4, 3*self.height_screen/7-2))
@@ -234,6 +242,9 @@ class Panel():
     
     def get_farm_button(self) : 
         return self.farm_button
+    
+    def get_granary_button(self) : 
+        return self.granary_button
 
     def get_up_button(self):
         return self.up_button

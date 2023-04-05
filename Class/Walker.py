@@ -352,7 +352,7 @@ class Prefect(Walker):
         elif self.isWorking:
             self.extinguishFire()
 
-        elif any((i.risk.type == "fire" and i.risk.fireCounter > 0 and i not in self.currentCell.check_cell_around(Cell.Building))
+        elif any((i. risk != None and i.risk.type == "fire" and i.risk.fireCounter > 0 and i not in self.currentCell.check_cell_around(Cell.Building))
                  for i in self.current_building.map.buildings) and not self.isWorking and not self.inBuilding:
             print(self.building.map.buildings[0].risk.fireCounter)
             self.building.map.buildings.sort(
@@ -524,11 +524,14 @@ class Farmer(Walker) :
         return "Farmer"
         
     def move(self) : 
-        if len(self.path == 0) : 
+        print(self.path)
+        if len(self.path) == 0 : 
             return
         if self.delivering : 
+            print("delivering")
+            print(self.path)
             if len(self.path) == 1 : 
-                self.path_finding(self.path[0], self.building)
+                self.path_finding(self.currentCell, self.building)
                 self.delivering = False
                 self.movePathFinding()
             else :
@@ -547,6 +550,7 @@ class Farmer(Walker) :
         path = []
         for i in self.building.farmParts :
             path += i.check_cell_around(Cell.Path)
+            print(path)
             print(i.x, i.y)
         
         if len(path) == 0:

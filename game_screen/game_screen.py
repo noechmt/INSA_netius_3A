@@ -53,6 +53,7 @@ def game_screen():
         map = Map(SIZE, height_land, width_land)
         # map.array[33][33] = Farm(33, 33, height_land, width_land, SCREEN, map)
         map.array[33][33] = Granary(33, 33, height_land, width_land, SCREEN, map)
+        print(map.array[33][33] in map.buildings)
         # map.array[37][37] = Crop(37, 37, height_land, width_land, SCREEN, map, map.array[33][33])
         # print(map.array[33][33])
         # print(map.array[34][34])
@@ -214,6 +215,12 @@ def game_screen():
                         map.handle_button("farm")
                         panel.display()
                         # map.display_map()
+                    if (panel.granary_button.is_hovered(pos)):
+                        panel.set_window("granary")
+                        map.handle_button("granary")
+                        panel.display()
+
+
                     if (panel.up_button.is_hovered(pos)):
                         if speed_index < 9:
                             speed_index += 1
@@ -279,8 +286,10 @@ def game_screen():
                             selected_cell.build("prefecture")
                         elif map.get_engineered() and selected_cell.isBuildable():
                             selected_cell.build("engineer post")
-                        elif map.get_farmed() and selected_cell.isBuildable(3):
+                        elif map.get_farmed() and selected_cell.isBuildable("Farm"):
                             selected_cell.build("farm")
+                        elif map.get_granaried() and selected_cell.isBuildable("Granary"):
+                            selected_cell.build("granary")
                         elif map.get_welled() and selected_cell.isBuildable():
                             selected_cell.build("well")
                             for k in range(-2, 3):
@@ -332,6 +341,8 @@ def game_screen():
                 panel.get_prefecture_button().handle_hover_button(pos, SCREEN)
                 panel.get_engineerpost_button().handle_hover_button(pos, SCREEN)
                 panel.get_well_button().handle_hover_button(pos, SCREEN)
+                panel.get_farm_button().handle_hover_button(pos, SCREEN)
+                panel.get_granary_button().handle_hover_button(pos, SCREEN)
                 panel.get_up_button().handle_hover_button(pos, SCREEN)
                 panel.get_down_button().handle_hover_button(pos, SCREEN)
                 panel.get_pause_button().handle_hover_button(pos, SCREEN)
