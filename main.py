@@ -4,7 +4,7 @@ import sys
 import os
 import ctypes
 
-# Check of the version of python
+# Check of the version of python, 3.10 or 3.11
 assert sys.version[0:4] == "3.10" or sys.version[0:
                                                  4] == "3.11", "Merci d'utiliser une version de python >= 3.10 !"
 
