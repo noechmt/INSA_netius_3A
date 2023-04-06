@@ -60,7 +60,7 @@ class Walker():
             else:
                 SCREEN.blit(pygame.transform.scale(self.walker_sprites["right"][self.currentSprite % 2], (
                     self.currentCell.width, self.currentCell.height)), (self.currentCell.left, self.currentCell.top))
-
+            
             self.currentSprite += 1
         # elif self.inBuilding == True :
         #     self.currentCell.display()
@@ -521,6 +521,10 @@ class Governor(Walker):
             self.currentSprite += 1
             return True
         return False
+    
+    def display(self):
+        super().display()
+        self.currentSprite -= 1
 
     def __getstate__(self):
         state = self.__dict__.copy()

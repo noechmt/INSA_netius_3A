@@ -396,7 +396,6 @@ def game_screen():
         #     fire_upadte_count = 0
 
         walker_update_count += 1
-        governor_update_count += 1
         if walker_update_count >= update_speed // 2:
             # print(walker_update_count)
             map.update_walkers()
@@ -407,6 +406,7 @@ def game_screen():
             # print("break")
             walker_update_count = 0
 
+        governor_update_count += 1
         if governor_update_count >= update_speed // 4:
             if map.governor.move():
                 map.center_camera_governor()
