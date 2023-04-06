@@ -524,6 +524,7 @@ class Governor(Walker):
     
     def display(self):
         super().display()
+        # Decrease the currentSprite bc when displayed it will be increased, we don't want that
         self.currentSprite -= 1
 
     def __getstate__(self):
