@@ -31,6 +31,10 @@ class Map:  # Un ensemble de cellule
         self.size = size  # La taille de la map est size*size : int
         self.height_land = height
         self.width_land = width
+        self.players = ["", "", "", ""]
+        # TO-DO request the num player
+        self.num_player = 1
+        # TO-DO put names in array and do function to fill it after init
         self.name_user = username
         self.offset_top = 0
         self.offset_left = 0
@@ -42,28 +46,30 @@ class Map:  # Un ensemble de cellule
         self.laborAdvisorQueue = []
         self.buildings = []
         self.path_graph = nx.DiGraph()
-        self.init_map()
+        self.init_paths()
         self.spawn_cells = [self.array[0][self.size//10],
                             self.array[0][self.size - self.size//10],
                             self.array[self.size -
                                        1][self.size - self.size//10],
                             self.array[self.size - 1][self.size//10]]
         # Replace 0 with the player number - 1
-        self.spawn_cell = self.spawn_cells[0]
+        self.spawn_cell = self.spawn_cells[self.num_player - 1]
         # Init a governor at spawn_cell
         # To-do spawn at the city-hall
+        self.init_city_halls()
         self.governor = Governor(self.spawn_cell, username)
         self.wallet = 5000
         self.update_hover = 0
         self.button_activated = {"house": False, "shovel": False, "road": False,
-                                 "prefecture": False, "engineerpost": False, "well": False, "farm" : False, "granary" : False}
+                                 "prefecture": False, "engineerpost": False, "well": False, "farm": False, "granary": False}
         self.zoom = 1
         self.zoom_coef = 1
         self.population = 0
         self.month_index = 0
         self.year = 150
 
-    def init_map(self):  # Permet d'initialiser le chemin de terre sur la map.
+    # Permet d'initialiser le chemin de terre sur la map.
+    def init_paths(self):
         # Generate the init path of player 1 (top of the map)
         for x in range(self.size // 10):
             self.array[x][self.size // 10] = Path(
@@ -106,6 +112,17 @@ class Map:  # Un ensemble de cellule
             self.array[self.size - (self.size // 10)][y].handle_sprites()
 
         self.display_map()
+
+    def init_city_halls(self):
+        self.array[self.size//10 - 1][self.size//10 - 1] = CityHall(
+            self.size//10 - 1, self.size//10 - 1, self.height_land, self.width_land, self, self.players[1 - 1])
+        self.array[self.size//10 - 1][self.size - (self.size//10 - 1)]
+        self.array[self.size//10 - 1][self.size - (self.size//10 - 2)] = CityHall(
+            self.size//10 - 1, self.size - (self.size//10 - 2), self.height_land, self.width_land, self, self.players[2 - 1])
+        self.array[self.size - (self.size//10 - 2)][self.size - (self.size//10 - 2)] = CityHall(
+            self.size - (self.size//10 - 2), self.size - (self.size//10 - 2), self.height_land, self.width_land, self, self.players[3 - 1])
+        self.array[self.size - (self.size//10 - 2)][self.size//10 - 1] = CityHall(
+            self.size - (self.size//10 - 2), self.size//10 - 1, self.height_land, self.width_land, self, self.players[4 - 1])
 
     def __str__(self):
         s = f"Map {self.size}*{self.size}\n"
@@ -276,14 +293,12 @@ class Map:  # Un ensemble de cellule
             case _:
                 self.display_map()
 
-    def update_farm(self) :
-        for i in self.buildings :
-            if isinstance(i, Farm) : 
-                if i.farmer.isWandering : return
+    def update_farm(self):
+        for i in self.buildings:
+            if isinstance(i, Farm):
+                if i.farmer.isWandering:
+                    return
                 i.crop_grow()
-                
-            
-            
 
     def get_housed(self):
         return self.button_activated["house"]
@@ -302,10 +317,10 @@ class Map:  # Un ensemble de cellule
 
     def get_welled(self):
         return self.button_activated["well"]
-    
+
     def get_farmed(self):
         return self.button_activated["farm"]
-    
+
     def get_granaried(self):
         return self.button_activated["granary"]
 

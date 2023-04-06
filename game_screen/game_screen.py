@@ -11,9 +11,8 @@ from Class.Wrapper import Wrapper
 import time
 from datetime import datetime
 
+
 # draw a rectangle with an opacity option
-
-
 def draw_rect_alpha(surface, color, rect):
     shape_surf = pygame.Surface(pygame.Rect(rect).size, pygame.SRCALPHA)
     pygame.draw.rect(shape_surf, color, shape_surf.get_rect())
@@ -130,7 +129,7 @@ def game_screen():
             WIDTH_SCREEN/2-WIDTH_SCREEN/12-pos[0]-map.offset_left)/map.width_land))-1
         y = round(((WIDTH_SCREEN/2-WIDTH_SCREEN/12-pos[0]-map.offset_left)/map.width_land + (
             pos[1]-map.offset_top-HEIGH_SCREEN/6)/map.height_land))
-        
+
         move_update += 1
         move_coeff = 6
         if move_update % 6 == 0:
@@ -156,7 +155,7 @@ def game_screen():
                             map.handle_move(
                                 "right", (3 - (WIDTH_SCREEN - pos[0]) / 20) / (zoom/move_coeff))
             move_update = 0
-        
+
          # If the mouse is in the map, we display the hovered cell(s)
         if selection["is_active"]:
             for i in selection["cells"]:
@@ -413,13 +412,13 @@ def game_screen():
                 map.center_camera_governor()
             governor_update_count = 0
 
-
-        farm_update_count+=1
-        if farm_update_count >= update_speed * 1.5 : 
+        farm_update_count += 1
+        if farm_update_count >= update_speed * 1.5:
             map.update_farm()
             farm_update_count = 0
 
-        map.governor.display()
+        if not isinstance(map.governor.currentCell, Building):
+            map.governor.display()
         map.display_walkers()
         panel.display()
 
