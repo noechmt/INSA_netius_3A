@@ -1,6 +1,8 @@
 import pygame
 from Class.Button import Button
-
+from Class.Text import Text
+from Class.Input_box import InputBox
+from  Class.chat import Chat
 
 def draw_rect_alpha(surface, color, rect):
     shape_surf = pygame.Surface(pygame.Rect(rect).size, pygame.SRCALPHA)
@@ -16,6 +18,7 @@ class Panel():
         self.init_buttons()
         self.window_current = self.window_none
         self.chatON = False
+        self.chat = Chat(self.screen)
         self.display()
        
         pass
@@ -81,12 +84,7 @@ class Panel():
             "game_screen/game_screen_sprites/farm_paneling.png").convert_alpha()
         self.granary_button_sprite = pygame.image.load(
             "game_screen/game_screen_sprites/granary_paneling.png").convert_alpha()
-        self.chat_sprite = {
-            "background" : pygame.image.load("game_screen/game_screen_sprites/chat_background.jpg").convert_alpha()
-
-
-        }
-
+        
   
 
     def init_buttons(self):
@@ -204,12 +202,13 @@ class Panel():
         self.save_button.draw(self.screen)
         self.exit_button.draw(self.screen)
 
-        # <------------CHAT-------------------------------------------------->
 
+       
         if self.chatON : 
+            self.chat.display()
 
-            self.screen.blit(self.chat_sprite["background"], 
-                             (self.width_screen*1/80, self.height_screen*0.01))
+            
+
 
 
 

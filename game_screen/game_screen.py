@@ -9,7 +9,7 @@ from Class.Map import *
 from Class.Panel import Panel
 import time
 from datetime import datetime
-from  Class.chat import chat
+
 
 # draw a rectangle with an opacity option
 
@@ -57,9 +57,6 @@ def game_screen():
         # print(map.array[34][34])
 
     panel = Panel(SCREEN)
-
-    # game_chat = chat(SCREEN)
-
 
     # Dims without left panel
     height_wo_panel = HEIGH_SCREEN
@@ -385,6 +382,14 @@ def game_screen():
                 if pygame.key.get_pressed()[pygame.K_t] : 
                     panel.chatON = True
                     panel.set_window("chat")
+
+                    if panel.chat.input.handle_event(event, SCREEN) : 
+                        print("salut")
+                        SCREEN.blit(pygame.transform.scale(panel.chat.chat_sprite["background"],(panel.width_screen*0.450, panel.height_screen*0.450)), 
+                             (panel.width_screen*1/80, panel.height_screen*0.01))
+                        panel.chat.title.draw(panel.screen)
+                        # panel.chat.input.draw(panel.chat.screen)
+                       
                     
 
                 # grid_button.handle_hover_button(pos, SCREEN)
