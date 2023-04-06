@@ -32,7 +32,7 @@ typedef struct gameSocket gameSocket ;
 
 
 gameSocket * listOtherSocket ;
-
+int NbPlayer = 0 ;
 // System
 void stop ( char * error_msg ){
     perror(error_msg);
@@ -46,6 +46,7 @@ char errorMessageInitNewSock[] = "Can't initialise new socket\n";
 
 // Liste chainé
 
+int getNbPlayer(); // Avoir le nombre de joueurs 
 void initOtherSocket();
 void addOtherSocket(char *ipAddr, char* playerName, int port );
 void supprOtherSocket(char * ip); // Supprimer une socket 

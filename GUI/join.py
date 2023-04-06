@@ -3,16 +3,16 @@ import pygame
 from Class.Button import Button
 from Class.Input_box import InputBox
 from Class.Text import Text
-import ctypes as ct
-import os
-
-# libc = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../p2p/libc.so')
-# clibrary = ct.CDLL(libc)
+import threading as thread
+from p2p.socket_python import *
 
 
 def join_game():
 
     pygame.init()
+    server = set_server(1235,4)
+    thread_recv = thread.Thread(target=recv_data, args=(server,))
+    thread_recv.start()
 
     # Create screen variable and set the size of the screen
     SCREEN = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
@@ -132,10 +132,8 @@ def join_game():
                 if text_back.is_hovered(pos):
                     return False
                 if text_connect.is_hovered(pos):
-                    # if input_ip.get_text() != '' and input_port.get_text() != '':
-                    #clibrary.serveur(input_ip.get_text().encode(), input_port.get_text())
-                    
-                    return True
+                    send_data(input_port.get_text())
+
             if input_ip.handle_event(event, SCREEN):
                 SCREEN.blit(pygame.transform.scale(
                     menu_background, (width_menu, height_menu)), (left_menu, top_menu))
