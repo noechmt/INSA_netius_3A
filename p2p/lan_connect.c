@@ -160,7 +160,7 @@ int sending(char *ip_adress, int port, char* msg)
         {
             return -1;
         }
-        if(send(sock, msg, sizeof(msg), 0)<0){
+        if(send(sock, msg, strlen(msg), 0)<0){
             perror("send error ");
         };
     }
@@ -206,7 +206,7 @@ int sending_local(char* msg)
             close(sock_local);
             return -1;
         }
-        if(send(sock_local, msg, sizeof(msg), 0)<0){
+        if(send(sock_local, msg, strlen(msg), 0)<0){
             perror("send error ");
         }
     }
