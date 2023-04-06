@@ -18,14 +18,13 @@ int PORT = 1234;
 int LOCAL_PORT = 1236;
 int PORT_PYTHON = 1235;
 int LOCAL_FD;
+char IP[25];
 
-int sending(char *adress, int port);
+int sending(char *adress, int port, char* msg);
 void local_connect(int local_fd);
 void receiving(int fd);
-void receiving_local(int local_fd);
 void *receive_thread(void *fd);
-void *receive_local_thread(void *local_fd);
-int sending_local();
+int sending_local(char* msg);
 
 void local_connect(int local_fd)
 {
@@ -58,7 +57,8 @@ int main(int argc, char **argv)
     }
     /*printf("Enter your port number:");
     scanf("%d", &PORT);*/
-
+    strncpy(IP, argv[1], strlen(argv[1]));
+    printf("%s\n", IP);
     int server_fd, local_fd;
     struct sockaddr_in address;
 
@@ -121,24 +121,25 @@ int main(int argc, char **argv)
     pthread_create(&tid2, NULL, &receive_thread, &local_fd); // Creating thread to keep receiving message in real time
     while (1)
     {
-        if (sending(argv[1], 1234) < 0)
+        /*sending_local("hello");
+        sleep(2);*/
+        /*if (sending(argv[1], 1234) < 0)
         {
             break;
-        }
+        }*/
     }
     close(server_fd);
     close(local_fd);
 }
 
 // Sending messages to port
-int sending(char *ip_adress, int port)
+int sending(char *ip_adress, int port, char* msg)
 {
 
     // Fetching port number
 
     int sock = 0;
     struct sockaddr_in serv_addr;
-    char buffer_send[1024] = {0};
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         close(sock);
@@ -154,15 +155,15 @@ int sending(char *ip_adress, int port)
         sleep(2);
         return 1;
     }
-    scanf("%s", buffer_send);
-    if (strlen(buffer_send) != 0)
+    if (strlen(msg) != 0)
     {
-        if (strncmp(buffer_send, "/quit", strlen("/quit")) == 0)
+        if (strncmp(msg, "/quit", strlen("/quit")) == 0)
         {
             return -1;
         }
-        send(sock, buffer_send, sizeof(buffer_send), 0);
-        bzero(buffer_send, 1024);
+        if(send(sock, msg, sizeof(msg), 0)<0){
+            perror("send error ");
+        };
     }
     printf("Message sent\n");
     sleep(2);
@@ -172,6 +173,7 @@ int sending(char *ip_adress, int port)
 
 int sending_local(char* msg)
 {
+
     int sock_local = 0;
     struct sockaddr_in serv_addr;
     if ((sock_local = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -206,8 +208,9 @@ int sending_local(char* msg)
             close(sock_local);
             return -1;
         }
-        send(sock_local, msg, sizeof(msg), 0);
-        bzero(msg, 1024);
+        if(send(sock_local, msg, sizeof(msg), 0)<0){
+            perror("send error ");
+        }
     }
     sleep(2);
     printf("Je meurs\n");
@@ -249,7 +252,6 @@ void receiving(int fd)
             perror("Error");
             exit(EXIT_FAILURE);
         }
-
         for (int i = 0; i < FD_SETSIZE; i++)
         {
             if (FD_ISSET(i, &ready_sockets))
@@ -269,7 +271,12 @@ void receiving(int fd)
                 else
                 {
                     valread = recv(i, buffer, sizeof(buffer), 0);
-                    sending_local(buffer);
+                    if(strcmp(inet_ntoa(address.sin_addr), "127.0.0.1") != 0){
+                        sending_local(buffer);
+                    }
+                    else{
+                        sending(IP, 1234, buffer);
+                    }                   
                     FD_CLR(i, &current_sockets);
                 }
             }

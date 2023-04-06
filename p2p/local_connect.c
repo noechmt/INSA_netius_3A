@@ -111,9 +111,9 @@ int sending()
             return -1;
         }
         send(sock, buffer_send, sizeof(buffer_send), 0);
+        printf("Message sent\n");
         bzero(buffer_send, 1024);
     }
-    printf("Message sent\n");
     close(sock);
     return 1;
 }
@@ -173,7 +173,7 @@ void receiving(int server_fd)
                 else
                 {
                     valread = recv(i, buffer, sizeof(buffer), 0);
-                    printf("%s\n", buffer);
+                    printf("receive %s\n", buffer);
                     FD_CLR(i, &current_sockets);
                 }
             }
