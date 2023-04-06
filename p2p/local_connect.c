@@ -81,7 +81,7 @@ int sending()
 {
 
     // Fetching port number
-    int PORT_server = 1235;
+    int PORT_server = 1236;
 
     int sock = 0;
     struct sockaddr_in serv_addr;
