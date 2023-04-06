@@ -10,11 +10,8 @@ from Class.Panel import Panel
 import time
 from datetime import datetime
 
-# define variable player1 to a username
 
 # draw a rectangle with an opacity option
-
-
 def draw_rect_alpha(surface, color, rect):
     shape_surf = pygame.Surface(pygame.Rect(rect).size, pygame.SRCALPHA)
     pygame.draw.rect(shape_surf, color, shape_surf.get_rect())
@@ -415,7 +412,8 @@ def game_screen():
             map.update_farm()
             farm_update_count = 0
 
-        map.governor.display()
+        if not isinstance(map.governor.currentCell, Building):
+            map.governor.display()
         map.display_walkers()
         panel.display()
 
