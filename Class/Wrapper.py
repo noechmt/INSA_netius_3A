@@ -15,7 +15,8 @@ class Wrapper:
 
    def wrap(self, data_json):
       print(data_json)
-      data = json.loads(data_json)
+      try : data = json.loads(data_json)
+      except: return
       match data["header"]:
          case 'join':
             #Add here spawnpoints checker
