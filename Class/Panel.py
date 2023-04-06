@@ -77,6 +77,8 @@ class Panel():
             "game_screen/game_screen_sprites/farm_paneling.png").convert_alpha()
         self.granary_button_sprite = pygame.image.load(
             "game_screen/game_screen_sprites/granary_paneling.png").convert_alpha()
+        self.ownership_button_sprite = pygame.image.load(
+            "game_screen/game_screen_sprites/paneling_ownership.png").convert_alpha()
 
     def init_buttons(self):
         self.grid_button = Button(177*self.width_screen/192, 0.320*self.height_screen,
@@ -101,6 +103,8 @@ class Panel():
                                   self.width_screen/48, self.height_screen/40, self.farm_button_sprite)
         self.granary_button = Button(182*self.width_screen/192, 0.350*self.height_screen,
                                   self.width_screen/48, self.height_screen/40, self.granary_button_sprite)
+        self.ownership_button = Button(187*self.width_screen/192, 0.350*self.height_screen, self.width_screen/48, self.height_screen/40, self.ownership_button_sprite)
+
         self.up_button = Button(
             177*self.width_screen/192, 0.25*self.height_screen+12*self.height_screen/80, self.width_screen/48, self.height_screen/40, self.button_up_sprite)
         self.down_button = Button(
@@ -180,6 +184,8 @@ class Panel():
         self.farm_button.draw(self.screen)
 
         self.granary_button.draw(self.screen)
+
+        self.ownership_button.draw(self.screen)
 
         draw_rect_alpha(self.screen, (25, 25, 25, 127), (self.width_screen*(11/12)+2,
                         self.height_screen*(8/17), self.width_screen/12-4, 3*self.height_screen/7-2))
@@ -273,3 +279,6 @@ class Panel():
             self.governor_button.change_image(self.governor_on)
         else:
             self.governor_button.change_image(self.governor_off)
+    
+    def get_ownership_button(self):
+        return self.ownership_button

@@ -31,15 +31,18 @@ class Map:  # Un ensemble de cellule
         self.size = size  # La taille de la map est size*size : int
         self.height_land = height
         self.width_land = width
-        self.players = ["", "", "", ""]
+        self.button_activated = {"house": False, "shovel": False, "road": False,
+                                 "prefecture": False, "engineerpost": False, "well": False, "farm": False, "granary": False, "ownership" : False}
+        self.players = ["Player1", "Player2", "Player3", "Player4"]
         # TO-DO request the num player
-        self.num_player = 1
+        self.num_player = 4
         # TO-DO put names in array and do function to fill it after init
         self.name_user = username
+        self.players[self.num_player - 1] = username
         self.offset_top = 0
         self.offset_left = 0
         self.overlay = ""
-        self.array = [[Empty(j, i, self.height_land, self.width_land, self, username) for i in range(
+        self.array = [[Empty(j, i, self.height_land, self.width_land, self, None) for i in range(
             size)] for j in range(size)]  # tableau de cellule (voir classe cellule) : list
         self.walkers = []
         self.migrantQueue = []
@@ -47,6 +50,7 @@ class Map:  # Un ensemble de cellule
         self.buildings = []
         self.path_graph = nx.DiGraph()
         self.init_paths()
+        self.init_ownership()
         self.spawn_cells = [self.array[0][self.size//10],
                             self.array[0][self.size - self.size//10],
                             self.array[self.size -
@@ -60,8 +64,6 @@ class Map:  # Un ensemble de cellule
         self.governor = Governor(self.spawn_cell, username)
         self.wallet = 5000
         self.update_hover = 0
-        self.button_activated = {"house": False, "shovel": False, "road": False,
-                                 "prefecture": False, "engineerpost": False, "well": False, "farm": False, "granary": False}
         self.zoom = 1
         self.zoom_coef = 1
         self.population = 0
@@ -73,11 +75,11 @@ class Map:  # Un ensemble de cellule
         # Generate the init path of player 1 (top of the map)
         for x in range(self.size // 10):
             self.array[x][self.size // 10] = Path(
-                x, self.size // 10, self.height_land, self.width_land, self, self.name_user)
+                x, self.size // 10, self.height_land, self.width_land, self, None)
             self.array[x][self.size // 10].handle_sprites()
         for y in range((self.size // 10) + 1):
             self.array[self.size // 10][y] = Path(
-                self.size // 10, y, self.height_land, self.width_land, self, self.name_user)
+                self.size // 10, y, self.height_land, self.width_land, self, None)
             self.array[self.size // 10][y].handle_sprites()
 
         # Generate the init path of player 2 (left of the map)
@@ -112,6 +114,24 @@ class Map:  # Un ensemble de cellule
             self.array[self.size - (self.size // 10)][y].handle_sprites()
 
         self.display_map()
+    
+    def init_ownership(self):
+        if self.num_player == 1:
+            for x in range(self.size // 10 + 1):
+                for y in range(self.size // 10 + 1):
+                    self.array[x][y].owner = self.name_user
+        elif self.num_player == 2:
+            for x in range(self.size // 10 + 1):
+                for y in range(self.size - (self.size // 10), self.size):
+                    self.array[x][y].owner = self.name_user
+        elif self.num_player == 3:
+            for x in range(self.size - (self.size // 10), self.size):
+                for y in range(self.size - (self.size // 10), self.size):
+                    self.array[x][y].owner = self.name_user
+        elif self.num_player == 4:
+            for x in range(self.size - (self.size // 10), self.size):
+                for y in range(self.size // 10 + 1):
+                    self.array[x][y].owner = self.name_user
 
     def init_city_halls(self):
         self.array[self.size//10 - 1][self.size//10 - 1] = CityHall(
@@ -323,6 +343,9 @@ class Map:  # Un ensemble de cellule
 
     def get_granaried(self):
         return self.button_activated["granary"]
+    
+    def get_ownershiped(self):
+        return self.button_activated["ownership"]
 
     def get_height_land(self):
         return self.height_land

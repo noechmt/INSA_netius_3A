@@ -56,9 +56,9 @@ def game_screen():
         # print(map.array[34][34])
 
     panel = Panel(SCREEN)
-    wrapper = Wrapper(map)
-    wrapper.wrap('{"header": "build", "username": "Governor", "x": 5, "y": 5, "type": "house"}')
-    wrapper.wrap('{"header": "walker", "username": "Governor", "array": [{"action": "move", "currentCell": [7, 5], "previousCell": [7, 4], "type": "Migrant"}]}')
+    # wrapper = Wrapper(map)
+    # wrapper.wrap('{"header": "build", "username": "Governor", "x": 5, "y": 5, "type": "house"}')
+    # wrapper.wrap('{"header": "walker", "username": "Governor", "array": [{"action": "move", "currentCell": [7, 5], "previousCell": [7, 4], "type": "Migrant"}]}')
 
 
     # Dims without left panel
@@ -148,7 +148,7 @@ def game_screen():
             if pos[0] >= WIDTH_SCREEN - 60 and map.offset_left <= (map.get_cell(0, 0).width * SIZE / 2) - (WIDTH_SCREEN / 2) / 1.25:
                 if not panel.get_road_button().is_hovered(pos) and not panel.get_well_button().is_hovered(pos):
                     if not panel.get_collapse_button().is_hovered(pos) and not panel.get_exit_button().is_hovered(pos):
-                        if not panel.get_governor_button().is_hovered(pos):
+                        if not panel.get_governor_button().is_hovered(pos) and not panel.get_ownership_button:
                             map.offset_left += 5 * \
                                 (3 - (WIDTH_SCREEN - pos[0]
                                       ) / 20)/(zoom/move_coeff)
@@ -217,6 +217,8 @@ def game_screen():
                             panel.set_window("well")
                             map.handle_button("well")
                             map.set_overlay("water")
+                        if (panel.get_ownership_button().is_hovered(pos)):
+                            map.handle_button("ownership")
 
                     if (panel.farm_button.is_hovered(pos)):
                         panel.set_window("farm")
@@ -352,6 +354,7 @@ def game_screen():
                 panel.get_collapse_button().handle_hover_button(pos, SCREEN)
                 panel.get_exit_button().handle_hover_button(pos, SCREEN)
                 panel.get_governor_button().handle_hover_button(pos, SCREEN)
+                panel.get_ownership_button().handle_hover_button(pos, SCREEN)
 
             if event.type == pygame.KEYDOWN:
                 if pygame.key.get_pressed()[pygame.K_ESCAPE]:
