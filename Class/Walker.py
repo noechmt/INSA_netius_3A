@@ -29,17 +29,17 @@ def set_SCREEN_walker(screen):
 
 class Walker():
 
-    def __init__(self, job, building, state):
+    def __init__(self, job, building, state, owner):
         self.job = job  # le métier (migrant, worker, etc) : string
         self.building = building  # string (prefecture, engineer post, house)
         self.currentCell = building  # La cellule de départ de l'entity : Cell
         self.previousCell = None
         self.inBuilding = state
+        self.owner = owner
         self.path = []
         self.ttl = 50
         self.wait = 0
         print("Walker spawn")
-
         self.walker_sprites = {}
         self.alive = False
         self.isWandering = False
@@ -173,10 +173,13 @@ class Walker():
 
 
 class Migrant(Walker):
-    def __init__(self, building):
-        super().__init__("migrant", building, False)
-        self.cell_assignement(self.currentCell.map.array[27][39])
-        self.currentCell.map.migrantQueue.append(self)
+    def __init__(self, building, owner):
+        super().__init__("migrant", building, False, owner)
+        if self.building != None and self.building.map.name_user == owner:
+            self.cell_assignement(self.currentCell.map.array[27][39])
+            self.currentCell.map.migrantQueue.append(self)
+            self.spawnCount = 0
+            self.previousCell = None
         # building.map.walkers.append(self)
         self.walker_sprites = dict((k, pygame.image.load(
             "walker_sprites/migrant_sprites/mg_" + k + ".png").convert_alpha()) for k in ["top", "bot", "left", "right"])
@@ -184,8 +187,6 @@ class Migrant(Walker):
                                  k + ".png").convert_alpha()) for k in ["top", "bot", "left", "right"])
         # SCREEN.blit(pygame.transform.scale(self.walker_sprites["top"],
         # (self.currentCell.width, self.currentCell.height)), (self.currentCell.left, self.currentCell.top))
-        self.spawnCount = 0
-        self.previousCell = None
 
     def display(self):
         if self.previousCell != None:
@@ -224,7 +225,8 @@ class Migrant(Walker):
                 if 0 < self.previousCell.y < 39:
                     self.currentCell.map.array[self.currentCell.x][self.previousCell.y + 1].display()
 
-            if (len(self.currentCell.check_cell_around(Cell.Path)) >= 2 and not (self.previousCell.x == self.path[0].x or self.previousCell.y == self.path[0].y)) or self.building in self.currentCell.check_cell_around(Cell.House):
+            # if (len(self.currentCell.check_cell_around(Cell.Path)) >= 2 
+            #     and not (self.previousCell.x == self.path[0].x or self.previousCell.y == self.path[0].y)) or (self.building != None and self.building in self.currentCell.check_cell_around(Cell.House)):
                 for i in self.currentCell.check_cell_around(Cell.Path):
                     i.display()
 
@@ -261,8 +263,8 @@ class Migrant(Walker):
 
 
 class LaborAdvisor(Walker):
-    def __init__(self, building):
-        super().__init__("labor advisor", building, True)
+    def __init__(self, building, owner):
+        super().__init__("labor advisor", building, True, owner)
         # self.leave_building()
         self.building.map.laborAdvisorQueue.append(self)
         self.walker_sprites = dict((k, [0, 0])
@@ -316,8 +318,8 @@ class LaborAdvisor(Walker):
 
 class Prefect(Walker):
     risk_reset = True
-    def __init__(self, current_prefecture):
-        super().__init__("prefect", current_prefecture, True)
+    def __init__(self, current_prefecture, owner):
+        super().__init__("prefect", current_prefecture, True, owner)
         self.current_building = current_prefecture
         self.extinguishCounter = 0
         self.waterCounter = 0
@@ -447,8 +449,8 @@ class Prefect(Walker):
 
 
 class Engineer(Walker):
-    def __init__(self, engineerPost):
-        super().__init__("engineer", engineerPost, False)
+    def __init__(self, engineerPost, owner):
+        super().__init__("engineer", engineerPost, False, owner)
         self.current_building = engineerPost
         # self.walker_sprites = dict((k,pygame.image.load("walker_sprites/engineer_sprites/engineer_" + k + ".png")) for k in ["top","bot","left","right"])
         self.walker_sprites = dict((k, [0, 0])
@@ -497,8 +499,8 @@ class Engineer(Walker):
 
 class Governor(Walker):
 
-    def __init__(self, current_city_hall):
-        super().__init__("Governor", current_city_hall, False)
+    def __init__(self, current_city_hall, owner):
+        super().__init__("Governor", current_city_hall, False, owner)
         self.current_building = current_city_hall
         self.orientation = None
         self.walker_sprites = dict((k, [0, 0])
@@ -538,8 +540,8 @@ class Governor(Walker):
 
 
 class Farmer(Walker) :
-    def __init__(self, farm):
-        super().__init__("farmer",farm, True)
+    def __init__(self, farm, owner):
+        super().__init__("farmer",farm, True, owner)
         self.building = farm
         self.walker_sprites = dict((k, [0, 0])
                                    for k in ["top", "bot", "left", "right"])

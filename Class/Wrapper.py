@@ -42,4 +42,4 @@ class Wrapper:
                   
                   walker_ghost.currentCell = self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1])
                   walker_ghost.previousCell = self.map.get_cell(walker["previousCell"][0], walker["previousCell"][1])
-                  walker_ghost.map.walkers.append(walker_ghost)
+                  self.map.walkers.append(walker_ghost)

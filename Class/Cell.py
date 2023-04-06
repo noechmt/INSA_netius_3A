@@ -221,40 +221,41 @@ class Cell:  # Une case de la map
         
         return path
 
-    def build(self, type):
+    def build(self, type, owner=""):
+        if owner=="": owner=self.owner
         if isinstance(self, Empty) and self.type_empty != "dirt":
             print("This cell is already taken")
         else:
             match type:
                 case "path":
                     self.map.set_cell_array(self.x, self.y, Path(
-                        self.x, self.y, self.height, self.width, self.map, self.owner))
+                        self.x, self.y, self.height, self.width, self.map, owner))
                     self.map.get_cell(self.x, self.y).handle_sprites()
                     self.map.get_cell(self.x, self.y).display()
                     self.map.wallet -= 4
                 case "house":
                     self.map.set_cell_array(self.x, self.y, House(
-                        self.x, self.y, self.height, self.width, self.map, self.owner))
+                        self.x, self.y, self.height, self.width, self.map, owner))
                     self.map.wallet -= 10
                 case "well":
                     self.map.set_cell_array(self.x, self.y, Well(
-                        self.x, self.y, self.height, self.width, self.map, self.owner))
+                        self.x, self.y, self.height, self.width, self.map, owner))
                     self.map.wallet -= 5
                 case "prefecture":
                     self.map.set_cell_array(self.x, self.y, Prefecture(
-                        self.x, self.y, self.height, self.width, self.map, self.owner))
+                        self.x, self.y, self.height, self.width, self.map, owner))
                     self.map.wallet -= 30
                 case "engineer post":
                     self.map.set_cell_array(self.x, self.y, EngineerPost(
-                        self.x, self.y, self.height, self.width, self.map, self.owner))
+                        self.x, self.y, self.height, self.width, self.map, owner))
                     self.map.wallet -= 30
                 case "farm":
                     self.map.set_cell_array(self.x, self.y, Farm(
-                        self.x, self.y, self.height, self.width, self.map, self.owner))
+                        self.x, self.y, self.height, self.width, self.map, owner))
                     self.map.wallet -= 100
                 case "granary":
                     self.map.set_cell_array(self.x, self.y, Granary(
-                        self.x, self.y, self.height, self.width, self.map, self.owner))
+                        self.x, self.y, self.height, self.width, self.map, owner))
                     self.map.wallet -= 100
             for i in range(-2, 3):
                 for j in range(-2, 3):
@@ -710,18 +711,21 @@ class Empty(Cell):
 class Building(Cell):  # un fils de cellule (pas encore sûr de l'utilité)
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width,  map, owner)
-        self.map.buildings.append(self)
+        
         self.destroyed = False
         path_around = self.check_cell_around(Path)
         house_around = self.check_cell_around(House)
         self.path_sprite = ""
-        for j in path_around:
-            # if isinstance
-            self.map.path_graph.add_edge(j, self)
-            self.map.path_graph.add_edge(self, j, weight=2000)
-            if isinstance(self, House) and len(house_around) != 0:
-                for k in house_around:
-                    self.map.path_graph.add_edge(j, k, weight=2000)
+
+        if self.owner == self.map.name_user:
+            self.map.buildings.append(self)
+            for j in path_around:
+                # if isinstance
+                self.map.path_graph.add_edge(j, self)
+                self.map.path_graph.add_edge(self, j, weight=2000)
+                if isinstance(self, House) and len(house_around) != 0:
+                    for k in house_around:
+                        self.map.path_graph.add_edge(j, k, weight=2000)
 
     def destroy(self):
         self.destroyed = 1
@@ -736,7 +740,7 @@ class House(Building):  # la maison fils de building (?)
         self.max_occupants = 5
         self.unemployedCount = 0
         if owner == map.name_user:
-            self.migrant = Migrant(self)
+            self.migrant = Migrant(self, owner)
             self.risk = RiskEvent("fire", self)
         # Temporary
         self.path_sprite = "game_screen/game_screen_sprites/house_" + \
@@ -850,11 +854,11 @@ class Well(Building):
 class Prefecture(Building):
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width, map, owner)
-        self.labor_advisor = LaborAdvisor(self)
+        self.labor_advisor = LaborAdvisor(self, self.owner)
         self.employees = 0
         self.requiredEmployees = 5
         if self.owner == self.map.name_user:
-            self.prefect = Prefect(self)
+            self.prefect = Prefect(self, owner)
             self.risk = RiskEvent("collapse", self)
         self.path_sprite = "game_screen/game_screen_sprites/prefecture.png"
         self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
@@ -904,11 +908,11 @@ class Prefecture(Building):
 class EngineerPost(Building):
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width, map, owner)
-        self.labor_advisor = LaborAdvisor(self)
+        self.labor_advisor = LaborAdvisor(self, self.owner)
         self.employees = 0
         self.requiredEmployees = 5
         if self.owner == self.map.name_user:
-            self.engineer = Engineer(self)
+            self.engineer = Engineer(self, owner)
             self.risk = RiskEvent("fire", self)
         self.path_sprite = "game_screen/game_screen_sprites/engineerpost.png"
         self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
@@ -1033,7 +1037,7 @@ class Farm(Building) :
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width, map, owner)
         if self.owner == self.map.name_user:
-            self.farmer = Farmer(self)
+            self.farmer = Farmer(self, owner)
         self.risk = None
         self.path_sprite = "game_screen/game_screen_sprites/farm.png"
         self.sprite = pygame.image.load(self.path_sprite).convert_alpha()

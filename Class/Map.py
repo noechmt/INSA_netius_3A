@@ -52,7 +52,7 @@ class Map:  # Un ensemble de cellule
         self.spawn_cell = self.spawn_cells[0]
         # Init a governor at spawn_cell
         # To-do spawn at the city-hall
-        self.governor = Governor(self.spawn_cell)
+        self.governor = Governor(self.spawn_cell, username)
         self.wallet = 5000
         self.update_hover = 0
         self.button_activated = {"house": False, "shovel": False, "road": False,
