@@ -8,6 +8,7 @@ from Class.Button import Button
 from Class.Map import *
 from Class.Panel import Panel
 from Class.Wrapper import Wrapper
+import p2p.socket_python as p2p
 import time
 from datetime import datetime
 
@@ -57,8 +58,8 @@ def game_screen():
 
     panel = Panel(SCREEN)
     wrapper = Wrapper(map)
-    wrapper.wrap('{"header": "build", "username": "Governor", "x": 5, "y": 5, "type": "house"}')
-    wrapper.wrap('{"header": "walker", "username": "Governor", "array": [{"action": "move", "currentCell": [7, 5], "previousCell": [7, 4], "type": "Migrant"}]}')
+    #wrapper.wrap('{"header": "build", "username": "Governor", "x": 5, "y": 5, "type": "house"}')
+    #wrapper.wrap('{"header": "walker", "username": "Governor", "array": [{"action": "move", "currentCell": [7, 5], "previousCell": [7, 4], "type": "Migrant"}]}')
 
 
     # Dims without left panel
@@ -114,6 +115,8 @@ def game_screen():
         pos = pygame.mouse.get_pos()
 
         update_speed = 10 / (speed)
+
+        wrapper.wrap(p2p.get_data())
 
         fire_update_count += 1
         if fire_update_count >= update_speed:
