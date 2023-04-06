@@ -13,7 +13,7 @@
 
 // INADDR_ANY
 char name[20];
-int PORT = 1235;
+int PORT = 1236;
 
 int sending();
 void receiving(int server_fd);
@@ -81,7 +81,7 @@ int sending()
 {
 
     // Fetching port number
-    int PORT_server = 1236;
+    int PORT_server = 1235;
 
     int sock = 0;
     struct sockaddr_in serv_addr;
@@ -108,12 +108,15 @@ int sending()
     {
         if (strncmp(buffer_send, "/quit", strlen("/quit")) == 0)
         {
+            close(sock);
             return -1;
         }
         send(sock, buffer_send, sizeof(buffer_send), 0);
         printf("Message sent\n");
         bzero(buffer_send, 1024);
     }
+    sleep(2);
+    printf("Je meur\n");
     close(sock);
     return 1;
 }

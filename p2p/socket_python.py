@@ -56,7 +56,8 @@ def set_client(port):
     return client
     
 
-def send_data(data,addr="127.0.0.1",port=1234):
+def send_data(data,addr="127.0.0.1",port=1236):
+    
     Socket = MySocket()
     Socket.connect(addr,port)
     print("Connected")
@@ -75,18 +76,19 @@ def recv_data(server_socket,freq=1):
         readable, writable, exceptional = select.select(inputs, [], [])
         
         # Traiter les connexions prêtes à être lues
-        print(inputs)
+        
         for s in readable:
             print("Je suis dans redable")
             if s is server_socket.getSock():
                 print("If")
                 # Nouvelle connexion entrante
                 client_socket = server_socket.accept()
-                data = s.recv(1024)
+                data = client_socket.recv(10)
                 print(f"Data received: {data}")
+                
                 # Ajouter la connexion cliente à la liste de surveillance
                 inputs.append(client_socket)
-                print(inputs)
+
             else:
                 print("Else")
                 # Données prêtes à être lues
@@ -109,7 +111,4 @@ def close_socket(socket):
     socket.close()
 
 
-def th_recv(server,freq=2) :
-
-        recv_data(server)
         
