@@ -142,6 +142,7 @@ class Map:  # Un ensemble de cellule
 
     def handle_esc(self):
         self.button_activated = dict.fromkeys(self.button_activated, False)
+        
 
     def handle_zoom(self, zoom_in):
         if zoom_in:

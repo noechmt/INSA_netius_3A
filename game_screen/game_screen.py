@@ -9,6 +9,7 @@ from Class.Map import *
 from Class.Panel import Panel
 import time
 from datetime import datetime
+from  Class.chat import chat
 
 # draw a rectangle with an opacity option
 
@@ -56,6 +57,9 @@ def game_screen():
         # print(map.array[34][34])
 
     panel = Panel(SCREEN)
+
+    # game_chat = chat(SCREEN)
+
 
     # Dims without left panel
     height_wo_panel = HEIGH_SCREEN
@@ -182,7 +186,7 @@ def game_screen():
                         map.handle_esc()
                         governor_movements = not governor_movements
                         panel.set_governor_sprite(governor_movements)
-                    if not governor_movements:
+                    if not governor_movements and not panel.chatON:
                         if (panel.get_grid_button().is_hovered(pos)):
                             map.set_overlay("grid")
                         if panel.get_fire_button().is_hovered(pos):
@@ -354,28 +358,34 @@ def game_screen():
                     panel.set_window("none")
                     map.handle_esc()
                     governor_movements = False
+                    panel.chatON = False
                     panel.set_governor_sprite(governor_movements)
 
                 if pygame.key.get_pressed()[pygame.K_r]:
                     Prefect.risk_reset = not Prefect.risk_reset
 
-                if pygame.key.get_pressed()[pygame.K_p]:
-                    volume = pygame.mixer.music.get_volume()
-                    pygame.mixer.music.set_volume(volume + 0.05)
-                    print("tunic", pygame.mixer.music.get_volume())
-                    for i in map.sound_effect:
-                        volume = map.sound_effect[i].get_volume()
-                        map.sound_effect[i].set_volume(volume + 0.05)
-                        print(map.sound_effect[i].get_volume(), i, "+")
+                # if pygame.key.get_pressed()[pygame.K_p]:
+                #     volume = pygame.mixer.music.get_volume()
+                #     pygame.mixer.music.set_volume(volume + 0.05)
+                #     print("tunic", pygame.mixer.music.get_volume())
+                #     for i in map.sound_effect:
+                #         volume = map.sound_effect[i].get_volume()
+                #         map.sound_effect[i].set_volume(volume + 0.05)
+                #         print(map.sound_effect[i].get_volume(), i, "+")
 
-                if pygame.key.get_pressed()[pygame.K_m]:
-                    volume = pygame.mixer.music.get_volume()
-                    pygame.mixer.music.set_volume(volume - 0.05)
-                    print("tunic", pygame.mixer.music.get_volume())
-                    for i in map.sound_effect:
-                        volume = map.sound_effect[i].get_volume()
-                        map.sound_effect[i].set_volume(volume - 0.05)
-                        print(map.sound_effect[i].get_volume(), i, "-")
+                # if pygame.key.get_pressed()[pygame.K_m]:
+                #     volume = pygame.mixer.music.get_volume()
+                #     pygame.mixer.music.set_volume(volume - 0.05)
+                #     print("tunic", pygame.mixer.music.get_volume())
+                #     for i in map.sound_effect:
+                #         volume = map.sound_effect[i].get_volume()
+                #         map.sound_effect[i].set_volume(volume - 0.05)
+                #         print(map.sound_effect[i].get_volume(), i, "-")
+
+                if pygame.key.get_pressed()[pygame.K_t] : 
+                    panel.chatON = True
+                    panel.set_window("chat")
+                    
 
                 # grid_button.handle_hover_button(pos, SCREEN)
                 # home_button.handle_hover_button(pos, SCREEN)
