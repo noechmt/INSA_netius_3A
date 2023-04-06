@@ -18,13 +18,13 @@ int PORT = 1234;
 int LOCAL_PORT = 1236;
 int PORT_PYTHON = 1235;
 int LOCAL_FD;
-char IP[25];
+char IP[4][25];
 
-int sending(char *adress, int port, char* msg);
+int sending(char *adress, int port, char *msg);
 void local_connect(int local_fd);
 void receiving(int fd);
 void *receive_thread(void *fd);
-int sending_local(char* msg);
+int sending_local(char *msg);
 
 void local_connect(int local_fd)
 {
@@ -57,7 +57,8 @@ int main(int argc, char **argv)
     }
     /*printf("Enter your port number:");
     scanf("%d", &PORT);*/
-    strncpy(IP, argv[1], strlen(argv[1]));
+    strncpy(IP[0], argv[1], strlen(argv[1]));
+    strncpy(IP[1], argv[2], strlen(argv[2]));
     int server_fd, local_fd;
     struct sockaddr_in address;
 
@@ -132,7 +133,7 @@ int main(int argc, char **argv)
 }
 
 // Sending messages to port
-int sending(char *ip_adress, int port, char* msg)
+int sending(char *ip_adress, int port, char *msg)
 {
 
     // Fetching port number
@@ -160,7 +161,8 @@ int sending(char *ip_adress, int port, char* msg)
         {
             return -1;
         }
-        if(send(sock, msg, sizeof(msg), 0)<0){
+        if (send(sock, msg, sizeof(msg), 0) < 0)
+        {
             perror("send error ");
         };
     }
@@ -169,7 +171,7 @@ int sending(char *ip_adress, int port, char* msg)
     return 1;
 }
 
-int sending_local(char* msg)
+int sending_local(char *msg)
 {
 
     int sock_local = 0;
@@ -190,7 +192,6 @@ int sending_local(char* msg)
     if (setsockopt(sock_local, SOL_SOCKET, SO_LINGER, &so_linger, sizeof(so_linger)) == -1)
     {
         close(sock_local);
-        
     }
 
     // printf("Waiting for connection\n");
@@ -206,7 +207,8 @@ int sending_local(char* msg)
             close(sock_local);
             return -1;
         }
-        if(send(sock_local, msg, sizeof(msg), 0)<0){
+        if (send(sock_local, msg, sizeof(msg), 0) < 0)
+        {
             perror("send error ");
         }
     }
@@ -268,16 +270,23 @@ void receiving(int fd)
                 else
                 {
                     valread = recv(i, buffer, sizeof(buffer), 0);
-                    if(valread < 0 ){
+                    if (valread < 0)
+                    {
                         perror("erreur de recv");
                     }
                     printf("message recu et transmis : %s\n", buffer);
-                    if(strcmp(inet_ntoa(address.sin_addr), "127.0.0.1") != 0){
+                    if (strcmp(inet_ntoa(address.sin_addr), "127.0.0.1") != 0)
+                    {
                         sending_local(buffer);
                     }
-                    else{
-                        sending(IP, 1234, buffer);
-                    }                   
+                    else
+                    {
+                        for (int i = 0; i < 2; i++)
+                        {
+                            printf("%s\n", IP[i]);
+                            sending(IP[i], 1234, buffer);
+                        }
+                    }
                     FD_CLR(i, &current_sockets);
                 }
             }
