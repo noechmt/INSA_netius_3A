@@ -5,9 +5,6 @@ import pygame
 import networkx as nx
 
 
-
-
-
 def rm_dup_list(x):
     return list(dict.fromkeys(x))
 
@@ -88,7 +85,8 @@ class Walker():
 
     # if (self.building.employees == self.building.required_employees) :
     def leave_building(self):
-        if self.building.type == "ruin" : return
+        if self.building.type == "ruin":
+            return
         self.isWandering = True
         # print(self.isWandering)
         path = self.currentCell.check_cell_around(Cell.Path)
@@ -111,7 +109,6 @@ class Walker():
         self.inBuilding = True
         self.currentCell.display()
         self.previousCell.display()
-        
 
         if not isinstance(self, Prefect) and not isinstance(self, Engineer) and not isinstance(self, Farmer):
             self.building.map.walkers.remove(self)
@@ -197,7 +194,7 @@ class Migrant(Walker):
                         self.currentCell.width, self.currentCell.height)), (self.previousCell.left, self.previousCell.top))
                 if 0 < self.previousCell.x < 39:
                     self.currentCell.map.array[self.previousCell.x -
-                                            1][self.currentCell.y].display()
+                                               1][self.currentCell.y].display()
             elif self.previousCell.x > self.currentCell.x:
                 if not self.inBuilding:
                     SCREEN.blit(pygame.transform.scale(self.walker_sprites["left"], (
@@ -206,7 +203,7 @@ class Migrant(Walker):
                         self.currentCell.width, self.currentCell.height)), (self.previousCell.left, self.previousCell.top))
                 if 0 < self.previousCell.x < 39:
                     self.currentCell.map.array[self.previousCell.x +
-                                            1][self.currentCell.y].display()
+                                               1][self.currentCell.y].display()
             elif self.previousCell.y < self.currentCell.y:
                 if not self.inBuilding:
                     SCREEN.blit(pygame.transform.scale(self.walker_sprites["bot"], (
@@ -316,6 +313,7 @@ class LaborAdvisor(Walker):
 
 class Prefect(Walker):
     risk_reset = True
+
     def __init__(self, current_prefecture):
         super().__init__("prefect", current_prefecture, True)
         self.current_building = current_prefecture
@@ -370,7 +368,6 @@ class Prefect(Walker):
                 elif self.path[0].y < self.currentCell.y:
                     self.orientation = "top"
 
-
         elif len(self.path) == 1 and not self.isWandering:
             self.enter_building()
             self.wait = 0
@@ -380,20 +377,22 @@ class Prefect(Walker):
                 if len(self.path) == 0:
                     self.path_finding(self.currentCell, self.building)
                 self.movePathFinding()
-                if self.risk_reset : self.reset_fire_risk()
+                if self.risk_reset:
+                    self.reset_fire_risk()
                 if self.currentCell == self.current_building:
                     self.ttl = 50
             else:
                 super().move()
                 self.ttl -= 1
-                if self.risk_reset : self.reset_fire_risk()
+                if self.risk_reset:
+                    self.reset_fire_risk()
 
     def reset_fire_risk(self):
         cell = self.currentCell.check_cell_around(Cell.Building)
         for i in cell:
             if not isinstance(i, Cell.Prefecture) and not isinstance(i, Cell.Well) and not i.risk.happened:
                 i.risk.resetEvent()
-            for j in i.check_cell_around(Cell.Building) :
+            for j in i.check_cell_around(Cell.Building):
                 if not isinstance(j, Cell.Prefecture) and not isinstance(j, Cell.Well) and not j.risk.happened:
                     j.risk.resetEvent()
 
@@ -537,9 +536,9 @@ class Governor(Walker):
 # y decrease -> top
 
 
-class Farmer(Walker) :
+class Farmer(Walker):
     def __init__(self, farm):
-        super().__init__("farmer",farm, True)
+        super().__init__("farmer", farm, True)
         self.building = farm
         self.walker_sprites = dict((k, [0, 0])
                                    for k in ["top", "bot", "left", "right"])
@@ -548,41 +547,41 @@ class Farmer(Walker) :
                 self.walker_sprites[i][j] = pygame.image.load(
                     "walker_sprites/farmer_sprites/farmer_" + i + "_" + str(j) + ".png").convert_alpha()
         self.delivering = False
-                
 
     def __str__(self):
         return "Farmer"
-        
-    def move(self) : 
+
+    def move(self):
         print(self.path)
-        if len(self.path) == 0 : 
+        if len(self.path) == 0:
             return
-        if self.delivering : 
+        if self.delivering:
             print("delivering")
             print(self.path)
-            if len(self.path) == 1 : 
+            if len(self.path) == 1:
                 self.path_finding(self.currentCell, self.building)
                 self.delivering = False
                 self.movePathFinding()
-            else :
+            else:
                 self.movePathFinding()
-        
-        else : 
-            if len(self.path) == 1 :
+
+        else:
+            if len(self.path) == 1:
                 self.enter_building()
                 self.path = []
-            else :
+            else:
                 self.movePathFinding()
-        
+
     def leave_building(self):
-        if self.building.type == "ruin" : return
-                # print(self.isWandering)
+        if self.building.type == "ruin":
+            return
+            # print(self.isWandering)
         path = []
-        for i in self.building.farmParts :
+        for i in self.building.farmParts:
             path += i.check_cell_around(Cell.Path)
             print(path)
             print(i.x, i.y)
-        
+
         if len(path) == 0:
             return 0
         self.cell_assignement(random.choice(path))
@@ -594,6 +593,3 @@ class Farmer(Walker) :
 
         print("Walker is leaving the building on the cell " +
               str(self.currentCell.x) + ";" + str(self.currentCell.y))
-        
-    
-

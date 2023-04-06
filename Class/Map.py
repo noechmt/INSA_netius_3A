@@ -31,6 +31,10 @@ class Map:  # Un ensemble de cellule
         self.size = size  # La taille de la map est size*size : int
         self.height_land = height
         self.width_land = width
+        self.players = ["", "", "", ""]
+        # TO-DO request the num player
+        self.num_player = 1
+        # TO-DO put names in array and do function to fill it after init
         self.name_user = username
         self.offset_top = 0
         self.offset_left = 0
@@ -49,7 +53,7 @@ class Map:  # Un ensemble de cellule
                                        1][self.size - self.size//10],
                             self.array[self.size - 1][self.size//10]]
         # Replace 0 with the player number - 1
-        self.spawn_cell = self.spawn_cells[0]
+        self.spawn_cell = self.spawn_cells[self.num_player - 1]
         # Init a governor at spawn_cell
         # To-do spawn at the city-hall
         self.init_city_halls()
@@ -111,7 +115,14 @@ class Map:  # Un ensemble de cellule
 
     def init_city_halls(self):
         self.array[self.size//10 - 1][self.size//10 - 1] = CityHall(
-            self.size//10 - 1, self.size//10 - 1, self.height_land, self.width_land, self, self.name_user)
+            self.size//10 - 1, self.size//10 - 1, self.height_land, self.width_land, self, self.players[1 - 1])
+        self.array[self.size//10 - 1][self.size - (self.size//10 - 1)]
+        self.array[self.size//10 - 1][self.size - (self.size//10 - 2)] = CityHall(
+            self.size//10 - 1, self.size - (self.size//10 - 2), self.height_land, self.width_land, self, self.players[2 - 1])
+        self.array[self.size - (self.size//10 - 2)][self.size - (self.size//10 - 2)] = CityHall(
+            self.size - (self.size//10 - 2), self.size - (self.size//10 - 2), self.height_land, self.width_land, self, self.players[3 - 1])
+        self.array[self.size - (self.size//10 - 2)][self.size//10 - 1] = CityHall(
+            self.size - (self.size//10 - 2), self.size//10 - 1, self.height_land, self.width_land, self, self.players[4 - 1])
 
     def __str__(self):
         s = f"Map {self.size}*{self.size}\n"

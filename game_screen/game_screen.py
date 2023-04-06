@@ -10,6 +10,8 @@ from Class.Panel import Panel
 import time
 from datetime import datetime
 
+# define variable player1 to a username
+
 # draw a rectangle with an opacity option
 
 
@@ -125,7 +127,7 @@ def game_screen():
             WIDTH_SCREEN/2-WIDTH_SCREEN/12-pos[0]-map.offset_left)/map.width_land))-1
         y = round(((WIDTH_SCREEN/2-WIDTH_SCREEN/12-pos[0]-map.offset_left)/map.width_land + (
             pos[1]-map.offset_top-HEIGH_SCREEN/6)/map.height_land))
-        
+
         move_update += 1
         move_coeff = 6
         if move_update % 6 == 0:
@@ -151,7 +153,7 @@ def game_screen():
                             map.handle_move(
                                 "right", (3 - (WIDTH_SCREEN - pos[0]) / 20) / (zoom/move_coeff))
             move_update = 0
-        
+
          # If the mouse is in the map, we display the hovered cell(s)
         if selection["is_active"]:
             for i in selection["cells"]:
@@ -408,9 +410,8 @@ def game_screen():
                 map.center_camera_governor()
             governor_update_count = 0
 
-
-        farm_update_count+=1
-        if farm_update_count >= update_speed * 1.5 : 
+        farm_update_count += 1
+        if farm_update_count >= update_speed * 1.5:
             map.update_farm()
             farm_update_count = 0
 
