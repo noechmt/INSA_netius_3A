@@ -42,19 +42,14 @@ class MySocket:
     def getSock(self) :
         return self.sock
         
+class Server:
 
-def set_server(port,number):
-    server= MySocket()
-    server.bind("127.0.0.1", port)
-    server.listen(number)
-    return server
-    
-    
-def set_client(port):
-    client = MySocket()
-    client.connect("127.0.0.1", port)
-    return client
-    
+    socket=None
+        
+    def __init__(self,port,number):
+        Server.socket= MySocket()
+        Server.socket.bind("127.0.0.1", port)
+        Server.socket.listen(number)
 
 def send_data(data,addr="127.0.0.1",port=1236):
     
@@ -103,7 +98,7 @@ def recv_data(server_socket,freq=1):
                     inputs.remove(s)
     
 def get_data(socket):
-    tmp = socket.data 
+    tmp = "".join(socket.data)
     socket.data = []
     return tmp
 
