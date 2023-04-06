@@ -98,7 +98,7 @@ def choose_name():
                     return False
                 if text_continue.is_hovered(pos):
                     if input_name.get_text() != '':
-                        file = open("Saves/.temp.txt", "w")
+                        file = open("Saves/temp.txt", "w")
                         file.write(input_name.get_text())
                         file.close()
                         return True

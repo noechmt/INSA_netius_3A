@@ -1,0 +1,9 @@
+{
+<<<<<<< HEAD
+=======
+    "files.associations": {
+        "*.embeddedhtml": "html",
+        "in.h": "c"
+    }
+>>>>>>> origin/p2p
+}

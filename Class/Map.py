@@ -27,39 +27,102 @@ sound_effect["extinguish"].set_volume(0.1)
 
 class Map:  # Un ensemble de cellule
 
-    def __init__(self, size, height, width):
+    def __init__(self, size, height, width, username):
         self.size = size  # La taille de la map est size*size : int
         self.height_land = height
         self.width_land = width
+        self.players = ["", "", "", ""]
+        # TO-DO request the num player
+        self.num_player = 1
+        # TO-DO put names in array and do function to fill it after init
+        self.name_user = username
         self.offset_top = 0
         self.offset_left = 0
         self.overlay = ""
-        self.array = [[Empty(j, i, self.height_land, self.width_land, SCREEN, self) for i in range(
+        self.array = [[Empty(j, i, self.height_land, self.width_land, self, username) for i in range(
             size)] for j in range(size)]  # tableau de cellule (voir classe cellule) : list
         self.walkers = []
         self.migrantQueue = []
         self.laborAdvisorQueue = []
         self.buildings = []
         self.path_graph = nx.DiGraph()
-        self.spawn_cell = self.array[39][19]
-        self.init_map()
-        self.wallet = 3000
+        self.init_paths()
+        self.spawn_cells = [self.array[0][self.size//10],
+                            self.array[0][self.size - self.size//10],
+                            self.array[self.size -
+                                       1][self.size - self.size//10],
+                            self.array[self.size - 1][self.size//10]]
+        # Replace 0 with the player number - 1
+        self.spawn_cell = self.spawn_cells[self.num_player - 1]
+        # Init a governor at spawn_cell
+        # To-do spawn at the city-hall
+        self.init_city_halls()
+        self.governor = Governor(self.spawn_cell, username)
+        self.wallet = 5000
         self.update_hover = 0
         self.button_activated = {"house": False, "shovel": False, "road": False,
-                                 "prefecture": False, "engineerpost": False, "well": False}
+                                 "prefecture": False, "engineerpost": False, "well": False, "farm": False, "granary": False}
         self.zoom = 1
         self.zoom_coef = 1
-        self.name_user = ""
         self.population = 0
         self.month_index = 0
         self.year = 150
 
-    def init_map(self):  # Permet d'initialiser le chemin de terre sur la map.
-        for i in range(self.size):
-            # Initialisation du chemin
-            self.array[self.size-m.floor(self.size/3)][i] = Path(self.size-m.floor(
-                self.size/3), i, self.height_land, self.width_land, SCREEN, self)
+    # Permet d'initialiser le chemin de terre sur la map.
+    def init_paths(self):
+        # Generate the init path of player 1 (top of the map)
+        for x in range(self.size // 10):
+            self.array[x][self.size // 10] = Path(
+                x, self.size // 10, self.height_land, self.width_land, self, self.name_user)
+            self.array[x][self.size // 10].handle_sprites()
+        for y in range((self.size // 10) + 1):
+            self.array[self.size // 10][y] = Path(
+                self.size // 10, y, self.height_land, self.width_land, self, self.name_user)
+            self.array[self.size // 10][y].handle_sprites()
+
+        # Generate the init path of player 2 (left of the map)
+        for x in range(self.size // 10):
+            self.array[x][self.size - (self.size // 10)] = Path(
+                x, self.size - (self.size // 10), self.height_land, self.width_land, self, None)
+            self.array[x][self.size - (self.size // 10)].handle_sprites()
+        for y in range((self.size // 10)):
+            self.array[self.size // 10][(self.size - 1) - y] = Path(
+                self.size // 10, (self.size - 1) - y, self.height_land, self.width_land, self, None)
+            self.array[self.size // 10][(self.size - 1) - y].handle_sprites()
+
+        # Generate the init path of player 3 (bottom of the map)
+        for x in range(self.size - (self.size // 10), self.size):
+            self.array[x][self.size - (self.size // 10)] = Path(
+                x, self.size - (self.size // 10), self.height_land, self.width_land, self, None)
+            self.array[x][self.size - (self.size // 10)].handle_sprites()
+        for y in range((self.size // 10)):
+            self.array[self.size - (self.size // 10)][(self.size - 1) - y] = Path(
+                self.size - (self.size // 10), (self.size - 1) - y, self.height_land, self.width_land, self, None)
+            self.array[self.size - (self.size // 10)
+                       ][(self.size - 1) - y].handle_sprites()
+
+        # Generate the init path of player 4 (right of the map)
+        for x in range(self.size - (self.size // 10), self.size):
+            self.array[x][self.size // 10] = Path(
+                x, self.size // 10, self.height_land, self.width_land, self, None)
+            self.array[x][self.size // 10].handle_sprites()
+        for y in range((self.size // 10) + 1):
+            self.array[self.size - (self.size // 10)][y] = Path(
+                self.size - (self.size // 10), y, self.height_land, self.width_land, self, None)
+            self.array[self.size - (self.size // 10)][y].handle_sprites()
+
         self.display_map()
+
+    def init_city_halls(self):
+        self.array[self.size//10 - 1][self.size//10 - 1] = CityHall(
+            self.size//10 - 1, self.size//10 - 1, self.height_land, self.width_land, self, self.players[1 - 1])
+        self.array[self.size//10 - 1][self.size - (self.size//10 - 1)]
+        self.array[self.size//10 - 1][self.size - (self.size//10 - 2)] = CityHall(
+            self.size//10 - 1, self.size - (self.size//10 - 2), self.height_land, self.width_land, self, self.players[2 - 1])
+        self.array[self.size - (self.size//10 - 2)][self.size - (self.size//10 - 2)] = CityHall(
+            self.size - (self.size//10 - 2), self.size - (self.size//10 - 2), self.height_land, self.width_land, self, self.players[3 - 1])
+        self.array[self.size - (self.size//10 - 2)][self.size//10 - 1] = CityHall(
+            self.size - (self.size//10 - 2), self.size//10 - 1, self.height_land, self.width_land, self, self.players[4 - 1])
 
     def __str__(self):
         s = f"Map {self.size}*{self.size}\n"
@@ -75,6 +138,15 @@ class Map:  # Un ensemble de cellule
             s += "\n"
         return s
 
+    def center_camera_governor(self):
+        # Center the scene into the cell where the governor is, it is a 2.5D game
+        self.offset_left = (SCREEN.get_width()/2 - SCREEN.get_width()/12) + self.width_land*self.governor.currentCell.x/2 \
+            - self.width_land*self.governor.currentCell.y/2 - SCREEN.get_width() / \
+            2.25  # 2.25 because the panel take 1/4 of the screen so it needs to be centered
+        self.offset_top = SCREEN.get_height()/2 - SCREEN.get_height()/6 - self.governor.currentCell.x*self.height_land/2 \
+            - self.governor.currentCell.y*self.height_land/2
+        self.init_screen_coordinates()
+
     def count_population(self):
         self.population = 0
         for b in self.buildings:
@@ -89,8 +161,6 @@ class Map:  # Un ensemble de cellule
         self.button_activated = dict.fromkeys(self.button_activated, False)
 
     def handle_zoom(self, zoom_in):
-        SCREEN.fill((0, 0, 0))
-        #self.offset_left, self.offset_top = (0, 0)
         if zoom_in:
             self.zoom_coef *= 1.05
             self.height_land *= 1.05
@@ -99,27 +169,20 @@ class Map:  # Un ensemble de cellule
             self.zoom_coef /= 1.05
             self.height_land /= 1.05
             self.width_land /= 1.05
-        for x in range(40):
-            for y in range(40):
+        for x in range(self.size):
+            for y in range(self.size):
                 self.get_cell(x, y).handle_zoom(zoom_in)
+        self.center_camera_governor()
+
+    def init_screen_coordinates(self):
+        for x in range(self.size):
+            for y in range(self.size):
+                self.get_cell(x, y).init_screen_coordonates()
 
     def handle_move(self, move, m):
-        SCREEN.fill((0, 0, 0))
-        for x in range(40):
-            for y in range(40):
+        for x in range(self.size):
+            for y in range(self.size):
                 self.get_cell(x, y).handle_move(move, m)
-                # Around the world : verti and hori
-                if self.get_cell(0, 20).left >= 1.25*SCREEN.get_size()[0]:
-                    self.get_cell(x, y).left = -SCREEN.get_size()[0]
-                if self.get_cell(20, 20).left <= -1.25*SCREEN.get_size()[0]:
-                    self.get_cell(x, y).left = SCREEN.get_size()[0]
-                if self.get_cell(0, 0).top >= 1.25*SCREEN.get_size()[1]:
-                    self.get_cell(x, y).top = -SCREEN.get_size()[1]
-                if self.get_cell(39, 39).top <= -1.25*SCREEN.get_size()[1]:
-                    self.get_cell(x, y).top = SCREEN.get_size()[1]
-
-                self.get_cell(x, y).display()
-    # Check if these coordinates are in the map
 
     def inMap(self, x, y):
         return (0 <= x and x <= self.size-1 and 0 <= y and y <= self.size-1)
@@ -155,23 +218,32 @@ class Map:  # Un ensemble de cellule
             i.move()
             if self.get_overlay() not in ("fire", "collapse") and not isinstance(i, Prefect) or (isinstance(i, Prefect) and not i.isWorking):
                 i.display()
-            i.currentCell.display_around()
-            if not isinstance(i, Migrant):
-                i.previousCell.display()
-                i.previousCell.display_around()
+            """if not isinstance(i, Migrant):
+                if i.previousCell is not None:
+                    i.previousCell.display()"""
 
         for i in self.buildings:
-            if not i.risk.happened:
+            if i.risk and not i.risk.happened:
                 i.risk.riskIncrease()
+
+    def display_walkers(self):
+        for i in self.walkers:
+            if self.get_overlay() not in ("fire", "collapse") and not isinstance(i, Prefect) or (isinstance(i, Prefect) and not i.isWorking):
+                i.display()
+            """if not isinstance(i, Migrant):
+                if i.previousCell is not None:
+                    i.previousCell.display()"""
+            if isinstance(i, Prefect) and i.isWorking:
+                i.extinguishFire(0)
 
     def update_fire(self):
         for i in self.buildings:
-            if i.risk.happened and i.risk.type == "fire":
+            if i.risk and i.risk.happened and i.risk.type == "fire":
                 i.risk.burn()
 
     def update_collapse(self):
         for i in self.buildings:
-            if i.risk.happened and i.risk.type == "collapse":
+            if i.risk and i.risk.happened and i.risk.type == "collapse":
                 i.risk.collapse()
 
     def set_cell_array(self, x, y, cell):
@@ -179,18 +251,16 @@ class Map:  # Un ensemble de cellule
         self.array[x][y].display()
 
     def get_cell(self, x, y):
-        if (x < 0 or x >= 40) or (y < 0 or y >= 40):
+        if (x < 0 or x >= self.size) or (y < 0 or y >= self.size):
             return None
         return self.array[x][y]
 
     def display(self):
-        """print(np.array([[(self.array[i][j].type_of_cell)
-              for i in range(self.size)] for j in range(self.size)]))"""
         pass
 
     def display_map(self):
-        for i in range(40):
-            for j in range(40):
+        for i in range(self.size):
+            for j in range(self.size):
                 self.array[i][j].display()
 
     def get_overlay(self):
@@ -209,8 +279,8 @@ class Map:  # Un ensemble de cellule
     def display_overlay(self, pushed=1):
         match self.overlay:
             case "grid" | "water":
-                for x in range(40):
-                    for y in range(40):
+                for x in range(self.size):
+                    for y in range(self.size):
                         self.array[x][y].display_overlay()
 
             case "fire" | "collapse":
@@ -222,6 +292,13 @@ class Map:  # Un ensemble de cellule
 
             case _:
                 self.display_map()
+
+    def update_farm(self):
+        for i in self.buildings:
+            if isinstance(i, Farm):
+                if i.farmer.isWandering:
+                    return
+                i.crop_grow()
 
     def get_housed(self):
         return self.button_activated["house"]
@@ -241,6 +318,12 @@ class Map:  # Un ensemble de cellule
     def get_welled(self):
         return self.button_activated["well"]
 
+    def get_farmed(self):
+        return self.button_activated["farm"]
+
+    def get_granaried(self):
+        return self.button_activated["granary"]
+
     def get_height_land(self):
         return self.height_land
 
@@ -249,6 +332,3 @@ class Map:  # Un ensemble de cellule
 
     def get_name_user(self):
         return self.name_user
-
-    def set_name_user(self, name_user):
-        self.name_user = name_user

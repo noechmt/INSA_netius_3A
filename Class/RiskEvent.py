@@ -78,8 +78,6 @@ class RiskEvent():
                 self.building.display()
             self.fireCounter = 0
             self.building.destroyed = True
-            # self.building.map.buildings.remove(self.building)
-            self.update_sprites_around()
             sound_effect["cooling"].set_volume(0.2)
             sound_effect["cooling"].play()
 
@@ -95,7 +93,6 @@ class RiskEvent():
                 self.building.map.array[self.building.x][self.building.y + 1].display()
             self.fireCounter += 1
             if self.tmpbool:
-                self.update_sprites_around()
                 self.tmpbool = False
 
         # if self.fireCounter >= 400 :
@@ -114,26 +111,11 @@ class RiskEvent():
         self.building.path_sprite = self.fire_sprites[8]["path"]
         self.building.update_sprite_size()
         self.building.display()
-
-        self.update_sprites_around()
         sound_effect["break"].play()
         # self.building.map.buildings.remove(self.building)
 
     def resetEvent(self):
         self.riskCounter = 0
-
-    def update_sprites_around(self):
-        arr = self.building.check_cell_around(Cell.Cell)
-        for i in arr:
-            if not isinstance(i, Cell.Building):
-                i.display()
-                i.display_around()
-            for j in i.check_cell_around(Cell.Cell):
-                if j.x < self.building.x + 2 and j.y < self.building.y + 2:
-                    # and not (j in [i.map.array[i.x-1][i.y], i.map.array[i.x - 1][i.y - 1]]) and (isinstance(i, Cell.Prefecture) or isinstance(i, Cell.EngineerPost)):
-                    if not isinstance(j, Cell.Building):
-                        j.display()
-                        j.display_around()
 
     def __getstate__(self):
         state = self.__dict__.copy()
