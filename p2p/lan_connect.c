@@ -58,7 +58,6 @@ int main(int argc, char **argv)
     /*printf("Enter your port number:");
     scanf("%d", &PORT);*/
     strncpy(IP, argv[1], strlen(argv[1]));
-    printf("%s\n", IP);
     int server_fd, local_fd;
     struct sockaddr_in address;
 
@@ -165,7 +164,6 @@ int sending(char *ip_adress, int port, char* msg)
             perror("send error ");
         };
     }
-    printf("Message sent\n");
     sleep(2);
     close(sock);
     return 1;
@@ -213,7 +211,6 @@ int sending_local(char* msg)
         }
     }
     sleep(2);
-    printf("Je meurs\n");
     close(sock_local);
     return 1;
 }
@@ -224,7 +221,7 @@ void *receive_thread(void *fd)
     int s_fd = *((int *)fd);
     while (1)
     {
-        sleep(2);
+        sleep(0.5);
         receiving(s_fd);
     }
 }
@@ -271,6 +268,10 @@ void receiving(int fd)
                 else
                 {
                     valread = recv(i, buffer, sizeof(buffer), 0);
+                    if(valread < 0 ){
+                        perror("erreur de recv");
+                    }
+                    printf("message recu et transmis : %s\n", buffer);
                     if(strcmp(inet_ntoa(address.sin_addr), "127.0.0.1") != 0){
                         sending_local(buffer);
                     }
