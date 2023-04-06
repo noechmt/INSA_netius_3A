@@ -42,7 +42,7 @@ class Map:  # Un ensemble de cellule
         self.laborAdvisorQueue = []
         self.buildings = []
         self.path_graph = nx.DiGraph()
-        self.init_map()
+        self.init_paths()
         self.spawn_cells = [self.array[0][self.size//10],
                             self.array[0][self.size - self.size//10],
                             self.array[self.size -
@@ -52,18 +52,20 @@ class Map:  # Un ensemble de cellule
         self.spawn_cell = self.spawn_cells[0]
         # Init a governor at spawn_cell
         # To-do spawn at the city-hall
+        self.init_city_halls()
         self.governor = Governor(self.spawn_cell)
         self.wallet = 5000
         self.update_hover = 0
         self.button_activated = {"house": False, "shovel": False, "road": False,
-                                 "prefecture": False, "engineerpost": False, "well": False, "farm" : False, "granary" : False}
+                                 "prefecture": False, "engineerpost": False, "well": False, "farm": False, "granary": False}
         self.zoom = 1
         self.zoom_coef = 1
         self.population = 0
         self.month_index = 0
         self.year = 150
 
-    def init_map(self):  # Permet d'initialiser le chemin de terre sur la map.
+    # Permet d'initialiser le chemin de terre sur la map.
+    def init_paths(self):
         # Generate the init path of player 1 (top of the map)
         for x in range(self.size // 10):
             self.array[x][self.size // 10] = Path(
@@ -106,6 +108,10 @@ class Map:  # Un ensemble de cellule
             self.array[self.size - (self.size // 10)][y].handle_sprites()
 
         self.display_map()
+
+    def init_city_halls(self):
+        self.array[self.size//10 - 1][self.size//10 - 1] = CityHall(
+            self.size//10 - 1, self.size//10 - 1, self.height_land, self.width_land, self, self.name_user)
 
     def __str__(self):
         s = f"Map {self.size}*{self.size}\n"
@@ -276,14 +282,12 @@ class Map:  # Un ensemble de cellule
             case _:
                 self.display_map()
 
-    def update_farm(self) :
-        for i in self.buildings :
-            if isinstance(i, Farm) : 
-                if i.farmer.isWandering : return
+    def update_farm(self):
+        for i in self.buildings:
+            if isinstance(i, Farm):
+                if i.farmer.isWandering:
+                    return
                 i.crop_grow()
-                
-            
-            
 
     def get_housed(self):
         return self.button_activated["house"]
@@ -302,10 +306,10 @@ class Map:  # Un ensemble de cellule
 
     def get_welled(self):
         return self.button_activated["well"]
-    
+
     def get_farmed(self):
         return self.button_activated["farm"]
-    
+
     def get_granaried(self):
         return self.button_activated["granary"]
 
