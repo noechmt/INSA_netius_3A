@@ -64,6 +64,7 @@ class Cell:  # Une case de la map
         self.WIDTH_SCREEN, self.HEIGHT_SCREEN = SCREEN.get_size()
         self.init_screen_coordonates()
         self.path_sprite = ""
+        self.price = 5
 
     def update_sprite_size(self):
         pass
@@ -239,8 +240,8 @@ class Cell:  # Une case de la map
         return path
 
 
-    def build(self, type, owner=""):
-        if owner=="": owner=self.owner
+    def build(self, type, owner=None):
+        if owner==None: owner=self.owner
         if isinstance(self, Empty) and self.type_empty != "dirt":
             print("This cell is already taken")
         else:

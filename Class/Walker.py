@@ -173,7 +173,7 @@ class Migrant(Walker):
     def __init__(self, building, owner):
         super().__init__("migrant", building, False, owner)
         if self.building != None and self.building.map.name_user == owner:
-            self.cell_assignement(self.currentCell.map.array[27][39])
+            self.cell_assignement(self.currentCell.map.spawn_cells[self.currentCell.map.num_player - 1])
             self.currentCell.map.migrantQueue.append(self)
             self.spawnCount = 0
             self.previousCell = None
