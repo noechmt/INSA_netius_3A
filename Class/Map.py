@@ -70,6 +70,7 @@ class Map:  # Un ensemble de cellule
         self.month_index = 0
         self.year = 150
         self.transaction = {"cells": [], "amount": 0, "Done": False}
+        self.sound_effect = sound_effect
 
     def add_transaction(self, cell):
         if cell.owner == None:
