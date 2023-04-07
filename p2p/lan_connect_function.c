@@ -23,7 +23,7 @@ int sending(char *ip_adress, int port, char *msg)
     // printf("Waiting for connection\n");
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
-        sleep(2);
+        sleep(0.01);
         return 1;
     }
     if (strlen(msg) != 0)
@@ -37,7 +37,6 @@ int sending(char *ip_adress, int port, char *msg)
             perror("send error ");
         };
     }
-    sleep(2);
     close(sock);
     return 1;
 }
@@ -74,7 +73,7 @@ int sending_local(char *msg)
     // printf("Waiting for connection\n");
     if (connect(sock_local, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
-        sleep(2);
+        sleep(0.01);
         return 1;
     }
     if (strlen(msg) != 0)
@@ -89,7 +88,6 @@ int sending_local(char *msg)
             perror("send error ");
         }
     }
-    sleep(2);
     close(sock_local);
     return 1;
 }
@@ -100,7 +98,7 @@ void *receive_thread(void *fd)
     int s_fd = *((int *)fd);
     while (1)
     {
-        sleep(0.5);
+        sleep(0.001);
         receiving(s_fd);
     }
 }
