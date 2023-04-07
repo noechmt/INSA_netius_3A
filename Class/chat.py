@@ -73,5 +73,3 @@ class Chat:
             if event.button == 4 and self.history_index < 95:
 
                 self.history_index += 5
-
-            print(self.history_index)
