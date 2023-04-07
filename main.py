@@ -20,3 +20,6 @@ if __name__ == "__main__":
         from game_screen.game_screen import game_screen
         game_screen()
     pygame.quit()
+
+# TO-DO
+# Play Blackjack with nearby governor
