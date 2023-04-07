@@ -32,13 +32,13 @@ class Wrapper:
                if walker["action"] == "move":
                   match walker["type"]:
                      case "Migrant":
-                        walker_ghost = Walker.Migrant(None, data["username"])
+                        walker_ghost = Walker.Migrant(walker["building"], data["username"])
                      case "Labor Advisor":
-                        walker_ghost = Walker.LaborAdvisor(None, data["username"])
+                        walker_ghost = Walker.LaborAdvisor(walker["building"], data["username"])
                      case "Prefect":
-                        walker_ghost = Walker.Prefect(None, data["username"])
+                        walker_ghost = Walker.Prefect(walker["building"], data["username"])
                      case "Engineer":
-                        walker_ghost = Walker.Engineer(None, data["username"])
+                        walker_ghost = Walker.Engineer(walker["building"], data["username"])
                   
                   walker_ghost.currentCell = self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1])
                   walker_ghost.previousCell = self.map.get_cell(walker["previousCell"][0], walker["previousCell"][1])
