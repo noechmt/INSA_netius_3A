@@ -46,4 +46,4 @@ class Wrapper:
                   self.map.walkers.append(walker_ghost)
 
          case 'chat' : 
-            self.panel.chat.panel.chat.history_append(data['message'])
+            self.panel.chat.history_append(data['message'])

@@ -206,6 +206,7 @@ class Panel():
        
         if self.chatON : 
             self.chat.display()
+            print(self.chat.message_history)
             
 
             
