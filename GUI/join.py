@@ -11,9 +11,6 @@ import subprocess
 def join_game():
 
     pygame.init()
-    server = Server(1235,5)
-    thread_recv = thread.Thread(target=recv_data, args=(server,))
-    thread_recv.start()
 
     # Create screen variable and set the size of the screen
     SCREEN = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
