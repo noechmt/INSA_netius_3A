@@ -2,7 +2,8 @@ import json
 import p2p.socket_python as p2p
 
 def encodeJSON(data):
-   p2p.send_data(json.dumps(data))
+   p2p.Client.sendData(json.dumps(data))
+   # p2p.send_data(json.dumps(data))
 
 def join(username):
    encodeJSON({"header": "join",

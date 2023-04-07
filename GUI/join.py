@@ -139,7 +139,9 @@ def join_game():
                         file = open("Saves/temp.txt", "w")
                         file.write(input_pseudo.get_text())
                         file.close()
-                    subprocess.Popen(['p2p/lan_connect', input_ip.get_text()])
+                    LanProcess =  subprocess.Popen(['p2p/lan_connect', input_ip.get_text()])
+                    
+                    Client("127.0.0.1",1236)
                     return True
 
             if input_ip.handle_event(event, SCREEN):

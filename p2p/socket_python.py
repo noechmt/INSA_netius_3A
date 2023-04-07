@@ -43,7 +43,21 @@ class MySocket:
         return self.sock
    
    
-   
+class Client : 
+    
+    socket = None
+    
+    def __init__(self,addr,port) :
+        
+        Client.socket = socket.socket()
+        Client.socket.connect((addr,port))
+        
+            
+    def sendData(data) :
+        Client.socket.send(data.encode())
+        
+    def close() : 
+        Client.socket.close()
         
 class Server:
 
