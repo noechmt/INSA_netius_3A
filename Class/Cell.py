@@ -201,8 +201,12 @@ class Cell:  # Une case de la map
             draw_polygon_alpha(SCREEN, (255, 0, 0, 85),
                                self.get_points_polygone())
         else:
-            draw_polygon_alpha(SCREEN, (0, 0, 0, 85),
-                               self.get_points_polygone())
+            if self.map.name_user == self.owner:
+                draw_polygon_alpha(SCREEN, (0, 0, 0, 85),
+                                self.get_points_polygone())
+            else:
+                draw_polygon_alpha(SCREEN, (255, 0, 0, 85),
+                                self.get_points_polygone())
 
     def get_points_polygone(self):
         return ((self.left + self.width / 2, self.top), (self.left, self.top + self.height / 2),
