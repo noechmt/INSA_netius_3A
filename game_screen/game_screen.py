@@ -260,7 +260,7 @@ def game_screen():
                     if panel.get_exit_button().is_hovered(pos):
                         run = False
 
-                if zoom_update > 0:
+                if zoom_update > 0 and not panel.chatON:
                     if event.button == 4:
                         if zoom < 1.4:
                             zoom += 0.05
@@ -386,15 +386,23 @@ def game_screen():
                     # print([panel.chat.message_history[i].text for i in range(len(panel.chat.message_history))])
                     
 
-            if panel.chatON and panel.chat.input.handle_event(event, SCREEN) : 
+            if panel.chatON  :
+                panel.chat.input.handle_event(event, SCREEN)  
                 if panel.chat.input.message_to_send != '' :
                     panel.chat.history_append(panel.chat.input.message_to_send)
                     panel.chat.input.message_to_send = ''
-                pass
-                # grid_button.handle_hover_button(pos, SCREEN)
-                # home_button.handle_hover_button(pos, SCREEN)
-                # shovel_button.handle_hover_button(pos, SCREEN)
-                # road_button.handle_hover_button(pos, SCREEN)
+                
+
+                panel.chat.handle_history_scroll(event)
+                print(panel.chat.history_index)
+
+
+            # if event.type == pygame.MOUSEBUTTONDOWN:
+            #     print(event.button)
+        
+          
+
+
 
         if map.get_overlay() in ("fire", "collapse"):
             map.display_overlay()
