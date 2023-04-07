@@ -7,14 +7,15 @@ import numpy as np
 from Class.Button import Button
 from Class.Map import *
 from Class.Panel import Panel
+from Class.Wrapper import Wrapper
+import p2p.socket_python as p2p
 import time
 from datetime import datetime
 from Class.Encoder import *
 
 
+
 # draw a rectangle with an opacity option
-
-
 def draw_rect_alpha(surface, color, rect):
     shape_surf = pygame.Surface(pygame.Rect(rect).size, pygame.SRCALPHA)
     pygame.draw.rect(shape_surf, color, shape_surf.get_rect())
@@ -58,6 +59,10 @@ def game_screen():
         # print(map.array[34][34])
 
     panel = Panel(SCREEN)
+    wrapper = Wrapper(map)
+    #wrapper.wrap('{"header": "build", "username": "Governor", "x": 5, "y": 5, "type": "house"}')
+    #wrapper.wrap('{"header": "walker", "username": "Governor", "array": [{"action": "move", "currentCell": [7, 5], "previousCell": [7, 4], "type": "Migrant"}]}')
+
 
     # Dims without left panel
     height_wo_panel = HEIGH_SCREEN
@@ -113,6 +118,8 @@ def game_screen():
 
         update_speed = 10 / (speed)
 
+        wrapper.wrap(p2p.get_data())
+
         fire_update_count += 1
         if fire_update_count >= update_speed:
             map.update_fire()
@@ -127,7 +134,7 @@ def game_screen():
             WIDTH_SCREEN/2-WIDTH_SCREEN/12-pos[0]-map.offset_left)/map.width_land))-1
         y = round(((WIDTH_SCREEN/2-WIDTH_SCREEN/12-pos[0]-map.offset_left)/map.width_land + (
             pos[1]-map.offset_top-HEIGH_SCREEN/6)/map.height_land))
-        
+
         move_update += 1
         move_coeff = 6
         if move_update % 6 == 0:
@@ -153,7 +160,7 @@ def game_screen():
                             map.handle_move(
                                 "right", (3 - (WIDTH_SCREEN - pos[0]) / 20) / (zoom/move_coeff))
             move_update = 0
-        
+
          # If the mouse is in the map, we display the hovered cell(s)
         if selection["is_active"]:
             for i in selection["cells"]:
@@ -393,6 +400,9 @@ def game_screen():
                     message = map.get_name_user() + " : " + panel.chat.input.message_to_send
                     panel.chat.history_append(message)
                     panel.chat.input.message_to_send = ''
+                    chat(message)
+
+                
                     
                 
 
@@ -433,13 +443,13 @@ def game_screen():
                 map.center_camera_governor()
             governor_update_count = 0
 
-
-        farm_update_count+=1
-        if farm_update_count >= update_speed * 1.5 : 
+        farm_update_count += 1
+        if farm_update_count >= update_speed * 1.5:
             map.update_farm()
             farm_update_count = 0
 
-        map.governor.display()
+        if not isinstance(map.governor.currentCell, Building):
+            map.governor.display()
         map.display_walkers()
         panel.display()
 

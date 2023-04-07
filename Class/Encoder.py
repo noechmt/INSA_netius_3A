@@ -1,35 +1,36 @@
 import json
+import p2p.socket_python as p2p
 
-def send_data(data):
-   json.dumps(data)
+def encodeJSON(data):
+   p2p.send_data(json.dumps(data))
 
 def join(username):
-   send_data({"header": "join",
+   encodeJSON({"header": "join",
       "username": username
    })
 
 def build(username, x, y, type):
-   send_data({"header": "build",
+   encodeJSON({"header": "build",
       "username": username,
       "x": x,
       "y": y, 
       "type": type})
 
 def levelup(username, x, y, level):
-   send_data({"header": "levelup",
+   encodeJSON({"header": "levelup",
       "username": username,
       "x": x,
       "y": y, 
       "level": level})
    
 def clear(username, x, y):
-   send_data({"header": "clear",
+   encodeJSON({"header": "clear",
       "username": username,
       "x": x,
       "y": y})
    
 def chat(message) :
-   send_data({"header" : "chat", 
+   encodeJSON({"header" : "chat", 
       "message" : message})
 
 class WalkerBuffer:  
@@ -38,13 +39,14 @@ class WalkerBuffer:
       self.username = username
       self.buffer = {"header": "walker", "username": username, "array": []}
 
-   def add(self, action, currentCell, previousCell, type):
+   def add(self, action, walker):
       self.buffer["array"].append({
              "action": action,
-             "currentCell": currentCell,
-             "previousCell": previousCell,
-             "type": type})
+             "building": self.building,
+             "currentCell": walker.currentCell,
+             "previousCell": walker.previousCell,
+             "type": walker.type})
    
    def send(self):
-      send_data(self.buffer)
+      encodeJSON(self.buffer)
       self.buffer = {"header": "walker", "username": self.username, "array": []}
