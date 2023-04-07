@@ -39,8 +39,15 @@ int main(int argc, char **argv)
     }
     server_connect(server_fd);
     /*-----------------------------------------------------*/
-    so_linger(server_fd, local_fd); 
-
+    so_linger(server_fd, local_fd);
+    if (argc > 1)
+    {
+        player *new_first_player = calloc(sizeof(player), 1);
+        initialize_player(new_first_player);
+        new_first_player->next_player = player_list;
+        player_list = new_first_player;
+        strncpy(player_list->ip_adress, argv[1], strlen(argv[1]));
+    }
     pthread_t tid;
     printf("Listening for other players... \n");
     pthread_create(&tid, NULL, &receive_thread, &server_fd); // Creating thread to keep receiving message in real time
@@ -92,23 +99,25 @@ void receiving(int fd)
                     }
                     FD_SET(client_socket, &current_sockets);
                     /*check if IP is in the list*/
-                    player* add_player_list = player_list;
-                    while(add_player_list->next_player != NULL){
-                        if(strncmp(add_player_list->ip_adress, inet_ntoa(address.sin_addr), strlen(inet_ntoa(address.sin_addr))) == 0){
+                    player *add_player_list = player_list;
+                    while (add_player_list->next_player != NULL)
+                    {
+                        if (strncmp(add_player_list->ip_adress, inet_ntoa(address.sin_addr), strlen(inet_ntoa(address.sin_addr))) == 0)
+                        {
                             count_check++;
                         }
                         add_player_list = add_player_list->next_player;
                     }
 
                     /*adding ip to the list*/
-                    if(count_check == 0){
-                        player* new_player = calloc(sizeof(player), 1);
+                    if (count_check == 0)
+                    {
+                        player *new_player = calloc(sizeof(player), 1);
                         initialize_player(new_player);
                         new_player->next_player = player_list;
                         player_list = new_player;
                         strncpy(player_list->ip_adress, inet_ntoa(address.sin_addr), strlen(inet_ntoa(address.sin_addr)));
                     }
-
                 }
                 else
                 {
@@ -124,8 +133,9 @@ void receiving(int fd)
                     }
                     else
                     {
-                        player* send_players = player_list;
-                        while(send_players->next_player != NULL){
+                        player *send_players = player_list;
+                        while (send_players->next_player != NULL)
+                        {
                             sending(send_players->ip_adress, 1234, buffer);
                             send_players = send_players->next_player;
                         }
