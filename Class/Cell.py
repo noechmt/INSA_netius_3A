@@ -201,7 +201,7 @@ class Cell:  # Une case de la map
             draw_polygon_alpha(SCREEN, (255, 0, 0, 85),
                                self.get_points_polygone())
         else:
-            if self.map.name_user == self.owner:
+            if self.map.name_user == self.owner or self.map.get_ownershiped():
                 draw_polygon_alpha(SCREEN, (0, 0, 0, 85),
                                 self.get_points_polygone())
             else:
