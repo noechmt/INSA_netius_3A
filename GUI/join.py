@@ -15,7 +15,7 @@ def join_game():
    
     thread_recv = thread.Thread(target=recv_data, args=(Server.socket,))
     thread_recv.start()
-
+    
 
     # Create screen variable and set the size of the screen
     SCREEN = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
@@ -139,9 +139,10 @@ def join_game():
                         file = open("Saves/temp.txt", "w")
                         file.write(input_pseudo.get_text())
                         file.close()
+                    
                     LanProcess =  subprocess.Popen(['p2p/lan_connect', input_ip.get_text()])
                     
-                    Client("127.0.0.1",1236)
+
                     return True
 
             if input_ip.handle_event(event, SCREEN):

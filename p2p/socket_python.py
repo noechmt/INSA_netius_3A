@@ -2,7 +2,7 @@ import socket
 from time import sleep
 import select
 
-MSGLEN =  10
+LanProcess = None
 
 class MySocket:
     

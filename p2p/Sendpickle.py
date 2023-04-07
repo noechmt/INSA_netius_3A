@@ -1,17 +1,9 @@
 import threading as thread
 from socket_python import *
 import subprocess
+import pickle
 
-def sendPickleFile() :
-    pass
 
-    
-def recvPickleFile():
-    
-    Server(1235,1)
-    subprocess.Popen(['p2p/lan_connect', ])
-    
-    
 Process = subprocess.Popen(['./lan_connect', "192.168.43.201"])
 
 Server(1235,1)
