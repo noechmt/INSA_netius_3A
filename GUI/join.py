@@ -5,6 +5,7 @@ from Class.Input_box import InputBox
 from Class.Text import Text
 import threading as thread
 from p2p.socket_python import *
+import subprocess
 
 
 def join_game():
@@ -61,32 +62,32 @@ def join_game():
     (width_input_ip, height_input_ip) = (
         width_menu - width_menu / 3, height_menu / 8)
     (left_input_ip, top_input_ip) = (
-        left_menu + width_menu / 5, top_text_ip)
+        left_menu + width_menu / 4, top_text_ip)
     input_ip_font = pygame.font.Font(
         "GUI/Fonts/Title Screen/Berry Rotunda.ttf", 25)
     input_ip = InputBox(left_input_ip, top_input_ip, width_input_ip,
                           height_input_ip, input_ip_font, 25, "")
     input_ip.draw(SCREEN)
 
-    # Text Port
-    (width_text_port, height_text_port) = (width_menu - width_menu / 10, height_menu / 8)
-    (left_text_port, top_text_port) = (left_menu - width_menu / 3, top_text_ip + height_menu / 5)
-    text_port_font = pygame.font.Font(
+    # Text pseudo
+    (width_text_pseudo, height_text_pseudo) = (width_menu - width_menu / 10, height_menu / 8)
+    (left_text_pseudo, top_text_pseudo) = (left_menu - width_menu / 3, top_text_ip + height_menu / 5)
+    text_pseudo_font = pygame.font.Font(
         "GUI/Fonts/Title Screen/Berry Rotunda.ttf", 30)
-    text_port = Text(left_text_port, top_text_port,
-                     width_text_port, height_text_port, "Port", text_port_font)
-    text_port.draw(SCREEN)
+    text_pseudo = Text(left_text_pseudo, top_text_pseudo,
+                     width_text_pseudo, height_text_pseudo, "Pseudo", text_pseudo_font)
+    text_pseudo.draw(SCREEN)
 
-    # Input box for the game Port
-    (width_input_port, height_input_port) = (
+    # Input box for the game pseudo
+    (width_input_pseudo, height_input_pseudo) = (
         width_menu - width_menu / 3, height_menu / 8)
-    (left_input_port, top_input_port) = (
-        left_menu + width_menu / 5, top_text_port)
-    input_port_font = pygame.font.Font(
+    (left_input_pseudo, top_input_pseudo) = (
+        left_menu + width_menu / 4, top_text_pseudo)
+    input_pseudo_font = pygame.font.Font(
         "GUI/Fonts/Title Screen/Berry Rotunda.ttf", 25)
-    input_port = InputBox(left_input_port, top_input_port, width_input_port,
-                          height_input_port, input_port_font, 25, "1234")
-    input_port.draw(SCREEN)
+    input_pseudo = InputBox(left_input_pseudo, top_input_pseudo, width_input_pseudo,
+                          height_input_pseudo, input_pseudo_font, 25, "1234")
+    input_pseudo.draw(SCREEN)
 
     # Connect button/text
     (width_text_connect, height_text_connect) = (
@@ -132,7 +133,12 @@ def join_game():
                 if text_back.is_hovered(pos):
                     return False
                 if text_connect.is_hovered(pos):
-                    send_data(input_port.get_text())
+                    if input_pseudo.get_text() != '':
+                        file = open("Saves/temp.txt", "w")
+                        file.write(input_pseudo.get_text())
+                        file.close()
+                    subprocess.Popen(['p2p/lan_connect', input_ip.get_text()])
+                    return True
 
             if input_ip.handle_event(event, SCREEN):
                 SCREEN.blit(pygame.transform.scale(
@@ -143,15 +149,15 @@ def join_game():
                             (width_menu, height_menu)), (left_menu, top_menu))
                 text_join.draw(SCREEN)
                 text_ip.draw(SCREEN)
-                text_port.draw(SCREEN)
+                text_pseudo.draw(SCREEN)
                 text_back.draw(SCREEN)
                 text_connect.draw(SCREEN)
                 input_ip.darken = False
-                input_port.darken = False
+                input_pseudo.darken = False
                 input_ip.draw(SCREEN)
-                input_port.draw(SCREEN)
+                input_pseudo.draw(SCREEN)
 
-            if input_port.handle_event(event, SCREEN):
+            if input_pseudo.handle_event(event, SCREEN):
                 SCREEN.blit(pygame.transform.scale(
                     menu_background, (width_menu, height_menu)), (left_menu, top_menu))
                 SCREEN.blit(pygame.transform.scale(background_image,
@@ -160,13 +166,13 @@ def join_game():
                             (width_menu, height_menu)), (left_menu, top_menu))
                 text_join.draw(SCREEN)
                 text_ip.draw(SCREEN)
-                text_port.draw(SCREEN)
+                text_pseudo.draw(SCREEN)
                 text_back.draw(SCREEN)
                 text_connect.draw(SCREEN)
                 input_ip.darken = False
-                input_port.darken = False
+                input_pseudo.darken = False
                 input_ip.draw(SCREEN)
-                input_port.draw(SCREEN)
+                input_pseudo.draw(SCREEN)
 
         # Set the FPS at 60
         clock.tick(60)
