@@ -70,7 +70,12 @@ class Cell:  # Une case de la map
         pass
 
     def get_cells_around(self):
-        return [self.map.get_cell(self.x-1, self.y), self.map.get_cell(self.x+1, self.y), self.map.get_cell(self.x, self.y-1), self.map.get_cell(self.x, self.y+1)]
+        return [self.map.get_cell(self.x-1, self.y) if self.map.inMap(self.x-1, self.y) else self,
+                self.map.get_cell(
+                    self.x+1, self.y) if self.map.inMap(self.x+1, self.y) else self,
+                self.map.get_cell(
+                    self.x, self.y-1) if self.map.inMap(self.x, self.y-1) else self,
+                self.map.get_cell(self.x, self.y+1) if self.map.inMap(self.x, self.y+1) else self]
 
     def isBuildable(self, type=""):
         if type == "Farm":

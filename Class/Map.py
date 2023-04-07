@@ -95,8 +95,9 @@ class Map:  # Un ensemble de cellule
             for cell in self.transaction["cells"]:
                 if cell.owner == None or cell.owner == self.name_user:
                     cell_around = cell.get_cells_around()
-                    if cell_around[0].owner == self.name_user or cell_around[1].owner == self.name_user or cell_around[2].owner == self.name_user or cell_around[3].owner == self.name_user:
-                        return True
+                    for i in cell_around:
+                        if i.owner == self.name_user:
+                            return True
         return False
 
     # Permet d'initialiser le chemin de terre sur la map.
