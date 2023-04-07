@@ -18,6 +18,7 @@ class InputBox:
         self.color_active = color_active
         self.color = color_inactive
         self.active = False
+        self.message_to_send = ""
 
     def draw(self, screen):
         if (not self.darken):
@@ -46,18 +47,19 @@ class InputBox:
             self.color = self.color_active if self.active else self.color_inactive
         if event.type == pygame.KEYDOWN :
             if self.active:
-                print("salut0")
+                # print("salut0")
                 if event.key == pygame.K_RETURN:
-                    print("salut1")
+                    # print("salut1")
+                    self.message_to_send = self.text
                     self.text = ''
                 elif event.key == pygame.K_BACKSPACE:
-                    print("salut2")
+                    # print("salut2")
                     self.text = self.text[:-1]
                 elif len(self.text) <= self.max_char:
-                    print("salut4")
+                    # print("salut4")
                     self.text += event.unicode
                 
-            print("salut5")
+            # print("salut5")
             self.darken = False
             return True
         self.draw(screen)

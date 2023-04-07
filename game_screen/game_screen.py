@@ -179,7 +179,7 @@ def game_screen():
                         selection["is_active"] = 1
 
                     if (panel.get_governor_button().is_hovered(pos)):
-                        panel.set_window("none")
+                        # panel.set_window("none")
                         map.handle_esc()
                         governor_movements = not governor_movements
                         panel.set_governor_sprite(governor_movements)
@@ -379,20 +379,18 @@ def game_screen():
                 #         map.sound_effect[i].set_volume(volume - 0.05)
                 #         print(map.sound_effect[i].get_volume(), i, "-")
 
-                if pygame.key.get_pressed()[pygame.K_t] or panel.chatON: 
+                if pygame.key.get_pressed()[pygame.K_t]: 
                     panel.chatON = True
                     panel.set_window("chat")
+
+                    # print([panel.chat.message_history[i].text for i in range(len(panel.chat.message_history))])
                     
 
-            if panel.chat.input.handle_event(event, SCREEN) : 
-                # SCREEN.blit(pygame.transform.scale(panel.chat.chat_sprite["background"],(panel.width_screen*0.450, panel.height_screen*0.450)), 
-                #      (panel.width_screen*1/80, panel.height_screen*0.01))
-                # panel.chat.title.draw(panel.screen)
-                # panel.chat.input.draw(panel.chat.screen)
+            if panel.chatON and panel.chat.input.handle_event(event, SCREEN) : 
+                if panel.chat.input.message_to_send != '' :
+                    panel.chat.history_append(panel.chat.input.message_to_send)
+                    panel.chat.input.message_to_send = ''
                 pass
-                       
-                    
-
                 # grid_button.handle_hover_button(pos, SCREEN)
                 # home_button.handle_hover_button(pos, SCREEN)
                 # shovel_button.handle_hover_button(pos, SCREEN)
