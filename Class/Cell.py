@@ -8,6 +8,7 @@ import random
 import time
 from Class.Sprites import *
 import Class.Encoder as encode
+from Class.Encoder import *
 
 SCREEN = None
 
@@ -67,6 +68,9 @@ class Cell:  # Une case de la map
         self.path_sprite = ""
         self.price = 5
         self.explored = False
+
+    def send_init(self):
+        return init_cell(self.map.name_user, self.x, self.y, self.type, self.owner)
 
     def update_sprite_size(self):
         pass

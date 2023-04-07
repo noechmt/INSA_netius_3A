@@ -72,6 +72,13 @@ class Map:  # Un ensemble de cellule
         self.year = 150
         self.transaction = {"cells": [], "amount": 0, "Done": False}
 
+    def send_init_map(self):
+        f = open("test_map", "w")
+        for x in range(self.size):
+            for y in range(self.size):
+                f.write(str(self.array[x][y].send_init()))
+        f.close()
+
     def add_transaction(self, cell):
         if cell.owner == None:
             if cell not in self.transaction["cells"]:
@@ -209,7 +216,6 @@ class Map:  # Un ensemble de cellule
 
     def handle_esc(self):
         self.button_activated = dict.fromkeys(self.button_activated, False)
-        
 
     def handle_zoom(self, zoom_in):
         if zoom_in:
@@ -276,8 +282,8 @@ class Map:  # Un ensemble de cellule
             """if not isinstance(i, Migrant):
                 if i.previousCell is not None:
                     i.previousCell.display()"""
-            
-        #walkerBuffer.send()
+
+        # walkerBuffer.send()
 
         for i in self.buildings:
             if i.risk and not i.risk.happened:

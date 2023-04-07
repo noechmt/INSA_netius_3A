@@ -59,6 +59,7 @@ def game_screen():
 
     panel = Panel(SCREEN)
     wrapper = Wrapper(map, panel)
+    map.send_init_map()
     #wrapper.wrap('{"header": "build", "username": "Governor", "x": 5, "y": 5, "type": "house"}')
     #wrapper.wrap('{"header": "walker", "username": "Governor", "array": [{"action": "move", "currentCell": [7, 5], "previousCell": [7, 4], "type": "Migrant"}]}')
 
