@@ -11,6 +11,11 @@ import subprocess
 def join_game():
 
     pygame.init()
+    Server(1235,4)
+   
+    thread_recv = thread.Thread(target=recv_data, args=(Server.socket,))
+    thread_recv.start()
+
 
     # Create screen variable and set the size of the screen
     SCREEN = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
@@ -83,7 +88,7 @@ def join_game():
     input_pseudo_font = pygame.font.Font(
         "GUI/Fonts/Title Screen/Berry Rotunda.ttf", 25)
     input_pseudo = InputBox(left_input_pseudo, top_input_pseudo, width_input_pseudo,
-                          height_input_pseudo, input_pseudo_font, 25, "1234")
+                          height_input_pseudo, input_pseudo_font, 25, "Player1")
     input_pseudo.draw(SCREEN)
 
     # Connect button/text
