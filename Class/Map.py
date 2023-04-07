@@ -32,10 +32,10 @@ class Map:  # Un ensemble de cellule
         self.height_land = height
         self.width_land = width
         self.button_activated = {"house": False, "shovel": False, "road": False,
-                                 "prefecture": False, "engineerpost": False, "well": False, "farm": False, "granary": False, "ownership" : False}
+                                 "prefecture": False, "engineerpost": False, "well": False, "farm": False, "granary": False, "ownership": False}
         self.players = ["Player1", "Player2", "Player3", "Player4"]
         # TO-DO request the num player
-        self.num_player = 1
+        self.num_player = 2
         # TO-DO put names in array and do function to fill it after init
         self.name_user = username
         self.players[self.num_player - 1] = username
@@ -69,27 +69,27 @@ class Map:  # Un ensemble de cellule
         self.population = 0
         self.month_index = 0
         self.year = 150
-        self.transaction = {"cells" : [], "amount" : 0, "Done" : False}
-    
+        self.transaction = {"cells": [], "amount": 0, "Done": False}
+
     def add_transaction(self, cell):
         if cell.owner == None:
             if cell not in self.transaction["cells"]:
                 self.transaction["cells"].append(cell)
                 self.transaction["amount"] += cell.price
-    
+
     def reset_transaction(self):
         self.transaction["cells"] = []
         self.transaction["amount"] = 0
         self.transaction["Done"] = False
-    
+
     def buy_cells(self):
         if self.check_valid_buy():
             for cell in self.transaction["cells"]:
                 cell.owner = self.name_user
                 self.wallet -= cell.price
             self.transaction["Done"] = True
-        return self.transaction["Done"] 
-    
+        return self.transaction["Done"]
+
     def check_valid_buy(self):
         if self.transaction["amount"] <= self.wallet:
             for cell in self.transaction["cells"]:
@@ -143,7 +143,7 @@ class Map:  # Un ensemble de cellule
             self.array[self.size - (self.size // 10)][y].handle_sprites()
 
         self.display_map()
-    
+
     def init_ownership(self):
         if self.num_player == 1:
             for x in range(self.size // 10 + 1):
@@ -372,7 +372,7 @@ class Map:  # Un ensemble de cellule
 
     def get_granaried(self):
         return self.button_activated["granary"]
-    
+
     def get_ownershiped(self):
         return self.button_activated["ownership"]
 

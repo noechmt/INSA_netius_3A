@@ -203,10 +203,10 @@ class Cell:  # Une case de la map
         else:
             if self.map.name_user == self.owner or self.map.get_ownershiped():
                 draw_polygon_alpha(SCREEN, (0, 0, 0, 85),
-                                self.get_points_polygone())
+                                   self.get_points_polygone())
             else:
                 draw_polygon_alpha(SCREEN, (255, 0, 0, 85),
-                                self.get_points_polygone())
+                                   self.get_points_polygone())
 
     def get_points_polygone(self):
         return ((self.left + self.width / 2, self.top), (self.left, self.top + self.height / 2),
@@ -246,9 +246,9 @@ class Cell:  # Une case de la map
 
         return path
 
-
     def build(self, type, owner=None):
-        if owner==None: owner=self.owner
+        if owner == None:
+            owner = self.owner
         if isinstance(self, Empty) and self.type_empty != "dirt":
             print("This cell is already taken")
             return
@@ -747,7 +747,7 @@ class Empty(Cell):
 class Building(Cell):  # un fils de cellule (pas encore sûr de l'utilité)
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width,  map, owner)
-        
+
         self.destroyed = False
         path_around = self.check_cell_around(Path)
         house_around = self.check_cell_around(House)
@@ -1067,7 +1067,7 @@ class CityHallPart(Building):
         for i in path_around:
             if len(path_around) != 0:
                 self.map.path_graph.add_edge(i, self.cityhall, weight=2000)
-    
+
     def display(self):
         super().display()
 
@@ -1133,7 +1133,7 @@ class FarmPart(Building):
         for i in path_around:
             if len(path_around) != 0:
                 self.map.path_graph.add_edge(i, self.farm, weight=2000)
-    
+
     def display(self):
         super().display()
 
@@ -1256,7 +1256,7 @@ class GranaryPart(Building):
         super().__init__(x, y, height, width, map, owner)
         self.granary = mygranary
         self.risk = self.granary.risk
-    
+
     def display(self):
         super().display()
 
