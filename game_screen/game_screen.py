@@ -379,16 +379,17 @@ def game_screen():
                 #         map.sound_effect[i].set_volume(volume - 0.05)
                 #         print(map.sound_effect[i].get_volume(), i, "-")
 
-                if pygame.key.get_pressed()[pygame.K_t] : 
+                if pygame.key.get_pressed()[pygame.K_t] or panel.chatON: 
                     panel.chatON = True
                     panel.set_window("chat")
+                    
 
-                    if panel.chat.input.handle_event(event, SCREEN) : 
-                        print("salut")
-                        SCREEN.blit(pygame.transform.scale(panel.chat.chat_sprite["background"],(panel.width_screen*0.450, panel.height_screen*0.450)), 
-                             (panel.width_screen*1/80, panel.height_screen*0.01))
-                        panel.chat.title.draw(panel.screen)
-                        # panel.chat.input.draw(panel.chat.screen)
+            if panel.chat.input.handle_event(event, SCREEN) : 
+                # SCREEN.blit(pygame.transform.scale(panel.chat.chat_sprite["background"],(panel.width_screen*0.450, panel.height_screen*0.450)), 
+                #      (panel.width_screen*1/80, panel.height_screen*0.01))
+                # panel.chat.title.draw(panel.screen)
+                # panel.chat.input.draw(panel.chat.screen)
+                pass
                        
                     
 

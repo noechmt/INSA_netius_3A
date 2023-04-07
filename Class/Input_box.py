@@ -25,14 +25,16 @@ class InputBox:
                 self.get_size()).convert_alpha()
             dark.fill((0, 0, 0, self.darken_percent*255))
             screen.blit(dark, self.get_pos())
-            self.darken = True
+            # self.darken = True
         text = self.font.render(self.text, 1, self.color)
         screen.blit(text, (self.left + (self.left / 40),
                            self.top + ((self.height/2 - text.get_height()/2))))
 
     def handle_event(self, event, screen):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            
+        # print(pygame.mouse.get_pressed(num_buttons=3))
+        # if pygame.mouse.get_pressed(num_buttons=3) == (True, False, False):
+        if event.type == pygame.MOUSEBUTTONDOWN :
+            print("alo?")
             # If the user clicked on the input_box rect.
             if self.rect.collidepoint(event.pos):
                 # Toggle the active variable.
@@ -42,14 +44,20 @@ class InputBox:
                 self.active = False
             # Change the current color of the input box.
             self.color = self.color_active if self.active else self.color_inactive
-        if event.type == pygame.KEYDOWN:
+        if event.type == pygame.KEYDOWN :
             if self.active:
+                print("salut0")
                 if event.key == pygame.K_RETURN:
+                    print("salut1")
                     self.text = ''
                 elif event.key == pygame.K_BACKSPACE:
+                    print("salut2")
                     self.text = self.text[:-1]
                 elif len(self.text) <= self.max_char:
+                    print("salut4")
                     self.text += event.unicode
+                
+            print("salut5")
             self.darken = False
             return True
         self.draw(screen)
