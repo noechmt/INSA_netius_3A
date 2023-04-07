@@ -4,6 +4,7 @@ import math as m
 import random as rd
 import networkx as nx
 import _thread as thread
+import Class.Encoder as encode
 import time
 from Class.Cell import *
 
@@ -208,6 +209,7 @@ class Map:  # Un ensemble de cellule
 
     def handle_esc(self):
         self.button_activated = dict.fromkeys(self.button_activated, False)
+        
 
     def handle_zoom(self, zoom_in):
         if zoom_in:
@@ -263,13 +265,19 @@ class Map:  # Un ensemble de cellule
                 if any(house.nb_occupants != 0 for house in self.buildings if isinstance(house, House)):
                     i.leave_building()
 
-        for i in self.walkers:
-            i.move()
-            if self.get_overlay() not in ("fire", "collapse") and not isinstance(i, Prefect) or (isinstance(i, Prefect) and not i.isWorking):
-                i.display()
+        #walkerBuffer = encode.WalkerBuffer(self.name_user)
+        for walker in self.walkers:
+            if walker.owner == self.name_user:
+                walker.move()
+                #walkerBuffer.add("move", walker)
+
+            if self.get_overlay() not in ("fire", "collapse") and not isinstance(walker, Prefect) or (isinstance(walker, Prefect) and not walker.isWorking):
+                walker.display()
             """if not isinstance(i, Migrant):
                 if i.previousCell is not None:
                     i.previousCell.display()"""
+            
+        #walkerBuffer.send()
 
         for i in self.buildings:
             if i.risk and not i.risk.happened:

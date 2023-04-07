@@ -1,5 +1,9 @@
 #include"SocketManager.h"
 
+// Fonction a faire 
+// Combien de joueurs ; Liste des IP ; Joueur se déconnecte ; 
+
+
 void initOtherSocket(){
     listOtherSocket = calloc(1,sizeof(gameSocket));
     if (listOtherSocket == NULL ){
@@ -21,6 +25,10 @@ gameSocket * initNewSocket( char * ipAddr , char * playerName , int port){
     newSocket->next = NULL ;
     
     return newSocket ;
+}
+
+int getNbPlayer(){
+    return NbPlayer ;
 }
 
 void addOtherSocket(char *ipAddr, char* playerName, int port ){
@@ -51,6 +59,7 @@ void addOtherSocket(char *ipAddr, char* playerName, int port ){
         
         tmp->next = newSocket ;
     }
+    NbPlayer ++ ;
 }
 
 void displayOtherSocket(){
@@ -76,11 +85,13 @@ void supprOtherSocket(char * ip){
         if ( strncmp(ip,curr->ip,IP_LENGTH) == 0 ){
             prev->next = curr->next ; 
             free(curr);
+            NbPlayer -- ;
             return ;
         }
         prev = curr ;
         curr = curr->next ; 
     }
+    
 }
 
 
@@ -92,9 +103,11 @@ void flushOtherSocket(){
         while ( curr->next != NULL ){
             next= curr->next ; 
             free(curr);
+            NbPlayer -- ;
             curr = next;
         }
         free(curr);
+        NbPlayer -- ;
     }
     listOtherSocket = NULL ;
 }
@@ -108,8 +121,9 @@ int main(){
     addOtherSocket("192.168.24.146","Player3",1452);
     addOtherSocket("192.168.24.147","Player4",1453);
     displayOtherSocket();
-    supprOtherSocket("192.168.24.145");
+    supprOtherSocket("192.168.24.149");
     displayOtherSocket();
-
+    flushOtherSocket();
+    printf("Players : %i\n",getNbPlayer());
     return 0 ;
 }
