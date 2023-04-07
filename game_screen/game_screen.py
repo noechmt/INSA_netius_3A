@@ -175,6 +175,10 @@ def game_screen():
                 run = 0
 
             if event.type == pygame.MOUSEBUTTONDOWN:
+                if map.get_ownershiped() and map.inMap(x, y) and pos[0] < width_wo_panel:
+                    selection["cells"].clear()
+                    selection["is_active"] = 0
+                    map.reset_transaction()
                 if event.button == 1:
                     if governor_movements == True:
                         if map.inMap(x, y):

@@ -92,7 +92,6 @@ class Map:  # Un ensemble de cellule
     
     def check_valid_buy(self):
         if self.transaction["amount"] <= self.wallet:
-            print("Money good")
             for cell in self.transaction["cells"]:
                 if cell.owner == None or cell.owner == self.name_user:
                     cell_around = cell.get_cells_around()
