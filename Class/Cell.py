@@ -65,6 +65,7 @@ class Cell:  # Une case de la map
         self.WIDTH_SCREEN, self.HEIGHT_SCREEN = SCREEN.get_size()
         self.init_screen_coordonates()
         self.path_sprite = ""
+        self.explored = False
 
     def update_sprite_size(self):
         pass

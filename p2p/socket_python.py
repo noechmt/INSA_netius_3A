@@ -48,7 +48,7 @@ class MySocket:
 class Server:
 
     socket=None
-    data=list()
+    data=""
         
     def __init__(self,port,number):
         Server.socket= MySocket()
@@ -80,13 +80,14 @@ def recv_data(server_socket,freq=1):
         # Traiter les connexions prêtes à être lues
         
         for s in readable:
-            print("Je suis dans redable")
+            
             if s is server_socket.getSock():
-                print("If")
+                
                 # Nouvelle connexion entrante
                 client_socket = server_socket.accept()
                 Server.data = client_socket.recv(2048)
-                print(f"Data received: ")
+                Server.data = Server.data.decode()
+                print(f"Data received: ",Server.data)
                 
                 # Ajouter la connexion cliente à la liste de surveillance
                 inputs.append(client_socket)
@@ -105,14 +106,12 @@ def recv_data(server_socket,freq=1):
                     s.close()
                     inputs.remove(s)
     
-def get_data(socket):
+def get_data():
     tmp = []
-    print(Server.data)
-    if Server.data != [] :
-        
-        tmp = "".join((char.decode("utf-8") for char in Server.data))
-        print(tmp)
-    Server.data = []
+    if Server.data :
+        tmp = Server.data
+        Server.data = ""
+    
     return tmp
 
 def close_socket(socket):

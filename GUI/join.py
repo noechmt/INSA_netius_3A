@@ -10,7 +10,7 @@ from p2p.socket_python import *
 def join_game():
 
     pygame.init()
-    server = set_server(1235,4)
+    server = Server(1235,5)
     thread_recv = thread.Thread(target=recv_data, args=(server,))
     thread_recv.start()
 

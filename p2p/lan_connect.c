@@ -206,6 +206,7 @@ int sending_local(char* msg)
             close(sock_local);
             return -1;
         }
+        printf("From C to Python : %s\n",msg);
         if(send(sock_local, msg, strlen(msg), 0)<0){
             perror("send error ");
         }
@@ -271,11 +272,13 @@ void receiving(int fd)
                     if(valread < 0 ){
                         perror("erreur de recv");
                     }
-                    printf("message recu et transmis : %s\n", buffer);
+                    
                     if(strcmp(inet_ntoa(address.sin_addr), "127.0.0.1") != 0){
+                        printf("From Network to C : %s\n", buffer);
                         sending_local(buffer);
                     }
                     else{
+                        printf("From C to network : %s\n", buffer);
                         sending(IP, 1234, buffer);
                     }                   
                     FD_CLR(i, &current_sockets);
