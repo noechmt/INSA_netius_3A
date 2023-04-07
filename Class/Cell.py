@@ -69,6 +69,9 @@ class Cell:  # Une case de la map
     def update_sprite_size(self):
         pass
 
+    def get_cells_around(self):
+        return [self.map.get_cell(self.x-1, self.y), self.map.get_cell(self.x+1, self.y), self.map.get_cell(self.x, self.y-1), self.map.get_cell(self.x, self.y+1)]
+
     def isBuildable(self, type=""):
         if type == "Farm":
             # print("putain")

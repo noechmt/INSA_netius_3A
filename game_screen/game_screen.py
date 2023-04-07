@@ -220,23 +220,24 @@ def game_screen():
                             panel.set_window("well")
                             map.handle_button("well")
                             map.set_overlay("water")
+                        if (panel.farm_button.is_hovered(pos)):
+                            panel.set_window("farm")
+                            map.handle_button("farm")
+
+                        # map.display_map()
+                        if (panel.granary_button.is_hovered(pos)):
+                            panel.set_window("granary")
+                            map.handle_button("granary")
                         if (panel.get_ownership_button().is_hovered(pos)):
                             map.handle_button("ownership")
                         if map.get_ownershiped() and panel.get_buy_button().is_hovered(pos):
-                            map.buy_cells()
-                            map.reset_transaction()
-                            selection["cells"].clear()
-                            selection["is_active"] = 0
+                            if (map.buy_cells()):
+                                map.reset_transaction()
+                                selection["cells"].clear()
+                                selection["is_active"] = 0
 
 
-                    if (panel.farm_button.is_hovered(pos)):
-                        panel.set_window("farm")
-                        map.handle_button("farm")
-
-                        # map.display_map()
-                    if (panel.granary_button.is_hovered(pos)):
-                        panel.set_window("granary")
-                        map.handle_button("granary")
+                    
 
                     if (panel.up_button.is_hovered(pos)):
                         if speed_index < 9:

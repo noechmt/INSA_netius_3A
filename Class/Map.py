@@ -80,12 +80,25 @@ class Map:  # Un ensemble de cellule
     def reset_transaction(self):
         self.transaction["cells"] = []
         self.transaction["amount"] = 0
+        self.transaction["Done"] = False
     
     def buy_cells(self):
-        for cell in self.transaction["cells"]:
-            cell.owner = self.name_user
-            self.wallet -= cell.price
-        self.transaction["Done"] = True
+        if self.check_valid_buy():
+            for cell in self.transaction["cells"]:
+                cell.owner = self.name_user
+                self.wallet -= cell.price
+            self.transaction["Done"] = True
+        return self.transaction["Done"] 
+    
+    def check_valid_buy(self):
+        if self.transaction["amount"] <= self.wallet:
+            print("Money good")
+            for cell in self.transaction["cells"]:
+                if cell.owner == None or cell.owner == self.name_user:
+                    cell_around = cell.get_cells_around()
+                    if cell_around[0].owner == self.name_user or cell_around[1].owner == self.name_user or cell_around[2].owner == self.name_user or cell_around[3].owner == self.name_user:
+                        return True
+        return False
 
     # Permet d'initialiser le chemin de terre sur la map.
     def init_paths(self):
