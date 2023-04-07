@@ -206,7 +206,7 @@ class Panel():
        
         if self.chatON : 
             self.chat.display()
-            print(self.chat.message_history)
+            print([self.chat.message_history[i].text for i in range(len(self.chat.message_history))])
             
 
             
