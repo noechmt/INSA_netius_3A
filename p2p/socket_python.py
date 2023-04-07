@@ -83,7 +83,7 @@ def recv_data(server_socket,freq=1):
                 print("If")
                 # Nouvelle connexion entrante
                 client_socket = server_socket.accept()
-                data = client_socket.recv(10)
+                data = client_socket.recv(1024)
                 print(f"Data received: {data}")
                 
                 # Ajouter la connexion cliente à la liste de surveillance

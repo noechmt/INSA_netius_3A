@@ -110,7 +110,7 @@ void receiving(int fd)
                     }
 
                     /*adding ip to the list*/
-                    if (count_check == 0)
+                    if (count_check == 0 &&strncmp("127.0.0.1", inet_ntoa(address.sin_addr), strlen(inet_ntoa(address.sin_addr))) != 0)
                     {
                         player *new_player = calloc(sizeof(player), 1);
                         initialize_player(new_player);
@@ -121,13 +121,13 @@ void receiving(int fd)
                 }
                 else
                 {
-                    valread = recv(i, buffer, sizeof(buffer), 0);
+                    valread = recv(i, buffer, 1024, 0);
                     if (valread < 0)
                     {
                         perror("erreur de recv");
                     }
                     printf("message recu et transmis : %s\n", buffer);
-                    if (strcmp(inet_ntoa(address.sin_addr), "127.0.0.1") != 0)
+                    if (strncmp(inet_ntoa(address.sin_addr), "127.0.0.1", strlen("127.0.0.1")) != 0)
                     {
                         sending_local(buffer);
                     }
@@ -135,7 +135,8 @@ void receiving(int fd)
                     {
                         player *send_players = player_list;
                         while (send_players->next_player != NULL)
-                        {
+                        {  
+                            printf("send to %s\n : ", send_players->ip_adress);
                             sending(send_players->ip_adress, 1234, buffer);
                             send_players = send_players->next_player;
                         }
