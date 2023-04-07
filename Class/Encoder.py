@@ -35,12 +35,13 @@ class WalkerBuffer:
       self.username = username
       self.buffer = {"header": "walker", "username": username, "array": []}
 
-   def add(self, action, currentCell, previousCell, type):
+   def add(self, action, walker):
       self.buffer["array"].append({
              "action": action,
-             "currentCell": currentCell,
-             "previousCell": previousCell,
-             "type": type})
+             "building": self.building,
+             "currentCell": walker.currentCell,
+             "previousCell": walker.previousCell,
+             "type": walker.type})
    
    def send(self):
       encodeJSON(self.buffer)

@@ -41,15 +41,22 @@ class MySocket:
     
     def getSock(self) :
         return self.sock
+   
+   
+   
         
 class Server:
 
     socket=None
+    data=""
         
     def __init__(self,port,number):
         Server.socket= MySocket()
         Server.socket.bind("127.0.0.1", port)
         Server.socket.listen(number)
+
+
+
 
 def send_data(data,addr="127.0.0.1",port=1236):
     
@@ -64,7 +71,7 @@ def recv_data(server_socket,freq=1):
 
     while True :
         sleep(freq)
-
+        print(server_socket)
         inputs = [server_socket.getSock()]
         
         # Utiliser select pour surveiller les canaux prêts à être lus
@@ -73,13 +80,14 @@ def recv_data(server_socket,freq=1):
         # Traiter les connexions prêtes à être lues
         
         for s in readable:
-            print("Je suis dans redable")
+            
             if s is server_socket.getSock():
-                print("If")
+                
                 # Nouvelle connexion entrante
                 client_socket = server_socket.accept()
-                data = client_socket.recv(10)
-                print(f"Data received: {data}")
+                Server.data = client_socket.recv(2048)
+                Server.data = Server.data.decode()
+                print(f"Data received: ",Server.data)
                 
                 # Ajouter la connexion cliente à la liste de surveillance
                 inputs.append(client_socket)
@@ -88,6 +96,7 @@ def recv_data(server_socket,freq=1):
                 print("Else")
                 # Données prêtes à être lues
                 data = s.recv(1024)
+                
                 print(data)
                 if data:
                     # Traiter les données reçues
@@ -97,9 +106,12 @@ def recv_data(server_socket,freq=1):
                     s.close()
                     inputs.remove(s)
     
-def get_data(socket):
-    tmp = "".join(socket.data)
-    socket.data = []
+def get_data():
+    tmp = []
+    if Server.data :
+        tmp = Server.data
+        Server.data = ""
+    
     return tmp
 
 def close_socket(socket):

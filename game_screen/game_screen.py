@@ -116,7 +116,7 @@ def game_screen():
 
         update_speed = 10 / (speed)
 
-        wrapper.wrap(p2p.get_data(p2p.Server.socket))
+        wrapper.wrap(p2p.get_data())
 
         fire_update_count += 1
         if fire_update_count >= update_speed:
