@@ -9,6 +9,7 @@ from Class.Map import *
 from Class.Panel import Panel
 import time
 from datetime import datetime
+from Class.Encoder import *
 
 
 # draw a rectangle with an opacity option
@@ -389,15 +390,17 @@ def game_screen():
             if panel.chatON  :
                 panel.chat.input.handle_event(event, SCREEN)  
                 if panel.chat.input.message_to_send != '' :
-                    panel.chat.history_append(panel.chat.input.message_to_send)
+                    message = map.get_name_user() + " : " + panel.chat.input.message_to_send
+                    panel.chat.history_append(message)
                     panel.chat.input.message_to_send = ''
+                    
                 
 
                 panel.chat.handle_history_scroll(event)
-                print(panel.chat.history_index)
+                # print(panel.chat.history_index)
 
 
-            # if event.type == pygame.MOUSEBUTTONDOWN:
+            # if event.type == pygame.MOUSEBUTTONDON:
             #     print(event.button)
         
           

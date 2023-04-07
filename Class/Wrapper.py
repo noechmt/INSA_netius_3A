@@ -10,8 +10,9 @@ import Class.Walker as Walker
 
 class Wrapper:
    
-   def __init__(self, map):
+   def __init__(self, map, panel):
       self.map = map
+      self.panel = panel
 
    def wrap(self, data_json):
       print(data_json)
@@ -43,3 +44,6 @@ class Wrapper:
                   walker_ghost.currentCell = self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1])
                   walker_ghost.previousCell = self.map.get_cell(walker["previousCell"][0], walker["previousCell"][1])
                   walker_ghost.map.walkers.append(walker_ghost)
+
+         case 'chat' : 
+            self.panel.chat.panel.chat.history_append(data['message'])
