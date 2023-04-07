@@ -251,6 +251,9 @@ class Cell:  # Une case de la map
         if owner==None: owner=self.owner
         if isinstance(self, Empty) and self.type_empty != "dirt":
             print("This cell is already taken")
+            return
+        if self.map.name_user != self.owner:
+            print("The cell is not yours, you can't build on it")
         else:
             match type:
                 case "path":
