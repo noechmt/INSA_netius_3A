@@ -312,7 +312,7 @@ class Cell:  # Une case de la map
     def clear(self):
         if isinstance(self, Path) and self.x == self.map.governor.currentCell.x and self.y == self.map.governor.currentCell.y:
             pass
-        if isinstance(self, CityHall) or isinstance(self, CityHallPart):
+        if isinstance(self, CityHall) or isinstance(self, CityHallPart) or isinstance(self, GranaryPart) or isinstance(self, FarmPart):
             pass
         elif not isinstance(self, Empty) and self.type_empty != "rock" and self.type_empty != "water":
             for i in self.map.walkers:
