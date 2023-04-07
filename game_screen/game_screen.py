@@ -14,7 +14,6 @@ from datetime import datetime
 from Class.Encoder import *
 
 
-
 # draw a rectangle with an opacity option
 def draw_rect_alpha(surface, color, rect):
     shape_surf = pygame.Surface(pygame.Rect(rect).size, pygame.SRCALPHA)
@@ -62,7 +61,6 @@ def game_screen():
     wrapper = Wrapper(map, panel)
     #wrapper.wrap('{"header": "build", "username": "Governor", "x": 5, "y": 5, "type": "house"}')
     #wrapper.wrap('{"header": "walker", "username": "Governor", "array": [{"action": "move", "currentCell": [7, 5], "previousCell": [7, 4], "type": "Migrant"}]}')
-
 
     # Dims without left panel
     height_wo_panel = HEIGH_SCREEN
@@ -369,53 +367,39 @@ def game_screen():
                 if pygame.key.get_pressed()[pygame.K_r]:
                     Prefect.risk_reset = not Prefect.risk_reset
 
-                # if pygame.key.get_pressed()[pygame.K_p]:
-                #     volume = pygame.mixer.music.get_volume()
-                #     pygame.mixer.music.set_volume(volume + 0.05)
-                #     print("tunic", pygame.mixer.music.get_volume())
-                #     for i in map.sound_effect:
-                #         volume = map.sound_effect[i].get_volume()
-                #         map.sound_effect[i].set_volume(volume + 0.05)
-                #         print(map.sound_effect[i].get_volume(), i, "+")
+                if pygame.key.get_pressed()[pygame.K_p]:
+                    volume = pygame.mixer.music.get_volume()
+                    pygame.mixer.music.set_volume(volume + 0.05)
+                    for i in map.sound_effect:
+                        volume = map.sound_effect[i].get_volume()
+                        map.sound_effect[i].set_volume(volume + 0.05)
 
-                # if pygame.key.get_pressed()[pygame.K_m]:
-                #     volume = pygame.mixer.music.get_volume()
-                #     pygame.mixer.music.set_volume(volume - 0.05)
-                #     print("tunic", pygame.mixer.music.get_volume())
-                #     for i in map.sound_effect:
-                #         volume = map.sound_effect[i].get_volume()
-                #         map.sound_effect[i].set_volume(volume - 0.05)
-                #         print(map.sound_effect[i].get_volume(), i, "-")
+                if pygame.key.get_pressed()[pygame.K_m]:
+                    volume = pygame.mixer.music.get_volume()
+                    pygame.mixer.music.set_volume(volume - 0.05)
+                    for i in map.sound_effect:
+                        volume = map.sound_effect[i].get_volume()
+                        map.sound_effect[i].set_volume(volume - 0.05)
 
-                if pygame.key.get_pressed()[pygame.K_t]: 
+                if pygame.key.get_pressed()[pygame.K_t]:
                     panel.chatON = True
                     panel.set_window("chat")
 
                     # print([panel.chat.message_history[i].text for i in range(len(panel.chat.message_history))])
-                    
 
-            if panel.chatON  :
-                panel.chat.input.handle_event(event, SCREEN)  
-                if panel.chat.input.message_to_send != '' :
+            if panel.chatON:
+                panel.chat.input.handle_event(event, SCREEN, True)
+                if panel.chat.input.message_to_send != '':
                     message = map.get_name_user() + " : " + panel.chat.input.message_to_send
                     panel.chat.history_append(message)
                     panel.chat.input.message_to_send = ''
                     chat(message)
 
-                
-                    
-                
-
                 panel.chat.handle_history_scroll(event)
                 # print(panel.chat.history_index)
 
-
             # if event.type == pygame.MOUSEBUTTONDON:
             #     print(event.button)
-        
-          
-
-
 
         if map.get_overlay() in ("fire", "collapse"):
             map.display_overlay()

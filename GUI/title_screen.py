@@ -181,4 +181,3 @@ def title_screen():
             title_screen()
 
         return True
-

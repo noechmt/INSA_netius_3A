@@ -68,6 +68,7 @@ class Map:  # Un ensemble de cellule
         self.population = 0
         self.month_index = 0
         self.year = 150
+        self.sound_effect = sound_effect
 
     # Permet d'initialiser le chemin de terre sur la map.
     def init_paths(self):
@@ -160,7 +161,6 @@ class Map:  # Un ensemble de cellule
 
     def handle_esc(self):
         self.button_activated = dict.fromkeys(self.button_activated, False)
-        
 
     def handle_zoom(self, zoom_in):
         if zoom_in:
@@ -227,8 +227,8 @@ class Map:  # Un ensemble de cellule
             """if not isinstance(i, Migrant):
                 if i.previousCell is not None:
                     i.previousCell.display()"""
-            
-        #walkerBuffer.send()
+
+        # walkerBuffer.send()
 
         for i in self.buildings:
             if i.risk and not i.risk.happened:
