@@ -60,7 +60,6 @@ def game_screen():
     # wrapper.wrap('{"header": "build", "username": "Governor", "x": 5, "y": 5, "type": "house"}')
     # wrapper.wrap('{"header": "walker", "username": "Governor", "array": [{"action": "move", "currentCell": [7, 5], "previousCell": [7, 4], "type": "Migrant"}]}')
 
-
     # Dims without left panel
     height_wo_panel = HEIGH_SCREEN
     width_wo_panel = WIDTH_SCREEN - (WIDTH_SCREEN/9)
@@ -106,7 +105,6 @@ def game_screen():
     pf = fps_font.render(f"pf", 1, (255, 255, 255))
     rn = fps_font.render(f"rn", 1, (255, 255, 255))
     pn = fps_font.render(f"pn", 1, (255, 255, 255))
-    ##############################
 
     map.center_camera_governor()
 
@@ -153,7 +151,7 @@ def game_screen():
                             if not panel.get_buy_button().is_hovered(pos):
                                 map.offset_left += 5 * \
                                     (3 - (WIDTH_SCREEN - pos[0]
-                                        ) / 20)/(zoom/move_coeff)
+                                          ) / 20)/(zoom/move_coeff)
                                 map.handle_move(
                                     "right", (3 - (WIDTH_SCREEN - pos[0]) / 20) / (zoom/move_coeff))
             move_update = 0
@@ -165,7 +163,7 @@ def game_screen():
         else:
             if map.inMap(x, y) and pos[0] < width_wo_panel:
                 map.get_cell(x, y).handle_hover_button()
-        
+
         # Always display selected cell
         zoom_update += 1
         for event in pygame.event.get():
@@ -239,9 +237,6 @@ def game_screen():
                                 map.reset_transaction()
                                 selection["cells"].clear()
                                 selection["is_active"] = 0
-
-
-                    
 
                     if (panel.up_button.is_hovered(pos)):
                         if speed_index < 9:
@@ -512,7 +507,7 @@ def game_screen():
         if Prefect.risk_reset:
             SCREEN.blit(pn, (WIDTH_SCREEN - WIDTH_SCREEN /
                              13 + WIDTH_SCREEN / 16, HEIGH_SCREEN - HEIGH_SCREEN/8.3))
-        
+
         # diplsay trade backgroung bottom left if button is ativated
         if map.get_ownershiped():
             panel.display_trade_window()
@@ -520,19 +515,24 @@ def game_screen():
             # cell range display
             first_cell = "0"
             last_cell = "0"
-            if len(map.transaction["cells"])>= 1 :
-                first_cell = str(map.transaction["cells"][0].x) + "," + str(map.transaction["cells"][0].y)
+            if len(map.transaction["cells"]) >= 1:
+                first_cell = str(
+                    map.transaction["cells"][0].x) + "," + str(map.transaction["cells"][0].y)
                 last_cell = first_cell
-            if len(map.transaction["cells"]) >= 2 :
-                last_cell = str(map.transaction["cells"][-1].x) + "," + str(map.transaction["cells"][-1].y)
-            text_range_cells = fps_font.render(f"Start cell : ({first_cell})", 1, (0, 0, 0))
+            if len(map.transaction["cells"]) >= 2:
+                last_cell = str(
+                    map.transaction["cells"][-1].x) + "," + str(map.transaction["cells"][-1].y)
+            text_range_cells = fps_font.render(
+                f"Start cell : ({first_cell})", 1, (0, 0, 0))
             SCREEN.blit(text_range_cells, (WIDTH_SCREEN - WIDTH_SCREEN /
                         13, HEIGH_SCREEN - HEIGH_SCREEN/11))
-            text_range_cells = fps_font.render(f"Stop cell : ({last_cell})", 1, (0, 0, 0))
+            text_range_cells = fps_font.render(
+                f"Stop cell : ({last_cell})", 1, (0, 0, 0))
             SCREEN.blit(text_range_cells, (WIDTH_SCREEN - WIDTH_SCREEN /
                         13, HEIGH_SCREEN - HEIGH_SCREEN/11 + text_range_cells.get_size()[1]))
             # price display
-            text_price = fps_font.render(f"Price : {map.transaction['amount']}", 1, (0, 0, 0))
+            text_price = fps_font.render(
+                f"Price : {map.transaction['amount']}", 1, (0, 0, 0))
             SCREEN.blit(text_price, (WIDTH_SCREEN - WIDTH_SCREEN /
                         13, HEIGH_SCREEN - HEIGH_SCREEN/11 + 2*text_range_cells.get_size()[1]))
             # Buy button
