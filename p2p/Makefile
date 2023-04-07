@@ -5,7 +5,7 @@ EXEC=lan_connect
 all:$(EXEC)
 
 lan_connect : lan_connect.o lan_connect_function.o lan_connect_sockets.o
-		@$(CC) -o $@ $^
+		@$(CC) -o $@ $^ -pthread
 ircerserv.o : lan_connect.h 
 
 lan_connect_function : lan_connect_function.o
