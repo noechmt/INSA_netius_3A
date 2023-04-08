@@ -51,14 +51,15 @@ def game_screen():
             map = pickle.load(f1)
         map.display_map()
     else:
-        map = Map(SIZE, height_land, width_land, name_path)
-        # map.array[33][33] = Farm(33, 33, height_land, width_land, SCREEN, map)
-        # map.array[37][37] = Crop(37, 37, height_land, width_land, SCREEN, map, map.array[33][33])
-        # print(map.array[33][33])
-        # print(map.array[34][34])
+        map = Map(SIZE, height_land, width_land, name_path, True)
 
     panel = Panel(SCREEN)
     wrapper = Wrapper(map, panel)
+    # FAire dans init map
+    zoom = 0.8
+    zoom += 0.05
+    map.handle_zoom(1)
+    # map.encode()
 
     # Dims without left panel
     height_wo_panel = HEIGH_SCREEN
@@ -80,7 +81,6 @@ def game_screen():
 
     selection = {"is_active": 0, "start": tuple, "cells": []}
     hovered_cell = None
-    zoom = 0.8
     move = 1
     zoom_update = 0
     move_update = 0

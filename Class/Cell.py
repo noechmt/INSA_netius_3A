@@ -68,6 +68,13 @@ class Cell:  # Une case de la map
         self.price = 5
         self.explored = False
 
+    def encode(self):
+        return encode.cell_init(self.map.name_user,
+                                self.x, self.y, self.type,
+                                self.type_empty if isinstance(
+                                    self, Empty) else "",
+                                self.owner)
+
     def update_sprite_size(self):
         pass
 
@@ -253,7 +260,7 @@ class Cell:  # Une case de la map
 
         return path
 
-    def build(self, type, owner=None):
+    def build(self, type, owner=None, init=False):
         if owner == None:
             owner = self.owner
         if isinstance(self, Empty) and self.type_empty != "dirt":
@@ -262,7 +269,7 @@ class Cell:  # Une case de la map
         if self.map.name_user != self.owner:
             print("The cell is not yours, you can't build on it")
         else:
-            if self.map.players_online > 1 and owner == self.map.name_user: 
+            if self.map.players_online > 1 and owner == self.map.name_user:
                 encode.build(owner, self.x, self.y, type)
             match type:
                 case "path":
@@ -270,31 +277,38 @@ class Cell:  # Une case de la map
                         self.x, self.y, self.height, self.width, self.map, owner))
                     self.map.get_cell(self.x, self.y).handle_sprites()
                     self.map.get_cell(self.x, self.y).display()
-                    self.map.wallet -= 4
+                    if not init:
+                        self.map.wallet -= 4
                 case "house":
                     self.map.set_cell_array(self.x, self.y, House(
                         self.x, self.y, self.height, self.width, self.map, owner))
-                    self.map.wallet -= 10
+                    if not init:
+                        self.map.wallet -= 10
                 case "well":
                     self.map.set_cell_array(self.x, self.y, Well(
                         self.x, self.y, self.height, self.width, self.map, owner))
-                    self.map.wallet -= 5
+                    if not init:
+                        self.map.wallet -= 5
                 case "prefecture":
                     self.map.set_cell_array(self.x, self.y, Prefecture(
                         self.x, self.y, self.height, self.width, self.map, owner))
-                    self.map.wallet -= 30
+                    if not init:
+                        self.map.wallet -= 30
                 case "engineer post":
                     self.map.set_cell_array(self.x, self.y, EngineerPost(
                         self.x, self.y, self.height, self.width, self.map, owner))
-                    self.map.wallet -= 30
+                    if not init:
+                        self.map.wallet -= 30
                 case "farm":
                     self.map.set_cell_array(self.x, self.y, Farm(
                         self.x, self.y, self.height, self.width, self.map, owner))
-                    self.map.wallet -= 100
+                    if not init:
+                        self.map.wallet -= 100
                 case "granary":
                     self.map.set_cell_array(self.x, self.y, Granary(
                         self.x, self.y, self.height, self.width, self.map, owner))
-                    self.map.wallet -= 100
+                    if not init:
+                        self.map.wallet -= 100
             for i in range(-2, 3):
                 for j in range(-2, 3):
                     if (37 > self.x > 3 and 37 > self.y > 3 and self.map.get_cell(self.x+i, self.y+j).type == "well"):
@@ -662,6 +676,13 @@ class Empty(Cell):
 
     def __str__(self):
         return self.type_empty
+
+    def init_random_sprites(self):
+        if (self.type_empty == "dirt"):
+            aleatoire = randint(1, 12)
+        else:
+            aleatoire = randint(1, 4)
+        super().set_aleatoire(aleatoire)
 
     def update_sprite_size(self):
         if self.type_empty == "tree":
