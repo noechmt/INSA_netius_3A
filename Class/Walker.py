@@ -486,6 +486,9 @@ class Engineer(Walker):
             if not isinstance(i, Cell.EngineerPost):
                 i.risk.resetEvent()
 
+    def __str__(self):
+        return "Engineer"
+
     def __getstate__(self):
         state = self.__dict__.copy()
         state.pop("walker_sprites")
@@ -508,6 +511,9 @@ class Governor(Walker):
             for j in range(2):
                 self.walker_sprites[i][j] = pygame.image.load(
                     "walker_sprites/governor_sprites/governor_" + i + "_" + str(j) + ".png").convert_alpha()
+
+    def __str__(self) -> str:
+        return "Governor"
 
     def set_pathfinding(self, cell_to_go):
         # Set the pathfinding to the cell_to_go

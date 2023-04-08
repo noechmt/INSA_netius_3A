@@ -51,7 +51,7 @@ class WalkerBuffer:
              "building": walker.building,
              "currentCell": walker.currentCell,
              "previousCell": walker.previousCell,
-             "type": walker.type})
+             "type": str(walker)})
    
    def send(self):
       encodeJSON(self.buffer)
