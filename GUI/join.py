@@ -143,9 +143,10 @@ def join_game():
                         file = open("Saves/temp.txt", "w")
                         file.write(input_pseudo.get_text())
                         file.close()
-                        subprocess.Popen(['p2p/lan_connect', input_ip.get_text()])
-                        encode.join(input_pseudo.get_text())
-                        return True
+                    subprocess.Popen(['p2p/lan_connect', input_ip.get_text()])
+                    sleep(1)
+                    encode.join(input_pseudo.get_text())
+                    return True
 
             if input_ip.handle_event(event, SCREEN):
                 SCREEN.blit(pygame.transform.scale(
