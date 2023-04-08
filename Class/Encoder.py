@@ -48,7 +48,7 @@ class WalkerBuffer:
    def add(self, action, walker):
       self.buffer["array"].append({
              "action": action,
-             "building": (walker.building.x, self.building.y),
+             "building": (walker.building.x, walker.building.y),
              "currentCell": walker.currentCell,
              "previousCell": walker.previousCell,
              "type": str(walker)})
