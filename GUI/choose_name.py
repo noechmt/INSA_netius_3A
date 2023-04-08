@@ -3,6 +3,7 @@ import pygame
 from Class.Button import Button
 from Class.Input_box import InputBox
 from Class.Text import Text
+import subprocess
 
 
 def choose_name():
@@ -101,6 +102,8 @@ def choose_name():
                         file = open("Saves/temp.txt", "w")
                         file.write(input_name.get_text())
                         file.close()
+                        subprocess.Popen(
+                            ['p2p/lan_connect', ''])
                         return True
             if (input_name.handle_event(event, SCREEN)):
                 SCREEN.blit(pygame.transform.scale(

@@ -14,7 +14,6 @@ def join_game():
     Server(1235,4)
     thread_recv = thread.Thread(target=recv_data, args=(Server.socket,))
     thread_recv.start()
-    
     Client("127.0.0.1",1236)
     
 
@@ -53,12 +52,14 @@ def join_game():
     text_join.draw(SCREEN)
 
     # Text IP
-    (width_text_ip, height_text_ip) = (width_menu - width_menu / 10, height_menu / 8)
-    (left_text_ip, top_text_ip) = (left_menu - width_menu / 3, top_text_join + height_menu / 3)
+    (width_text_ip, height_text_ip) = (
+        width_menu - width_menu / 10, height_menu / 8)
+    (left_text_ip, top_text_ip) = (left_menu -
+                                   width_menu / 3, top_text_join + height_menu / 3)
     text_ip_font = pygame.font.Font(
         "GUI/Fonts/Title Screen/Berry Rotunda.ttf", 30)
     text_ip = Text(left_text_ip, top_text_ip,
-                     width_text_ip, height_text_ip, "Ip", text_ip_font)
+                   width_text_ip, height_text_ip, "Ip", text_ip_font)
     text_ip.draw(SCREEN)
 
     # Input box for the game IP
@@ -69,16 +70,18 @@ def join_game():
     input_ip_font = pygame.font.Font(
         "GUI/Fonts/Title Screen/Berry Rotunda.ttf", 25)
     input_ip = InputBox(left_input_ip, top_input_ip, width_input_ip,
-                          height_input_ip, input_ip_font, 25, "")
+                        height_input_ip, input_ip_font, 25, "")
     input_ip.draw(SCREEN)
 
     # Text pseudo
-    (width_text_pseudo, height_text_pseudo) = (width_menu - width_menu / 10, height_menu / 8)
-    (left_text_pseudo, top_text_pseudo) = (left_menu - width_menu / 3, top_text_ip + height_menu / 5)
+    (width_text_pseudo, height_text_pseudo) = (
+        width_menu - width_menu / 10, height_menu / 8)
+    (left_text_pseudo, top_text_pseudo) = (
+        left_menu - width_menu / 3, top_text_ip + height_menu / 5)
     text_pseudo_font = pygame.font.Font(
         "GUI/Fonts/Title Screen/Berry Rotunda.ttf", 30)
     text_pseudo = Text(left_text_pseudo, top_text_pseudo,
-                     width_text_pseudo, height_text_pseudo, "Pseudo", text_pseudo_font)
+                       width_text_pseudo, height_text_pseudo, "Pseudo", text_pseudo_font)
     text_pseudo.draw(SCREEN)
 
     # Input box for the game pseudo
@@ -89,7 +92,7 @@ def join_game():
     input_pseudo_font = pygame.font.Font(
         "GUI/Fonts/Title Screen/Berry Rotunda.ttf", 25)
     input_pseudo = InputBox(left_input_pseudo, top_input_pseudo, width_input_pseudo,
-                          height_input_pseudo, input_pseudo_font, 25, "Player1")
+                            height_input_pseudo, input_pseudo_font, 25, "Player1")
     input_pseudo.draw(SCREEN)
 
     # Connect button/text
@@ -98,10 +101,10 @@ def join_game():
     (left_text_connect, top_text_connect) = (
         left_menu + 2 * width_menu / 3, top_menu + 2 * height_menu / 3)
     text_connect_font = pygame.font.Font(
-        
+
         "GUI/Fonts/Title Screen/Berry Rotunda.ttf", 20)
     text_connect = Text(left_text_connect, top_text_connect, width_text_connect,
-                         height_text_connect, "Connect", text_connect_font)
+                        height_text_connect, "Connect", text_connect_font)
     text_connect.draw(SCREEN)
 
     # Back button/text
