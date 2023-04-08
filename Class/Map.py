@@ -272,8 +272,8 @@ class Map:  # Un ensemble de cellule
             if walker.owner == self.name_user:
                 walker.move()
                 if self.players_online > 1: walkerBuffer.add("move", walker)
-            else:
-                self.walkers.remove(walker)
+            #else:
+                #self.walkers.remove(walker)
                 
             #if self.get_overlay() not in ("fire", "collapse") and not isinstance(walker, Prefect) or (isinstance(walker, Prefect) and not walker.isWorking):
             #    walker.display()
@@ -281,7 +281,7 @@ class Map:  # Un ensemble de cellule
                 if i.previousCell is not None:
                     i.previousCell.display()"""
             
-        if self.players_online > 1 and len(self.walkers) > 0: walkerBuffer.send()
+        if self.players_online > 1 and len(walkerBuffer.buffer["array"]) > 0: walkerBuffer.send()
 
         for i in self.buildings:
             if i.risk and not i.risk.happened:
