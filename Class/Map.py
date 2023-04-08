@@ -217,7 +217,7 @@ class Map:  # Un ensemble de cellule
                 if any(house.nb_occupants != 0 for house in self.buildings if isinstance(house, House)):
                     i.leave_building()
 
-        if self.players_online > 1: walkerBuffer = encode.WalkerBuffer(self.name_user)
+        if self.players_online > 1 and len(self.walkers) > 0: walkerBuffer = encode.WalkerBuffer(self.name_user)
         for walker in self.walkers:
             if walker.owner == self.name_user:
                 walker.move()
@@ -229,7 +229,7 @@ class Map:  # Un ensemble de cellule
                 if i.previousCell is not None:
                     i.previousCell.display()"""
             
-        if self.players_online > 1: walkerBuffer.send()
+        if self.players_online > 1 and len(self.walkers) > 0: walkerBuffer.send()
 
         for i in self.buildings:
             if i.risk and not i.risk.happened:
