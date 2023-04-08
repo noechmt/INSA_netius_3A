@@ -57,23 +57,27 @@ class Duel:
         
     
     def init_duel(self) : 
-        self.ON = False
 
+        #game score
         self.my_score = 0
         self.enemy_score = 0
         
+        #determine win or loss
         self.won = False
         self.lost = False
         self.draw = False
 
+        #handle bet system
         self.my_bet_stopped = False
         self.enemy_bet_stopped =False
 
-        self.duel_accepted = True
-        self.duel_refused = False
+        #handle request for duels
+        self.duel_request = 0
 
-        self.waiting_for_response = False
-        self.round_finished = False
+        #handle game rounds and network sync
+        self.duel_accepted = 0 # 1 accepted, 2 refused, 0 pending
+        self.game_round = 0
+        self.enemy_game_round = 0
         
 
 
@@ -93,15 +97,21 @@ class Duel:
         self.text["enemyscore"].text = str(self.enemy_score)
         
     def continue_bet(self) :
-        if not self.my_bet_stopped : self.my_score += rd.randint(1, 13)
-        if self.my_score > 21 : self.stop_bet()
+        if self.game_round == self.enemy_game_round :
+            if not self.my_bet_stopped : self.my_score += rd.randint(1, 13)
+            if self.my_score > 21 : self.stop_bet()
+
+            self.game_round += 1
 
     def continue_bet_enemy_proto(self) :
         if not self.enemy_bet_stopped : self.enemy_score += rd.randint(1, 13)
         if self.enemy_score > 21 : self.stop_bet_enemy_proto()
 
     def stop_bet(self) : 
-        self.my_bet_stopped = True
+        if self.game_round == self.enemy_game_round :
+            self.my_bet_stopped = True
+        
+
 
     def stop_bet_enemy_proto(self) :
         self.enemy_bet_stopped = True
@@ -126,12 +136,17 @@ class Duel:
         # print("won : ", self.won, "|lost : ", self.lost, "|draw : ", self.draw)
 
 
-    def handle_waiting_for_response(self) : 
-        pass
-    
-    def handle_enemy_actions(self) :
+    def ask_for_duel(self) : 
         pass
 
+    def accept_duel(self) :
+        pass 
+
+    def decline_duel(self) :
+        pass
+
+    def receive_enemy_info(self) :
+        pass
 
 
 

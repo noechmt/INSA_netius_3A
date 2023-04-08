@@ -236,10 +236,10 @@ def game_screen():
                     if panel.duelON :
                         if panel.continue_button.is_hovered((pos)) :
                             map.handle_button("continue")
-
+                                                      
                         if panel.stop_button.is_hovered((pos)) :
                             map.handle_button("stop")
-
+                            
                         if map.get_continued() :
                             panel.duel.continue_bet()
                             # print(panel.duel.my_score)
@@ -415,8 +415,8 @@ def game_screen():
 
                     # print([panel.chat.message_history[i].text for i in range(len(panel.chat.message_history))])
 
-            if panel.chatON or panel.duel.ON:
-                if not panel.duel.ON : panel.chat.input.handle_event(event, SCREEN, True)
+            if panel.chatON :
+                panel.chat.input.handle_event(event, SCREEN, True)
 
                 ######## chat messages #########
                 if panel.chat.input.message_to_send != '' and panel.chat.input.message_to_send[0] != '/' :
@@ -431,85 +431,56 @@ def game_screen():
                     # print(map.players)
                     command = myMap(panel.chat.input.message_to_send)
 
-                    if (command != [] and command[0] == '/duel') or panel.duel.ON: 
+                    if (command != [] and command[0] == '/duel') : 
                         
                         if command != [] and command[1] != '' and command[1] not in map.players : 
                             panel.chat.history_append("Player does not exist")
                             panel.chat.input.message_to_send = ''
+                        elif command != [] and command[1] != '' and command[1] in map.players :
+                            panel.duel.ask_for_duel() #send a duel request
+                            panel.duelON = True
+                            panel.chat.input.message_to_send = ''
 
-                        # TODO checking self vs self edge case when network is implemented 
-                        elif (command != [] and command[1] != '' and command[1] in map.players) or panel.duel.ON :
-                            
-                            panel.chatON = False
-                            if command != [] and command[1] != '' : panel.duel.waiting_for_response = True
-                            
+                    if (command != [] and command[0] == '/accept') and not panel.duel.waiting_for_response and panel.duel.duel_request > 0:
+                        panel.duel.accept_duel() #send confirmation for duel
+                        panel.duelON
 
-                            if (command != [] and command[1] != '') : panel.duel.enemy_name = command[1]
-                            panel.duel.player_name = map.name_user
-                           
-                            panel.duel.ON = True
+                    if (command != [] and command[0] == '/decline') and not panel.duel.waiting_for_response and panel.duel.duel_request > 0:
+                        panel.duel.decline_duel() #send refusal for duel
+            
 
-                            if not panel.duel.waiting_for_response :
-                            
-                                if panel.duel.duel_accepted :
-                                    panel.chat.history_append("A Duel has begun ! " + map.name_user + " VS " + command[1])
-                                    #### networking to be added here ####
-                                    
-                                    
-                                    panel.duelON = True
-
-                                    panel.duel.duel_accepted = False
-                                    panel.chat.input.message_to_send = ''
-                                    
-
-                                if panel.duel.duel_refused : 
-                                    panel.chat.history_append("A Duel has been declined ! (" + map.name_user + " VS " + command[1] + ")")
-
-                                    panel.chat.input.message_to_send = ''
-                                    #### networking to be added here ####
-
-                                    panel.duel.duel_refused = False
-                                    panel.duel.ON = False
-                                
-
-
-                                panel.duel.handle_enemy_actions()
-
-                                # print(panel.duel.ON)
-                                if panel.duel.handle_winner() : 
-                                    if panel.duel.won : 
-                                        panel.chat.history_append("You've won")
-                                    if panel.duel.lost : 
-                                        panel.chat.history_append("You've lost")
-                                    if panel.duel.draw :
-                                        panel.chat.history_append("It's a draw")
-
-                                    panel.chatON = True
-                                    panel.duelON = False
-
-                                    panel.duel.init_duel()
-                                    
-
-                    if (command != [] and command[0] == '/accept') or panel.duel.ON: 
-                        pass
-                
-
-                if panel.duelON :
-                    panel.duel.handle_waiting_for_response()
-                    
-
-                    pass
-
-
-
+                        
 
                 panel.chat.handle_history_scroll(event)
-                # print(panel.chat.history_index)
+                 # print(panel.chat.history_index)
 
         
 
-            # if event.type == pygame.MOUSEBUTTONDON:
-            #     print(event.button)
+        if panel.duelON :
+            panel.chatON = False
+
+            if panel.duel.accept_duel == 2  : 
+                panel.duelON = False
+                panel.duel.init_duel()
+
+            if panel.duel.accept_duel == 1 :
+
+                if panel.duel.handle_winner() :
+                    panel.duelON = False
+
+            
+
+
+            
+
+
+
+
+
+
+
+        # if event.type == pygame.MOUSEBUTTONDON:
+        #     print(event.button)
 
         if map.get_overlay() in ("fire", "collapse"):
             map.display_overlay()
