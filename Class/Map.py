@@ -272,9 +272,11 @@ class Map:  # Un ensemble de cellule
             if walker.owner == self.name_user:
                 walker.move()
                 if self.players_online > 1: walkerBuffer.add("move", walker)
-
-            if self.get_overlay() not in ("fire", "collapse") and not isinstance(walker, Prefect) or (isinstance(walker, Prefect) and not walker.isWorking):
-                walker.display()
+            else:
+                self.walkers.remove(walker)
+                
+            #if self.get_overlay() not in ("fire", "collapse") and not isinstance(walker, Prefect) or (isinstance(walker, Prefect) and not walker.isWorking):
+            #    walker.display()
             """if not isinstance(i, Migrant):
                 if i.previousCell is not None:
                     i.previousCell.display()"""

@@ -49,8 +49,8 @@ class WalkerBuffer:
       self.buffer["array"].append({
              "action": action,
              "building": (walker.building.x, walker.building.y),
-             "currentCell": walker.currentCell,
-             "previousCell": walker.previousCell,
+             "currentCell": (walker.currentCell.x, walker.currentCell.y) if walker.currentCell != None else None,
+             "previousCell": (walker.previousCell.x, walker.previousCell.y) if walker.previousCell != None else None,
              "type": str(walker)})
    
    def send(self):
