@@ -21,8 +21,10 @@ class Wrapper:
       match data["header"]:
          case 'join':
             #Add here spawnpoints checker
-            self.map.player_online = self.map.player_online + 1
-            encode.joinResponse(self.map.name_user, self.map.player_online)
+            self.map.players_online += 1
+            encode.joinResponse(self.map.name_user, self.map.players_online)
+         case 'joinResponse':
+            self.map.players_online += 1 
          case 'build':
             self.map.get_cell(data["x"], data["y"]).build(data["type"], data["username"])
          case 'clear':
