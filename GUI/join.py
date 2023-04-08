@@ -4,18 +4,13 @@ from Class.Button import Button
 from Class.Input_box import InputBox
 from Class.Text import Text
 import threading as thread
-from p2p.socket_python import *
+from p2p import socket_python as spy
 import subprocess
 
 
 def join_game():
 
     pygame.init()
-    Server(1235,4)
-    thread_recv = thread.Thread(target=recv_data, args=(Server.socket,))
-    thread_recv.start()
-    Client("127.0.0.1",1236)
-    
 
     # Create screen variable and set the size of the screen
     SCREEN = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
@@ -139,16 +134,17 @@ def join_game():
                 if text_back.is_hovered(pos):
                     return False
                 if text_connect.is_hovered(pos):
+                    spy.Server(1235,4)
+                    thread_recv = thread.Thread(target=spy.recv_data, args=(spy.Server.socket,))
+                    thread_recv.start()
+                    spy.LanProcess =  subprocess.Popen(['p2p/lan_connect',input_ip.get_text()])
+                    spy.Client("127.0.0.1",1236)
+                    
                     if input_pseudo.get_text() != '':
                         file = open("Saves/temp.txt", "w")
                         file.write(input_pseudo.get_text())
                         file.close()
-                    print(input_ip.get_text())
                     
-                    LanProcess =  subprocess.Popen(['p2p/lan_connect', input_ip.get_text()])
-                    print("Set my lan")
-                    showLan()
-
                     return True
 
             if input_ip.handle_event(event, SCREEN):

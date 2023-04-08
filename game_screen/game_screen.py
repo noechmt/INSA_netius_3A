@@ -264,8 +264,9 @@ def game_screen():
                         text_last_save = fps_font.render(
                             current_time, 1, (255, 255, 255))
                     if panel.get_exit_button().is_hovered(pos):
-                        print(p2p.showLan())
+                
                         p2p.LanProcess.kill()
+                        p2p.CloseSockets()
                         run = False
 
                 if zoom_update > 0 and not panel.chatON:
