@@ -191,7 +191,7 @@ def game_screen():
                         map.handle_esc()
                         governor_movements = not governor_movements
                         panel.set_governor_sprite(governor_movements)
-                    if not governor_movements and not panel.chatON:
+                    if not governor_movements and not panel.chatON and not panel.duelON:
                         if (panel.get_grid_button().is_hovered(pos)):
                             map.set_overlay("grid")
                         if panel.get_fire_button().is_hovered(pos):
@@ -241,9 +241,10 @@ def game_screen():
                             map.handle_button("stop")
 
                         if map.get_continued() :
-                            print("continue")
+                            panel.duel.continue_bet()
+                            # print(panel.duel.my_score)
                         if map.get_stopped() :
-                            print("stop")
+                            panel.duel.stop_bet()
 
                     if (panel.up_button.is_hovered(pos)):
                         if speed_index < 9:
@@ -387,28 +388,35 @@ def game_screen():
                 if pygame.key.get_pressed()[pygame.K_r]:
                     Prefect.risk_reset = not Prefect.risk_reset
 
-                if pygame.key.get_pressed()[pygame.K_p]:
-                    volume = pygame.mixer.music.get_volume()
-                    pygame.mixer.music.set_volume(volume + 0.05)
-                    for i in map.sound_effect:
-                        volume = map.sound_effect[i].get_volume()
-                        map.sound_effect[i].set_volume(volume + 0.05)
+                # if pygame.key.get_pressed()[pygame.K_p]:
+                #     volume = pygame.mixer.music.get_volume()
+                #     pygame.mixer.music.set_volume(volume + 0.05)
+                #     for i in map.sound_effect:
+                #         volume = map.sound_effect[i].get_volume()
+                #         map.sound_effect[i].set_volume(volume + 0.05)
 
-                if pygame.key.get_pressed()[pygame.K_m]:
-                    volume = pygame.mixer.music.get_volume()
-                    pygame.mixer.music.set_volume(volume - 0.05)
-                    for i in map.sound_effect:
-                        volume = map.sound_effect[i].get_volume()
-                        map.sound_effect[i].set_volume(volume - 0.05)
+                # if pygame.key.get_pressed()[pygame.K_m]:
+                #     volume = pygame.mixer.music.get_volume()
+                #     pygame.mixer.music.set_volume(volume - 0.05)
+                #     for i in map.sound_effect:
+                #         volume = map.sound_effect[i].get_volume()
+                #         map.sound_effect[i].set_volume(volume - 0.05)
 
-                if pygame.key.get_pressed()[pygame.K_t]:
+                if pygame.key.get_pressed()[pygame.K_e] and panel.duelON :
+                    panel.duel.continue_bet_enemy_proto()
+
+                if pygame.key.get_pressed()[pygame.K_s] and panel.duelON :
+                    panel.duel.stop_bet_enemy_proto()
+
+                if pygame.key.get_pressed()[pygame.K_t] and not panel.duelON:
+
                     panel.chatON = True
                     panel.set_window("chat")
 
                     # print([panel.chat.message_history[i].text for i in range(len(panel.chat.message_history))])
 
-            if panel.chatON:
-                panel.chat.input.handle_event(event, SCREEN, True)
+            if panel.chatON or panel.duel.ON:
+                if not panel.duel.ON : panel.chat.input.handle_event(event, SCREEN, True)
 
                 ######## chat messages #########
                 if panel.chat.input.message_to_send != '' and panel.chat.input.message_to_send[0] != '/' :
@@ -418,59 +426,87 @@ def game_screen():
                     chat(message)
                 
 
-                ######## chat commands #########
-                if panel.chat.input.message_to_send != '' and panel.chat.input.message_to_send[0] == '/' or panel.duel.ON :
+                ######## chat commands #########        
+                if (panel.chat.input.message_to_send != '' and panel.chat.input.message_to_send[0] == '/') or panel.duel.ON :
                     # print(map.players)
                     command = myMap(panel.chat.input.message_to_send)
 
-                    if command[0] == '/duel' : 
+                    if (command != [] and command[0] == '/duel') or panel.duel.ON: 
                         
-                        if command[1] != '' and command[1] not in map.players : 
+                        if command != [] and command[1] != '' and command[1] not in map.players : 
                             panel.chat.history_append("Player does not exist")
                             panel.chat.input.message_to_send = ''
 
                         # TODO checking self vs self edge case when network is implemented 
-                        elif command[1] != '' and command[1] in map.players or panel.duel.ON: 
+                        elif (command != [] and command[1] != '' and command[1] in map.players) or panel.duel.ON :
+                            
+                            panel.chatON = False
+                            if command != [] and command[1] != '' : panel.duel.waiting_for_response = True
+                            
+
+                            if (command != [] and command[1] != '') : panel.duel.enemy_name = command[1]
+                            panel.duel.player_name = map.name_user
                            
                             panel.duel.ON = True
+
+                            if not panel.duel.waiting_for_response :
                             
-                            if panel.duel.duel_accepted :
-                                panel.chat.history_append("A Duel has begun ! " + map.name_user + " VS " + command[1])
-                                #### networking to be added here ####
+                                if panel.duel.duel_accepted :
+                                    panel.chat.history_append("A Duel has begun ! " + map.name_user + " VS " + command[1])
+                                    #### networking to be added here ####
+                                    
+                                    
+                                    panel.duelON = True
+
+                                    panel.duel.duel_accepted = False
+                                    panel.chat.input.message_to_send = ''
+                                    
+
+                                if panel.duel.duel_refused : 
+                                    panel.chat.history_append("A Duel has been declined ! (" + map.name_user + " VS " + command[1] + ")")
+
+                                    panel.chat.input.message_to_send = ''
+                                    #### networking to be added here ####
+
+                                    panel.duel.duel_refused = False
+                                    panel.duel.ON = False
                                 
-                                panel.chatON = False
-                                panel.duelON = True
 
 
-                                
+                                panel.duel.handle_enemy_actions()
 
-                                panel.duel.duel_accepted = False
-                                panel.chat.input.message_to_send = ''
-                                
+                                # print(panel.duel.ON)
+                                if panel.duel.handle_winner() : 
+                                    if panel.duel.won : 
+                                        panel.chat.history_append("You've won")
+                                    if panel.duel.lost : 
+                                        panel.chat.history_append("You've lost")
+                                    if panel.duel.draw :
+                                        panel.chat.history_append("It's a draw")
 
-                            if panel.duel.duel_refused : 
-                                panel.chat.history_append("A Duel has declined ! (" + map.name_user + " VS " + command[1] + ")")
-                                panel.chat.input.message_to_send = ''
-                                #### networking to be added here ####
-                                panel.duel.duel_refused = False
-                                panel.duel.ON = False
-                               
-                            
+                                    panel.chatON = True
+                                    panel.duelON = False
 
+                                    panel.duel.init_duel()
+                                    
 
+                    if (command != [] and command[0] == '/accept') or panel.duel.ON: 
+                        pass
+                
+
+                if panel.duelON :
+                    panel.duel.handle_waiting_for_response()
                     
 
-
-
-
-
-
+                    pass
 
 
 
 
                 panel.chat.handle_history_scroll(event)
                 # print(panel.chat.history_index)
+
+        
 
             # if event.type == pygame.MOUSEBUTTONDON:
             #     print(event.button)

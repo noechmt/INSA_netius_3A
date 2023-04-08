@@ -127,10 +127,10 @@ class Panel():
         self.governor_button = Button(179.6*self.width_screen/192, self.height_screen/20, self.width_screen/22, self.height_screen/12, self.governor_off)
 
 
-        self.continue_button = Button(150*self.width_screen/192, 0.350*self.height_screen,
+        self.continue_button = Button(70*self.width_screen/192, 0.600*self.height_screen,
                                   self.width_screen/48, self.height_screen/40, self.duel.duel_sprite["continue"])
         
-        self.stop_button = Button(160*self.width_screen/192, 0.350*self.height_screen,
+        self.stop_button = Button(80*self.width_screen/192, 0.600*self.height_screen,
                                   self.width_screen/48, self.height_screen/40, self.duel.duel_sprite["stop"])
 
 
@@ -222,9 +222,10 @@ class Panel():
             
 
         if self.duelON : 
+            self.duel.display()
             self.continue_button.draw(self.screen)
             self.stop_button.draw(self.screen)
-            self.duel.display()
+           
             
 
 

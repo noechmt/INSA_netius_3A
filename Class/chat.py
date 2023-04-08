@@ -42,6 +42,7 @@ class Chat:
                               height_input_name, input_name_font, 35, "", (255, 255, 255))
 
     def display(self):
+        # print("darken?")
         self.screen.blit(pygame.transform.scale(self.chat_sprite["background"], (self.width_screen*.450, self.height_screen*.450)),
                          (self.width_screen*1/80, self.height_screen*0.01))
         self.title.draw(self.screen)
