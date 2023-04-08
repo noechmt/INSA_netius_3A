@@ -13,10 +13,11 @@ int sending(char *ip_adress, int port, char *msg, int server_fd)
     // printf("Waiting for connection\n");
     if (strlen(msg) != 0)
     {
-        if (strncmp(msg, "/quit", strlen("/quit")) == 0)
+        /*if (strncmp(msg, "/quit", strlen("/quit")) == 0)
         {
             return -1;
-        }
+        }*/
+        printf("%i %s", server_fd, msg);
         if (send(server_fd, msg, strlen(msg), 0) < 0)
         {
             perror("send error ");
@@ -51,7 +52,7 @@ int sending_local(char *msg, int local_fd)
             close(local_fd);
             return -1;
         }
-        if (send(local_fd, msg, strlen(msg), 0) < 0)
+        if (send(local_fd, msg, strlen(msg), MSG_WAITALL) < 0)
         {
             perror("send error ");
         }

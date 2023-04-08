@@ -45,11 +45,17 @@ int main(int argc, char **argv)
     so_linger(server_fd, local_fd);
     if (argc > 1)
     {
+        int sock;
         player *new_first_player = calloc(sizeof(player), 1);
         initialize_player(new_first_player);
         new_first_player->next_player = player_list;
         player_list = new_first_player;
         strncpy(player_list->ip_adress, argv[1], strlen(argv[1]));
+        if((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1){
+            perror("first socket failed");
+            exit(EXIT_FAILURE);
+        }
+        player_list->fd = sock;
     }
     pthread_t tid;
     printf("Listening for other players... \n");
@@ -63,22 +69,24 @@ int main(int argc, char **argv)
 void* receiving(void *fd_temp)
 {
     int fd = (*((int *)fd_temp));
+    printf("fd : %i", fd);
     struct sockaddr_in address;
     int valread, connect_local = 0;
     char *buffer = calloc(1024, 1);
     int addrlen = sizeof(address);
-    fd_set current_sockets;
+    fd_set current_sockets, ready_sockets;
 
     // Initialize my current set
-
+    FD_ZERO(&current_sockets);
+    FD_SET(fd, &current_sockets);
     int k = 0;
     while (1)
     {
-        FD_ZERO(&current_sockets);
-        FD_SET(fd, &current_sockets);
+        
         printf("%i\n", fd);
         k++;
-        if (select(FD_SETSIZE, &current_sockets, NULL, NULL, NULL) < 0 && errno != EINTR)
+        ready_sockets = current_sockets;
+        if (select(FD_SETSIZE, &ready_sockets, NULL, NULL, NULL) < 0 && errno != EINTR)
         {
             perror("Error select");
             exit(EXIT_FAILURE);
@@ -86,7 +94,7 @@ void* receiving(void *fd_temp)
         printf("ahah il fonctionne\n");
         for (int i = 0; i < FD_SETSIZE; i++)
         {
-            if (FD_ISSET(i, &current_sockets))
+            if (FD_ISSET(i, &ready_sockets))
             {
                 int count_check = 0;
 
@@ -157,7 +165,9 @@ void* receiving(void *fd_temp)
                 }
                 else
                 {
-                    valread = recv(i, buffer, 1024, 0);
+                    while((valread = recv(i, buffer, 1024, MSG_WAITALL))>0){
+                        
+                    }
                     /*Adding new player if the buffer is an IP adress*/
 
                     if (valread < 0)
@@ -198,7 +208,7 @@ void* receiving(void *fd_temp)
                         while (send_players->next_player != NULL)
                         {
                             // printf("send to : %s \n", send_players->ip_adress);
-                            printf("combien %i\n", send_players->fd);
+                            printf("combien %i %s\n", send_players->fd, buffer);
                             sending(send_players->ip_adress, 1234, buffer, send_players->fd);
                             send_players = send_players->next_player;
                         }

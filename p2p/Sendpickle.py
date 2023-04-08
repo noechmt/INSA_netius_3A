@@ -19,12 +19,13 @@ print("allo2")"""
 
 sleep(1)
 Client("127.0.0.1",1236)
-sleep(0.5)
+sleep(1)
 Client.sendData("|________|"*10)
 
 sleep(1)
 
-Client.sendData("||||||||||"*10)
+Client.sendData("123456789\0"*4)
+
 Client.sendData("/quit")
 Client.close()
 Server.close()
