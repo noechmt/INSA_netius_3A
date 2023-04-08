@@ -72,6 +72,10 @@ class Server:
         Server.socket.listen(number)
 
 
+    def close():
+        Server.socket.close()
+
+
 
 
 def send_data(data,addr="127.0.0.1",port=1236):
@@ -80,6 +84,7 @@ def send_data(data,addr="127.0.0.1",port=1236):
     Socket.connect(addr,port)
     print("Connected")
     Socket.mysend(data.encode())
+    print("EndSend")
     Socket.close()
     
 

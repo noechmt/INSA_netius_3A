@@ -12,16 +12,18 @@
 
 struct player {
     char* ip_adress;
+    int fd;
     struct player *next_player;
 };
 
 typedef struct player player;
 
-int sending(char *adress, int port, char *msg);
+int sending(char *adress, int port, char *msg, int server_fd);
 void local_connect(int local_fd);
-void receiving(int fd);
-void *receive_thread(void *fd);
-int sending_local(char *msg);
+/*void receiving_local(int fd);*/
+void* receiving(void* fd_temp);
+int sending_local(char *msg, int local_fd);
 void initialize_player(player* play);
 void so_linger(int server_fd, int local_fd);
 void server_connect(int server_fd);
+void flush_list(player *player);
