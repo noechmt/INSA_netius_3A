@@ -2,6 +2,8 @@ import socket
 from time import sleep
 import select
 
+def showLan() : print("Procsessu Lan : ",LanProcess)
+
 LanProcess = None
 
 class MySocket:
