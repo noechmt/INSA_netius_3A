@@ -9,6 +9,12 @@ def join(username):
       "username": username
    })
 
+def joinResponse(username, players_online):
+   encodeJSON({"header": "responseJoin",
+      "username": username,
+      "players_online": players_online
+   })
+
 def build(username, x, y, type):
    encodeJSON({"header": "build",
       "username": username,

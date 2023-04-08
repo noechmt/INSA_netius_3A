@@ -230,7 +230,8 @@ class Cell:  # Une case de la map
         if isinstance(self, Empty) and self.type_empty != "dirt":
             print("This cell is already taken")
         else:
-            if owner == self.map.name_user: encode.build(owner, self.x, self.y, type)
+            if self.map.players_online > 1 and owner == self.map.name_user: 
+                encode.build(owner, self.x, self.y, type)
             match type:
                 case "path":
                     self.map.set_cell_array(self.x, self.y, Path(

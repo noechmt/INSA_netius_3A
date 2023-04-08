@@ -2,6 +2,7 @@ import json
 from this import d
 
 import Class.Walker as Walker
+import Class.Encoder as encode
 
 #TODO
 #Protocole d'apparition sur la map :
@@ -19,7 +20,8 @@ class Wrapper:
       match data["header"]:
          case 'join':
             #Add here spawnpoints checker
-            pass
+            self.map.player_online = self.map.player_online + 1
+            encode.joinResponse(self.map.name_user, self.map.player_online)
          case 'build':
             self.map.get_cell(data["x"], data["y"]).build(data["type"], data["username"])
          case 'clear':
