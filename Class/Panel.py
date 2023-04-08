@@ -1,6 +1,8 @@
 import pygame
 from Class.Button import Button
-
+from Class.Text import Text
+from Class.Input_box import InputBox
+from  Class.chat import Chat
 
 def draw_rect_alpha(surface, color, rect):
     shape_surf = pygame.Surface(pygame.Rect(rect).size, pygame.SRCALPHA)
@@ -15,7 +17,10 @@ class Panel():
         self.init_sprites()
         self.init_buttons()
         self.window_current = self.window_none
+        self.chatON = False
+        self.chat = Chat(self.screen)
         self.display()
+       
         pass
 
     def init_sprites(self):
@@ -41,6 +46,8 @@ class Panel():
             "game_screen/game_screen_sprites/panel_window_well.png").convert_alpha()
         self.window_shovel = pygame.image.load(
             "game_screen/game_screen_sprites/panel_window_shovel.png").convert_alpha()
+        self.window_chat = pygame.image.load(
+            "game_screen/game_screen_sprites/panel_window_chat.png").convert_alpha()
         self.grid_button_sprite = pygame.image.load(
             "game_screen/game_screen_sprites/paneling_grid_button.png").convert_alpha()
         self.fire_button_sprite = pygame.image.load(
@@ -77,6 +84,8 @@ class Panel():
             "game_screen/game_screen_sprites/farm_paneling.png").convert_alpha()
         self.granary_button_sprite = pygame.image.load(
             "game_screen/game_screen_sprites/granary_paneling.png").convert_alpha()
+        
+  
 
     def init_buttons(self):
         self.grid_button = Button(177*self.width_screen/192, 0.320*self.height_screen,
@@ -184,14 +193,27 @@ class Panel():
         draw_rect_alpha(self.screen, (25, 25, 25, 127), (self.width_screen*(11/12)+2,
                         self.height_screen*(8/17), self.width_screen/12-4, 3*self.height_screen/7-2))
 
-        self.screen.blit(pygame.transform.scale(self.bottom, (self.width_screen/12,
-                                                              self.height_screen/10)), (((11/12)*self.width_screen), (0.9*self.height_screen)))
+        # self.screen.blit(pygame.transform.scale(self.bottom, (self.width_screen/12,
+        #                                                       self.height_screen/10)), (((11/12)*self.width_screen), (0.9*self.height_screen)))
 
         self.up_button.draw(self.screen)
         self.down_button.draw(self.screen)
         self.pause_button.draw(self.screen)
         self.save_button.draw(self.screen)
         self.exit_button.draw(self.screen)
+
+
+       
+        if self.chatON : 
+            self.chat.display()
+            print([self.chat.message_history[i].text for i in range(len(self.chat.message_history))])
+            
+
+            
+
+
+
+
 
     def set_window(self, choice):
         if choice == "road":
@@ -206,6 +228,8 @@ class Panel():
             self.window_current = self.window_well
         if choice == "shovel":
             self.window_current = self.window_shovel
+        if choice == "chat" :
+            self.window_current = self.window_chat
         if choice == "none":
             self.window_current = self.window_none
         self.screen.blit(pygame.transform.scale(self.window_current, (self.width_screen /

@@ -34,8 +34,12 @@ def clear(username, x, y):
       "username": username,
       "x": x,
       "y": y})
+   
+def chat(message) :
+   encodeJSON({"header" : "chat", 
+      "message" : message})
 
-class WalkerBuffer:
+class WalkerBuffer:  
 
    def __init__(self, username):
       self.username = username

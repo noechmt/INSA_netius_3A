@@ -11,6 +11,7 @@ from Class.Wrapper import Wrapper
 import p2p.socket_python as p2p
 import time
 from datetime import datetime
+from Class.Encoder import *
 
 
 # draw a rectangle with an opacity option
@@ -57,10 +58,9 @@ def game_screen():
         # print(map.array[34][34])
 
     panel = Panel(SCREEN)
-    wrapper = Wrapper(map)
+    wrapper = Wrapper(map, panel)
     #wrapper.wrap('{"header": "build", "username": "Governor", "x": 5, "y": 5, "type": "house"}')
     #wrapper.wrap('{"header": "walker", "username": "Governor", "array": [{"action": "move", "currentCell": [7, 5], "previousCell": [7, 4], "type": "Migrant"}]}')
-
 
     # Dims without left panel
     height_wo_panel = HEIGH_SCREEN
@@ -185,11 +185,11 @@ def game_screen():
                         selection["is_active"] = 1
 
                     if (panel.get_governor_button().is_hovered(pos)):
-                        panel.set_window("none")
+                        # panel.set_window("none")
                         map.handle_esc()
                         governor_movements = not governor_movements
                         panel.set_governor_sprite(governor_movements)
-                    if not governor_movements:
+                    if not governor_movements and not panel.chatON:
                         if (panel.get_grid_button().is_hovered(pos)):
                             map.set_overlay("grid")
                         if panel.get_fire_button().is_hovered(pos):
@@ -266,7 +266,7 @@ def game_screen():
                     if panel.get_exit_button().is_hovered(pos):
                         run = False
 
-                if zoom_update > 0:
+                if zoom_update > 0 and not panel.chatON:
                     if event.button == 4:
                         if zoom < 1.4:
                             zoom += 0.05
@@ -361,6 +361,7 @@ def game_screen():
                     panel.set_window("none")
                     map.handle_esc()
                     governor_movements = False
+                    panel.chatON = False
                     panel.set_governor_sprite(governor_movements)
 
                 if pygame.key.get_pressed()[pygame.K_r]:
@@ -369,25 +370,36 @@ def game_screen():
                 if pygame.key.get_pressed()[pygame.K_p]:
                     volume = pygame.mixer.music.get_volume()
                     pygame.mixer.music.set_volume(volume + 0.05)
-                    print("tunic", pygame.mixer.music.get_volume())
                     for i in map.sound_effect:
                         volume = map.sound_effect[i].get_volume()
                         map.sound_effect[i].set_volume(volume + 0.05)
-                        print(map.sound_effect[i].get_volume(), i, "+")
 
                 if pygame.key.get_pressed()[pygame.K_m]:
                     volume = pygame.mixer.music.get_volume()
                     pygame.mixer.music.set_volume(volume - 0.05)
-                    print("tunic", pygame.mixer.music.get_volume())
                     for i in map.sound_effect:
                         volume = map.sound_effect[i].get_volume()
                         map.sound_effect[i].set_volume(volume - 0.05)
-                        print(map.sound_effect[i].get_volume(), i, "-")
 
-                # grid_button.handle_hover_button(pos, SCREEN)
-                # home_button.handle_hover_button(pos, SCREEN)
-                # shovel_button.handle_hover_button(pos, SCREEN)
-                # road_button.handle_hover_button(pos, SCREEN)
+                if pygame.key.get_pressed()[pygame.K_t]:
+                    panel.chatON = True
+                    panel.set_window("chat")
+
+                    # print([panel.chat.message_history[i].text for i in range(len(panel.chat.message_history))])
+
+            if panel.chatON:
+                panel.chat.input.handle_event(event, SCREEN, True)
+                if panel.chat.input.message_to_send != '':
+                    message = map.get_name_user() + " : " + panel.chat.input.message_to_send
+                    panel.chat.history_append(message)
+                    panel.chat.input.message_to_send = ''
+                    chat(message)
+
+                panel.chat.handle_history_scroll(event)
+                # print(panel.chat.history_index)
+
+            # if event.type == pygame.MOUSEBUTTONDON:
+            #     print(event.button)
 
         if map.get_overlay() in ("fire", "collapse"):
             map.display_overlay()

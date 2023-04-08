@@ -69,6 +69,7 @@ class Map:  # Un ensemble de cellule
         self.population = 0
         self.month_index = 0
         self.year = 150
+        self.sound_effect = sound_effect
 
     # Permet d'initialiser le chemin de terre sur la map.
     def init_paths(self):
