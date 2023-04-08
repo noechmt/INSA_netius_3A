@@ -32,7 +32,7 @@ class Map:  # Un ensemble de cellule
         self.size = size  # La taille de la map est size*size : int
         self.height_land = height
         self.width_land = width
-        self.players = ["", "", "", ""]
+        self.players = ["Player1", "", "", ""]
         # TO-DO request the num player
         self.num_player = 1
         # TO-DO put names in array and do function to fill it after init
@@ -62,7 +62,7 @@ class Map:  # Un ensemble de cellule
         self.wallet = 5000
         self.update_hover = 0
         self.button_activated = {"house": False, "shovel": False, "road": False,
-                                 "prefecture": False, "engineerpost": False, "well": False, "farm": False, "granary": False}
+                                 "prefecture": False, "engineerpost": False, "well": False, "farm": False, "granary": False, "continue" : False, "stop" : False}
         self.zoom = 1
         self.zoom_coef = 1
         self.population = 0
@@ -331,6 +331,12 @@ class Map:  # Un ensemble de cellule
 
     def get_granaried(self):
         return self.button_activated["granary"]
+    
+    def get_continued(self) : 
+        return self.button_activated["continue"]
+    
+    def get_stopped(self) :
+        return self.button_activated["stop"]
 
     def get_height_land(self):
         return self.height_land

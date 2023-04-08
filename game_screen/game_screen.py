@@ -13,6 +13,8 @@ import time
 from datetime import datetime
 from Class.Encoder import *
 
+def myMap(message) : 
+    return [*map(str,message.split())]
 
 # draw a rectangle with an opacity option
 def draw_rect_alpha(surface, color, rect):
@@ -221,14 +223,27 @@ def game_screen():
                             map.handle_button("well")
                             map.set_overlay("water")
 
-                    if (panel.farm_button.is_hovered(pos)):
-                        panel.set_window("farm")
-                        map.handle_button("farm")
+                        if (panel.farm_button.is_hovered(pos)):
+                            panel.set_window("farm")
+                            map.handle_button("farm")
 
-                        # map.display_map()
-                    if (panel.granary_button.is_hovered(pos)):
-                        panel.set_window("granary")
-                        map.handle_button("granary")
+                            # map.display_map()
+                        if (panel.granary_button.is_hovered(pos)):
+                            panel.set_window("granary")
+                            map.handle_button("granary")
+
+                  
+                    if panel.duelON :
+                        if panel.continue_button.is_hovered((pos)) :
+                            map.handle_button("continue")
+
+                        if panel.stop_button.is_hovered((pos)) :
+                            map.handle_button("stop")
+
+                        if map.get_continued() :
+                            print("continue")
+                        if map.get_stopped() :
+                            print("stop")
 
                     if (panel.up_button.is_hovered(pos)):
                         if speed_index < 9:
@@ -303,8 +318,13 @@ def game_screen():
                                 for j in range(-2, 3):
                                     if (39 >= x+k >= 0 and 39 >= y+j >= 0):
                                         map.get_cell(i[0]+k, i[1]+j).display()
+
                         else:
                             selected_cell.display()
+
+                    
+
+
                     # map.buildings.sort(key=lambda i: (i.x, i.y))
                     # print([(i.x, i.y) for i in map.buildings])
                     selection["cells"].clear()
@@ -389,11 +409,65 @@ def game_screen():
 
             if panel.chatON:
                 panel.chat.input.handle_event(event, SCREEN, True)
-                if panel.chat.input.message_to_send != '':
+
+                ######## chat messages #########
+                if panel.chat.input.message_to_send != '' and panel.chat.input.message_to_send[0] != '/' :
                     message = map.get_name_user() + " : " + panel.chat.input.message_to_send
                     panel.chat.history_append(message)
                     panel.chat.input.message_to_send = ''
                     chat(message)
+                
+
+                ######## chat commands #########
+                if panel.chat.input.message_to_send != '' and panel.chat.input.message_to_send[0] == '/' or panel.duel.ON :
+                    # print(map.players)
+                    command = myMap(panel.chat.input.message_to_send)
+
+                    if command[0] == '/duel' : 
+                        
+                        if command[1] != '' and command[1] not in map.players : 
+                            panel.chat.history_append("Player does not exist")
+                            panel.chat.input.message_to_send = ''
+
+                        # TODO checking self vs self edge case when network is implemented 
+                        elif command[1] != '' and command[1] in map.players or panel.duel.ON: 
+                           
+                            panel.duel.ON = True
+                            
+                            if panel.duel.duel_accepted :
+                                panel.chat.history_append("A Duel has begun ! " + map.name_user + " VS " + command[1])
+                                #### networking to be added here ####
+                                
+                                panel.chatON = False
+                                panel.duelON = True
+
+
+                                
+
+                                panel.duel.duel_accepted = False
+                                panel.chat.input.message_to_send = ''
+                                
+
+                            if panel.duel.duel_refused : 
+                                panel.chat.history_append("A Duel has declined ! (" + map.name_user + " VS " + command[1] + ")")
+                                panel.chat.input.message_to_send = ''
+                                #### networking to be added here ####
+                                panel.duel.duel_refused = False
+                                panel.duel.ON = False
+                               
+                            
+
+
+                    
+
+
+
+
+
+
+
+
+
 
                 panel.chat.handle_history_scroll(event)
                 # print(panel.chat.history_index)

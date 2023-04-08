@@ -5,6 +5,8 @@ from Class.Input_box import InputBox
 
 class Chat:
     def __init__(self, screen):
+
+        # useless dict for now, may add another sprite someday (probably not)
         self.chat_sprite = {
             "background": pygame.image.load("game_screen/game_screen_sprites/chat_background.jpg").convert_alpha()
         }
@@ -73,3 +75,7 @@ class Chat:
             if event.button == 4 and self.history_index < 95:
 
                 self.history_index += 5
+
+        
+            
+

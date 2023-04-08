@@ -3,6 +3,7 @@ from Class.Button import Button
 from Class.Text import Text
 from Class.Input_box import InputBox
 from  Class.chat import Chat
+from Class.duel import Duel
 
 def draw_rect_alpha(surface, color, rect):
     shape_surf = pygame.Surface(pygame.Rect(rect).size, pygame.SRCALPHA)
@@ -15,10 +16,13 @@ class Panel():
         self.screen = screen
         self.width_screen, self.height_screen = self.screen.get_size()
         self.init_sprites()
-        self.init_buttons()
-        self.window_current = self.window_none
         self.chatON = False
+        self.duelON = False
+        self.duelAcceptWin = False
         self.chat = Chat(self.screen)
+        self.duel = Duel(self.screen)
+        self.window_current = self.window_none
+        self.init_buttons()
         self.display()
        
         pass
@@ -122,6 +126,14 @@ class Panel():
                                   41*self.height_screen/80, 1.5*self.width_screen/48, 1.75*self.height_screen/40, self.button_exit_sprite)
         self.governor_button = Button(179.6*self.width_screen/192, self.height_screen/20, self.width_screen/22, self.height_screen/12, self.governor_off)
 
+
+        self.continue_button = Button(150*self.width_screen/192, 0.350*self.height_screen,
+                                  self.width_screen/48, self.height_screen/40, self.duel.duel_sprite["continue"])
+        
+        self.stop_button = Button(160*self.width_screen/192, 0.350*self.height_screen,
+                                  self.width_screen/48, self.height_screen/40, self.duel.duel_sprite["stop"])
+
+
     def display(self):
         for i in range(2):
             for j in range(9):
@@ -206,9 +218,13 @@ class Panel():
        
         if self.chatON : 
             self.chat.display()
-            print([self.chat.message_history[i].text for i in range(len(self.chat.message_history))])
+            # print([self.chat.message_history[i].text for i in range(len(self.chat.message_history))])
             
 
+        if self.duelON : 
+            self.continue_button.draw(self.screen)
+            self.stop_button.draw(self.screen)
+            self.duel.display()
             
 
 
