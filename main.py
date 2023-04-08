@@ -1,4 +1,5 @@
 from GUI.title_screen import title_screen
+import p2p.connect as p2p
 import pygame
 import sys
 import os

@@ -4,6 +4,7 @@ import math as m
 import random as rd
 import networkx as nx
 import _thread as thread
+import Class.Encoder as encode
 import time
 from Class.Cell import *
 
@@ -35,7 +36,8 @@ class Map:  # Un ensemble de cellule
                                  "prefecture": False, "engineerpost": False, "well": False, "farm": False, "granary": False, "ownership": False}
         self.players = ["Player1", "Player2", "Player3", "Player4"]
         # TO-DO request the num player
-        self.num_player = 2
+        self.num_player = 1
+        self.players_online = 1
         # TO-DO put names in array and do function to fill it after init
         self.name_user = username
         self.players[self.num_player - 1] = username
@@ -265,13 +267,19 @@ class Map:  # Un ensemble de cellule
                 if any(house.nb_occupants != 0 for house in self.buildings if isinstance(house, House)):
                     i.leave_building()
 
-        for i in self.walkers:
-            i.move()
-            if self.get_overlay() not in ("fire", "collapse") and not isinstance(i, Prefect) or (isinstance(i, Prefect) and not i.isWorking):
-                i.display()
+        if self.players_online > 1 and len(self.walkers) > 0: walkerBuffer = encode.WalkerBuffer(self.name_user)
+        for walker in self.walkers:
+            if walker.owner == self.name_user:
+                walker.move()
+                if self.players_online > 1: walkerBuffer.add("move", walker)
+
+            if self.get_overlay() not in ("fire", "collapse") and not isinstance(walker, Prefect) or (isinstance(walker, Prefect) and not walker.isWorking):
+                walker.display()
             """if not isinstance(i, Migrant):
                 if i.previousCell is not None:
                     i.previousCell.display()"""
+            
+        if self.players_online > 1 and len(self.walkers) > 0: walkerBuffer.send()
 
         for i in self.buildings:
             if i.risk and not i.risk.happened:
