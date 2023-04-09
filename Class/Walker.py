@@ -46,7 +46,7 @@ class Walker():
     def display(self):
         if not self.inBuilding and self.building.map.get_overlay() not in ("fire", "collapse"):
             if self.previousCell is not None:
-                if self.currentCell.map.players_online > 1:
+                if self.currentCell.map.players_online > 1 and isinstance(self, Governor):
                     encode.governor(self.currentCell.map.name_user, self.currentCell.map.num_player, self.currentCell)
                 if self.previousCell.x < self.currentCell.x:
                     SCREEN.blit(pygame.transform.scale(self.walker_sprites["right"][self.currentSprite % 2], (
