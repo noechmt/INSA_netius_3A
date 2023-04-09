@@ -47,14 +47,30 @@ int main(int argc, char **argv)
         new_first_player->next_player = player_list;
         player_list = new_first_player;
         strncpy(player_list->ip_adress, argv[1], strlen(argv[1]));
+        int sock;
+        struct sockaddr_in serv_addr;
+        if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+        {
+            close(sock);
+            printf("\n Socket creation error init \n");
+            return -1;
+        }
+        serv_addr.sin_family = AF_INET;
+        serv_addr.sin_addr.s_addr = inet_addr(argv[1]); // INADDR_ANY always gives an IP of 0.0.0.0
+        serv_addr.sin_port = htons(1234);
+        // printf("Waiting for connection\n");
+        if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+        {
+            sleep(0.01);
+            perror("connect init ");
+            exit(EXIT_FAILURE);
+        }
+        player_list->fd = sock;
     }
     pthread_t tid;
     printf("Listening for other players... \n");
     pthread_create(&tid, NULL, &receive_thread, &server_fd); // Creating thread to keep receiving message in real time
-    while (1)
-    {
-        receive_thread(&local_fd);
-    }
+    receive_thread(&local_fd);
     close(server_fd);
     close(local_fd);
 }
@@ -110,45 +126,67 @@ void receiving(int fd)
                     }
 
                     /*adding ip to the list*/
-                    if (count_check == 0 &&strncmp("127.0.0.1", inet_ntoa(address.sin_addr), strlen(inet_ntoa(address.sin_addr))) != 0)
+                    if (count_check == 0 && strncmp("127.0.0.1", inet_ntoa(address.sin_addr), strlen(inet_ntoa(address.sin_addr))) != 0)
                     {
                         player *new_player = calloc(sizeof(player), 1);
                         initialize_player(new_player);
                         new_player->next_player = player_list;
                         player_list = new_player;
                         strncpy(player_list->ip_adress, inet_ntoa(address.sin_addr), strlen(inet_ntoa(address.sin_addr)));
+                        player_list->fd = i;
 
-                        player* share_ip = player_list;
+                        player *share_ip = player_list;
                         share_ip = share_ip->next_player;
-                        while(share_ip->next_player != NULL){
-                            sending(player_list->ip_adress, 1234, share_ip->ip_adress);
+                        while (share_ip->next_player != NULL)
+                        {
+                            sending(player_list->ip_adress, 1234, share_ip->ip_adress, player_list->fd);
                             share_ip = share_ip->next_player;
                         }
-                        sending(player_list->ip_adress, 1234, "maj");
+                        sending(player_list->ip_adress, 1234, "maj", player_list->fd);
                     }
                 }
                 else
                 {
                     valread = recv(i, buffer, 1024, 0);
                     /*Adding new player if the buffer is an IP adress*/
-                    
+
                     if (valread < 0)
                     {
                         perror("erreur de recv");
                     }
                     printf("message recu et transmis : %s\n", buffer);
 
-                    if(strncmp(buffer, "192.168", strlen("192.168")) == 0){
+                    if (strncmp(buffer, "192.168", strlen("192.168")) == 0)
+                    {
                         player *new_player = calloc(sizeof(player), 1);
                         initialize_player(new_player);
                         new_player->next_player = player_list;
                         player_list = new_player;
                         strncpy(player_list->ip_adress, buffer, strlen(buffer));
+                        int sock_server;
+                        struct sockaddr_in serv_addr;
+                        if ((sock_server = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+                        {
+                            close(sock_server);
+                            perror("\n Socket creation error \n");
+                        }
+                        serv_addr.sin_family = AF_INET;
+                        serv_addr.sin_addr.s_addr = inet_addr(player_list->ip_adress); // INADDR_ANY always gives an IP of 0.0.0.0
+                        serv_addr.sin_port = htons(1234);
+                        // printf("Waiting for connection\n");
+                        if (connect(sock_server, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+                        {
+                            sleep(0.01);
+                            perror("erreur connect adding ");
+                        }
+                        player_list->fd = sock_server;
                     }
-                    else if(strncmp(buffer, "maj", strlen("maj")) == 0){
+                    else if (strncmp(buffer, "maj", strlen("maj")) == 0)
+                    {
                         player *sending_to_all = player_list;
-                        while(sending_to_all->next_player != NULL){
-                            sending(sending_to_all->ip_adress, 1234, "new pelo");
+                        while (sending_to_all->next_player != NULL)
+                        {
+                            sending(sending_to_all->ip_adress, 1234, "new pelo", sending_to_all->fd);
                             sending_to_all = sending_to_all->next_player;
                         }
                     }
@@ -160,9 +198,9 @@ void receiving(int fd)
                     {
                         player *send_players = player_list;
                         while (send_players->next_player != NULL)
-                        {  
+                        {
                             printf("send to %s\n : ", send_players->ip_adress);
-                            sending(send_players->ip_adress, 1234, buffer);
+                            sending(send_players->ip_adress, 1234, buffer, send_players->fd);
                             send_players = send_players->next_player;
                         }
                     }

@@ -12,12 +12,13 @@
 
 struct player {
     char* ip_adress;
+    int fd;
     struct player *next_player;
 };
 
 typedef struct player player;
 
-int sending(char *adress, int port, char *msg);
+int sending(char *adress, int port, char *msg, int server_fd);
 void local_connect(int local_fd);
 void receiving(int fd);
 void *receive_thread(void *fd);

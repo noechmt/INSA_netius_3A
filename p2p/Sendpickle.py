@@ -26,7 +26,7 @@ sleep(1)
 
 Client.sendData("123456789\0"*4)
 
-Client.sendData("/quit")
+#Client.sendData("/quit")
 Client.close()
 Server.close()
 sleep(3)

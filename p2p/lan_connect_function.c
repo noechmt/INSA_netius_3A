@@ -1,15 +1,12 @@
 #include "lan_connect.h"
 
-
-
-
 // Sending messages to port
-int sending(char *ip_adress, int port, char *msg)
+int sending(char *ip_adress, int port, char *msg, int server_fd)
 {
 
     // Fetching port number
 
-    int sock = 0;
+    /*int sock = 0;
     struct sockaddr_in serv_addr;
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
@@ -25,19 +22,20 @@ int sending(char *ip_adress, int port, char *msg)
     {
         sleep(0.01);
         return 1;
-    }
+    }*/
     if (strlen(msg) != 0)
     {
         if (strncmp(msg, "/quit", strlen("/quit")) == 0)
         {
             return -1;
         }
-        if (send(sock, msg, strlen(msg), 0) < 0)
+        printf("%i\n", server_fd);
+        if (send(server_fd, msg, strlen(msg), 0) < 0)
         {
-            perror("send error ");
+            perror("send error server ");
         };
     }
-    close(sock);
+    close(server_fd);
     return 1;
 }
 
@@ -45,7 +43,9 @@ void initialize_player(player *play)
 {
     play->ip_adress = calloc(sizeof(char), 15);
     bzero(play->ip_adress, 15);
+    play->fd = 0;
 }
+
 
 int sending_local(char *msg)
 {
@@ -102,4 +102,3 @@ void *receive_thread(void *fd)
         receiving(s_fd);
     }
 }
-
