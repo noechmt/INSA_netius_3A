@@ -2,7 +2,9 @@ import socket
 from time import sleep
 import select
 
-MSGLEN =  10
+def showLan() : print("Procsessu Lan : ",LanProcess)
+
+LanProcess = None
 
 class MySocket:
     
@@ -43,7 +45,21 @@ class MySocket:
         return self.sock
    
    
-   
+class Client : 
+    
+    socket = None
+    
+    def __init__(self,addr,port) :
+        
+        Client.socket = socket.socket()
+        Client.socket.connect((addr,port))
+        
+            
+    def sendData(data) :
+        Client.socket.send(data.encode())
+        
+    def close() : 
+        Client.socket.close()
         
 class Server:
 
@@ -56,6 +72,10 @@ class Server:
         Server.socket.listen(number)
 
 
+    def close():
+        Server.socket.close()
+
+
 
 
 def send_data(data,addr="127.0.0.1",port=1236):
@@ -64,6 +84,7 @@ def send_data(data,addr="127.0.0.1",port=1236):
     Socket.connect(addr,port)
     print("Connected")
     Socket.mysend(data.encode())
+    print("EndSend")
     Socket.close()
     
 
