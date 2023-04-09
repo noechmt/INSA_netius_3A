@@ -112,6 +112,7 @@ def game_screen(first_online=False):
     while run:
         pos = pygame.mouse.get_pos()
 
+        wrapper.wrap(p2p.get_data())
         update_speed = 10 / (speed)
 
         fire_update_count += 1

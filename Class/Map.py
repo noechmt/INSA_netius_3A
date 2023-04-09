@@ -42,6 +42,7 @@ class Map:  # Un ensemble de cellule
         # TO-DO request the num
         self.players_online = 1
         if not first_online:
+            print("In responseJoin")
             wrapper = Wrapper(self, None)
             receive_num = False
             while not receive_num:
@@ -67,6 +68,7 @@ class Map:  # Un ensemble de cellule
         self.init_paths()
         self.init_ownership()
         if not first_online:
+            print("In cell_init")
             if load_map:
                 # Local version : reading from a file
                 # f = open("map", 'r')
@@ -76,13 +78,21 @@ class Map:  # Un ensemble de cellule
 
                 # Online version : reading from the requests
                 num_cell_init = 0
-                while num_cell_init != self.size * self.size:
+                while num_cell_init != self.size:
+                    time.sleep(1)
                     # protocol to receive packet and if it's cell_init header, decode it
                     data = p2p.get_data()
                     if len(data) != 0:
-                        if json.loads(data)["header"] == "cell_init":
-                            wrapper.wrap(data)
-                        num_cell_init += 1
+                        try:
+                            header = json.loads(data)["header"]
+                            print("header =", header, " !!!!!!!!!!!")
+                            if header == "cell_init":
+                                wrapper.wrap(data)
+                                num_cell_init += 1
+                                print("num_cell_init =", num_cell_init)
+                                encoder.row_received(self.name_user, True)
+                        except:
+                            encoder.row_received(self.name_user, False)
 
         self.spawn_cells = [self.array[0][self.size//10],
                             self.array[0][self.size - self.size//10],
@@ -114,6 +124,17 @@ class Map:  # Un ensemble de cellule
             for y in range(self.size):
                 row.append(self.array[x][y].encode())
             encoder.cell_init_row(self.name_user, row)
+            response = False
+            while not response:
+                data = p2p.get_data()
+                if len(data) != 0:
+                    try:
+                        header = json.loads(data)["header"]
+                        if header == "row_received":
+                            response = True
+                    except:
+                        encoder.cell_init_row(self.name_user, row)
+            time.sleep(2)
 
     def add_transaction(self, cell):
         if cell.owner == None:

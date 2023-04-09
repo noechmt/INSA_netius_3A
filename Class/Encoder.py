@@ -34,6 +34,12 @@ def cell_init_row(username, row):
                 "row": row})
 
 
+def row_received(username, received):
+    encodeJSON({"header": "row_received",
+                "username": username,
+                "received": received})
+
+
 def build(username, x, y, type):
     encodeJSON({"header": "build",
                 "username": username,

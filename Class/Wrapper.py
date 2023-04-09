@@ -19,6 +19,7 @@ class Wrapper:
         self.panel = panel
 
     def wrap(self, data_json):
+        print("WRAAAPPEDDDDD !")
         try:
             data = json.loads(data_json)
         except:
@@ -84,5 +85,5 @@ class Wrapper:
                             cell["x"], cell["y"]).init_random_sprites()
                     self.map.get_cell(
                         cell["x"], cell["y"]).owner = cell["owner"]
-                    print(cell["x"], cell["y"], cell["type"],
-                          cell["type_empty"], cell["owner"])
+            case 'row_received':
+                self.map.row_received = data["received"]

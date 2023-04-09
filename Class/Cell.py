@@ -268,8 +268,9 @@ class Cell:  # Une case de la map
         if self.map.name_user != self.owner:
             print("The cell is not yours, you can't build on it")
         else:
-            if self.map.players_online > 1 and owner == self.map.name_user:
-                encode.build(owner, self.x, self.y, type)
+            if not init:
+                if self.map.players_online > 1 and owner == self.map.name_user:
+                    encode.build(owner, self.x, self.y, type)
             match type:
                 case "path":
                     self.map.set_cell_array(self.x, self.y, Path(
