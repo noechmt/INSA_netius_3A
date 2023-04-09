@@ -137,7 +137,7 @@ def join_game():
                 text_connect.handle_hover_text(pos, SCREEN)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if text_back.is_hovered(pos):
-                    return False
+                    return (False, False)
                 if text_connect.is_hovered(pos):
                     if input_pseudo.get_text() != '':
                         file = open("Saves/temp.txt", "w")
