@@ -338,84 +338,86 @@ class Cell:  # Une case de la map
         if isinstance(self, CityHall) or isinstance(self, CityHallPart) or isinstance(self, GranaryPart) or isinstance(self, FarmPart):
             pass
         elif not isinstance(self, Empty) and self.type_empty != "rock" and self.type_empty != "water":
-            if self.map.players_online > 1 and self.owner == self.map.name_user: encode.clear(self.owner, self)
-            for i in self.map.walkers:
-                if i.building == self:
-                    self.map.walkers.remove(i)
-                    i.currentCell.display()
-                    if isinstance(self, House):
-                        i.previousCell.display()
-            for i in self.map.migrantQueue:
-                if i.building == self:
-                    self.map.migrantQueue.remove(i)
-                    i.currentCell.display()
-            for i in self.map.laborAdvisorQueue:
-                if i.building == self:
-                    self.map.laborAdvisorQueue.remove(i)
-                    i.currentCell.display()
-            self.type_empty = "dirt"
+            if self.owner == self.map.name_user:
+                if self.map.players_online > 1:
+                    encode.clear(self.owner, self)
+                for i in self.map.walkers:
+                    if i.building == self:
+                        self.map.walkers.remove(i)
+                        i.currentCell.display()
+                        if isinstance(self, House):
+                            i.previousCell.display()
+                for i in self.map.migrantQueue:
+                    if i.building == self:
+                        self.map.migrantQueue.remove(i)
+                        i.currentCell.display()
+                for i in self.map.laborAdvisorQueue:
+                    if i.building == self:
+                        self.map.laborAdvisorQueue.remove(i)
+                        i.currentCell.display()
+                self.type_empty = "dirt"
 
-            if isinstance(self, Granary):
-                for i in range(-1, 1):
-                    for j in range(-1, 1):
-                        # print(self.map.array[self.x+i][self.y+j].x, self.map.array[self.x+i][self.y+j].y)
-                        self.map.buildings.remove(
-                            self.map.array[self.x+i][self.y+j])
-                        self.map.set_cell_array(self.x+i, self.y+j, Empty(
-                            self.x+i, self.y+j, self.height, self.width, self.map, self.owner, "dirt", 1))
+                if isinstance(self, Granary):
+                    for i in range(-1, 1):
+                        for j in range(-1, 1):
+                            # print(self.map.array[self.x+i][self.y+j].x, self.map.array[self.x+i][self.y+j].y)
+                            self.map.buildings.remove(
+                                self.map.array[self.x+i][self.y+j])
+                            self.map.set_cell_array(self.x+i, self.y+j, Empty(
+                                self.x+i, self.y+j, self.height, self.width, self.map, self.owner, "dirt", 1))
 
-            elif isinstance(self, GranaryPart):
-                print(self.map.buildings)
-                for i in range(-1, 1):
-                    for j in range(-1, 1):
-                        self.map.buildings.remove(
-                            self.map.array[self.granary.x+i][self.granary.y+j])
-                        self.map.set_cell_array(self.granary.x+i, self.granary.y+j, Empty(
-                            self.granary.x+i, self.granary.y+j, self.height, self.width, self.map, self.owner, "dirt", 1))
+                elif isinstance(self, GranaryPart):
+                    print(self.map.buildings)
+                    for i in range(-1, 1):
+                        for j in range(-1, 1):
+                            self.map.buildings.remove(
+                                self.map.array[self.granary.x+i][self.granary.y+j])
+                            self.map.set_cell_array(self.granary.x+i, self.granary.y+j, Empty(
+                                self.granary.x+i, self.granary.y+j, self.height, self.width, self.map, self.owner, "dirt", 1))
 
-            elif isinstance(self, Farm):
-                for i in range(-1, 2):
-                    for j in range(-1, 2):
-                        self.map.buildings.remove(
-                            self.map.array[self.x+i][self.y+j])
-                        self.map.set_cell_array(self.x+i, self.y+j, Empty(
-                            self.x+i, self.y+j, self.height, self.width, self.map, self.owner, "dirt", 1))
+                elif isinstance(self, Farm):
+                    for i in range(-1, 2):
+                        for j in range(-1, 2):
+                            self.map.buildings.remove(
+                                self.map.array[self.x+i][self.y+j])
+                            self.map.set_cell_array(self.x+i, self.y+j, Empty(
+                                self.x+i, self.y+j, self.height, self.width, self.map, self.owner, "dirt", 1))
 
-            elif isinstance(self, Crop):
-                for i in range(-1, 2):
-                    for j in range(-1, 2):
-                        self.map.buildings.remove(
-                            self.map.array[self.building.x+i][self.building.y+j])
-                        self.map.set_cell_array(self.building.x+i, self.building.y+j, Empty(
-                            self.building.x+i, self.building.y+j, self.height, self.width, self.map, self.owner, "dirt", 1))
+                elif isinstance(self, Crop):
+                    for i in range(-1, 2):
+                        for j in range(-1, 2):
+                            self.map.buildings.remove(
+                                self.map.array[self.building.x+i][self.building.y+j])
+                            self.map.set_cell_array(self.building.x+i, self.building.y+j, Empty(
+                                self.building.x+i, self.building.y+j, self.height, self.width, self.map, self.owner, "dirt", 1))
 
-            elif isinstance(self, FarmPart):
-                for i in range(-1, 2):
-                    for j in range(-1, 2):
-                        self.map.buildings.remove(
-                            self.map.array[self.farm.x+i][self.farm.y+j])
-                        self.map.set_cell_array(self.farm.x+i, self.farm.y+j, Empty(
-                            self.farm.x+i, self.farm.y+j, self.height, self.width, self.map, self.owner, "dirt", 1))
+                elif isinstance(self, FarmPart):
+                    for i in range(-1, 2):
+                        for j in range(-1, 2):
+                            self.map.buildings.remove(
+                                self.map.array[self.farm.x+i][self.farm.y+j])
+                            self.map.set_cell_array(self.farm.x+i, self.farm.y+j, Empty(
+                                self.farm.x+i, self.farm.y+j, self.height, self.width, self.map, self.owner, "dirt", 1))
 
-            else:
-                if isinstance(self, Building):
-                    try:
-                        self.map.buildings.remove(self)
-                    except:
-                        pass
-                self.map.set_cell_array(self.x, self.y, Empty(
-                    self.x, self.y, self.height, self.width, self.map, self.owner, "dirt", 1))
+                else:
+                    if isinstance(self, Building):
+                        try:
+                            self.map.buildings.remove(self)
+                        except:
+                            pass
+                    self.map.set_cell_array(self.x, self.y, Empty(
+                        self.x, self.y, self.height, self.width, self.map, self.owner, "dirt", 1))
 
-            arr = self.check_cell_around(Cell)
-            for i in arr:
-                if not isinstance(i, Building):
-                    i.display()
-                for j in i.check_cell_around(Cell):
-                    if j.x < self.x + 2 and j.y < self.y + 2:
-                        # and not (j in [i.map.array[i.x-1][i.y], i.map.array[i.x - 1][i.y - 1]]) and (isinstance(i, Cell.Prefecture) or isinstance(i, Cell.EngineerPost)):
-                        if not isinstance(j, Building):
-                            j.display()
-            self.map.wallet -= 2
+                arr = self.check_cell_around(Cell)
+                for i in arr:
+                    if not isinstance(i, Building):
+                        i.display()
+                    for j in i.check_cell_around(Cell):
+                        if j.x < self.x + 2 and j.y < self.y + 2:
+                            # and not (j in [i.map.array[i.x-1][i.y], i.map.array[i.x - 1][i.y - 1]]) and (isinstance(i, Cell.Prefecture) or isinstance(i, Cell.EngineerPost)):
+                            if not isinstance(j, Building):
+                                j.display()
+                self.map.wallet -= 2
 
     def set_type(self, type):
         self.type = type
@@ -749,15 +751,18 @@ class Empty(Cell):
             super().display()
 
     def clear(self):
-        if self.type_empty == "tree":
-            self.type_empty = "dirt"
-            self.type_sprite = "dirt"
-            self.path_sprite = "game_screen/game_screen_sprites/" + \
-                self.type_sprite + "_" + str(self.aleatoire) + ".png"
-            self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
-            self.map.wallet -= 2
-        self.update_sprite_size()
-        self.display()
+        if self.owner == self.map.name_user:
+            if self.map.players_online > 1:
+                encode.clear(self.owner, self)
+            if self.type_empty == "tree":
+                self.type_empty = "dirt"
+                self.type_sprite = "dirt"
+                self.path_sprite = "game_screen/game_screen_sprites/" + \
+                    self.type_sprite + "_" + str(self.aleatoire) + ".png"
+                self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
+                self.map.wallet -= 2
+            self.update_sprite_size()
+            self.display()
 
     def canBuild(self):
         return self.type_empty == "dirt"
