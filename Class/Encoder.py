@@ -41,8 +41,9 @@ def duel_answer(answer) :
    encodeJSON({"header" : "duel_answer", 
       "accept" : answer}) # 1 accept or 2 decline
    
-def update_round() :
-   encodeJSON({"header" : "update_round"})
+def update_round(score) :
+   encodeJSON({"header" : "update_round", 
+      "score" : score})
 
 
 

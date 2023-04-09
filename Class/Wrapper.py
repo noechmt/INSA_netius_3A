@@ -57,3 +57,4 @@ class Wrapper:
 
          case 'update_round' :
             self.panel.duel.enemy_game_round += 1
+            self.panel.duel
