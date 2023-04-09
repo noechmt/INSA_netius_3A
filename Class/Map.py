@@ -157,7 +157,7 @@ class Map:  # Un ensemble de cellule
                             else:
                                 encoder.cell_init_row(self.name_user, row)
                     except:
-                        encoder.cell_init_row(self.name_user, row)
+                        pass
             for y in range(self.size//2, self.size):
                 row_2.append(self.array[x][y].encode())
             encoder.cell_init_row(self.name_user, row_2)
@@ -168,13 +168,13 @@ class Map:  # Un ensemble de cellule
                         header = json.loads(data)["header"]
                         if header == "row_received_2":
                             wrapper.wrap(data)
-                            print(self.row_received)
-                            if self.row_received:
+                            print(self.row_received_2)
+                            if self.row_received_2:
                                 response_2 = True
                             else:
-                                encoder.cell_init_row(self.name_user, row)
+                                encoder.cell_init_row(self.name_user, row_2)
                     except:
-                        encoder.cell_init_row(self.name_user, row)
+                        pass
 
     def add_transaction(self, cell):
         if cell.owner == None:
