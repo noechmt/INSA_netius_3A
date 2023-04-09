@@ -192,7 +192,7 @@ class Map:  # Un ensemble de cellule
             for cell in self.transaction["cells"]:
                 cell.owner = self.name_user
                 self.wallet -= cell.price
-                encoder.owner(self.name_user, self, self.name_user)
+                encoder.owner(self.name_user, cell, self.name_user)
             self.transaction["Done"] = True
         return self.transaction["Done"]
 
