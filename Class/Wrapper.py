@@ -97,3 +97,5 @@ class Wrapper:
                 self.map.row_received = data["received"]
             case 'row_received_2':
                 self.map.row_received_2 = data["received"]
+            case 'owner':
+                self.map.get_cell(data["x"], data["y"]).owner = data["owner"]

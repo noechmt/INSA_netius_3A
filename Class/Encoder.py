@@ -81,6 +81,13 @@ def chat(message):
     encodeJSON({"header": "chat",
                 "message": message})
 
+def owner(username, cell, owner):
+    encodeJSON({"header": "owner",
+                "username": username,
+                "x": cell.x,
+                "y": cell.y,
+                "owner": owner})
+
 
 class WalkerBuffer:
 
