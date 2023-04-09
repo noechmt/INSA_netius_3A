@@ -68,7 +68,6 @@ class Map:  # Un ensemble de cellule
         self.buildings = []
         self.path_graph = nx.DiGraph()
         self.init_paths()
-        self.init_ownership()
         if not first_online:
             print("In cell_init")
             if load_map:
@@ -107,7 +106,7 @@ class Map:  # Un ensemble de cellule
                             else:
                                 encoder.row_received_2(
                                     self.name_user, False)
-
+        self.init_ownership()
         self.spawn_cells = [self.array[0][self.size//10],
                             self.array[0][self.size - self.size//10],
                             self.array[self.size -
@@ -175,6 +174,7 @@ class Map:  # Un ensemble de cellule
                                 encoder.cell_init_row(self.name_user, row_2)
                     except:
                         pass
+        self.init_ownership(self.players_online)
 
     def add_transaction(self, cell):
         if cell.owner == None:
@@ -250,7 +250,10 @@ class Map:  # Un ensemble de cellule
 
         self.display_map()
 
-    def init_ownership(self):
+    def init_ownership(self, players_online=0):
+        if players_online != 0:
+            num_player = self.num_player
+            self.num_player = players_online
         if self.num_player == 1:
             for x in range(self.size // 10 + 1):
                 for y in range(self.size // 10 + 1):
@@ -267,7 +270,8 @@ class Map:  # Un ensemble de cellule
             for x in range(self.size - (self.size // 10), self.size):
                 for y in range(self.size // 10 + 1):
                     self.array[x][y].owner = self.name_user
-
+        if players_online != 0:
+            self.num_player = num_player
     def init_city_halls(self):
         self.array[self.size//10 - 1][self.size//10 - 1] = CityHall(
             self.size//10 - 1, self.size//10 - 1, self.height_land, self.width_land, self, self.players[1 - 1])
