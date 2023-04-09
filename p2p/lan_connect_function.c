@@ -29,11 +29,12 @@ int sending(char *ip_adress, int port, char *msg, int server_fd)
         {
             return -1;
         }
-        printf("%i\n", server_fd);
+        printf("fd %i\n", server_fd);
         if (send(server_fd, msg, strlen(msg), 0) < 0)
         {
             perror("send error server ");
         };
+        printf("aezr\n");
     }
     close(server_fd);
     return 1;

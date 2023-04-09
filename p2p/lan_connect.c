@@ -42,6 +42,7 @@ int main(int argc, char **argv)
     so_linger(server_fd, local_fd);
     if (argc > 1)
     {
+        printf("112\n");
         player *new_first_player = calloc(sizeof(player), 1);
         initialize_player(new_first_player);
         new_first_player->next_player = player_list;
@@ -68,6 +69,7 @@ int main(int argc, char **argv)
         player_list->fd = sock;
     }
     pthread_t tid;
+    printf("local : %i, server : %i \n", local_fd, server_fd);
     printf("Listening for other players... \n");
     pthread_create(&tid, NULL, &receive_thread, &server_fd); // Creating thread to keep receiving message in real time
     receive_thread(&local_fd);
@@ -91,17 +93,18 @@ void receiving(int fd)
     while (1)
     {
         k++;
-        ready_sockets = current_sockets;
+        //ready_sockets = current_sockets;
 
-        if (select(FD_SETSIZE, &ready_sockets, NULL, NULL, NULL) < 0)
+        if (select(FD_SETSIZE, &current_sockets, NULL, NULL, NULL) < 0)
         {
-            perror("Error");
+            perror("select error");
             exit(EXIT_FAILURE);
         }
         for (int i = 0; i < FD_SETSIZE; i++)
         {
-            if (FD_ISSET(i, &ready_sockets))
+            if (FD_ISSET(i, &current_sockets))
             {
+                printf("i : %i\n", i);
                 int count_check = 0;
 
                 if (i == fd)
@@ -113,6 +116,7 @@ void receiving(int fd)
                         perror("accept");
                         exit(EXIT_FAILURE);
                     }
+                    printf("client socket %i\n", client_socket);
                     FD_SET(client_socket, &current_sockets);
                     /*check if IP is in the list*/
                     player *add_player_list = player_list;
@@ -128,12 +132,13 @@ void receiving(int fd)
                     /*adding ip to the list*/
                     if (count_check == 0 && strncmp("127.0.0.1", inet_ntoa(address.sin_addr), strlen(inet_ntoa(address.sin_addr))) != 0)
                     {
+                        printf("azerazer\n");
                         player *new_player = calloc(sizeof(player), 1);
                         initialize_player(new_player);
                         new_player->next_player = player_list;
                         player_list = new_player;
                         strncpy(player_list->ip_adress, inet_ntoa(address.sin_addr), strlen(inet_ntoa(address.sin_addr)));
-                        player_list->fd = i;
+                        player_list->fd = client_socket;
 
                         player *share_ip = player_list;
                         share_ip = share_ip->next_player;
@@ -147,9 +152,11 @@ void receiving(int fd)
                 }
                 else
                 {
+                    printf("i recv %i\n", i);
                     valread = recv(i, buffer, 1024, 0);
                     /*Adding new player if the buffer is an IP adress*/
-
+                    printf("oui\n");
+                    printf("valread %i\n", valread);
                     if (valread < 0)
                     {
                         perror("erreur de recv");
@@ -158,6 +165,7 @@ void receiving(int fd)
 
                     if (strncmp(buffer, "192.168", strlen("192.168")) == 0)
                     {
+                        printf("test\n");
                         player *new_player = calloc(sizeof(player), 1);
                         initialize_player(new_player);
                         new_player->next_player = player_list;
