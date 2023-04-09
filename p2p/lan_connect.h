@@ -10,6 +10,8 @@
 #include <errno.h>
 #include <string.h>
 
+
+
 struct player {
     char* ip_adress;
     int fd;

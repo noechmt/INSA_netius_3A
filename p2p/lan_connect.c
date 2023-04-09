@@ -8,7 +8,7 @@ player *player_list = NULL;
 char name[20];
 int LOCAL_PORT = 1236;
 int PORT_PYTHON = 1235;
-
+int local_connexion = 0;
 int main(int argc, char **argv)
 {
     // initialisation du premier joueur
@@ -84,7 +84,7 @@ void receiving(int fd)
     int valread;
     char *buffer = calloc(1024, 1);
     int addrlen = sizeof(address);
-    fd_set current_sockets, ready_sockets;
+    fd_set current_sockets;
 
     // Initialize my current set
     FD_ZERO(&current_sockets);
@@ -93,7 +93,7 @@ void receiving(int fd)
     while (1)
     {
         k++;
-        //ready_sockets = current_sockets;
+        // ready_sockets = current_sockets;
 
         if (select(FD_SETSIZE, &current_sockets, NULL, NULL, NULL) < 0)
         {
@@ -147,17 +147,17 @@ void receiving(int fd)
                             sending(player_list->ip_adress, 1234, share_ip->ip_adress, player_list->fd);
                             share_ip = share_ip->next_player;
                         }
-                        if(player_list->next_player->next_player != NULL){
+                        if (player_list->next_player->next_player != NULL)
+                        {
                             sending(player_list->ip_adress, 1234, "maj", player_list->fd);
                         }
-                        
                     }
                 }
                 else
                 {
                     printf("i recv %i\n", i);
-                    valread = recv(i, buffer, 1024, 0);
-                    
+                    valread = recv(i, buffer, 1024, MSG_WAITALL);
+
                     /*Adding new player if the buffer is an IP adress*/
                     printf("oui\n");
                     printf("valread %i\n", valread);
@@ -192,6 +192,10 @@ void receiving(int fd)
                             perror("erreur connect adding ");
                         }
                         player_list->fd = sock_server;
+                        if (recv(sock_server, buffer, 1024, 0) < 0)
+                        {
+                            perror("azerrzaerrzerazrz");
+                        }
                     }
                     else if (strncmp(buffer, "maj", strlen("maj")) == 0)
                     {
@@ -204,6 +208,34 @@ void receiving(int fd)
                     }
                     else if (strncmp(inet_ntoa(address.sin_addr), "127.0.0.1", strlen("127.0.0.1")) != 0)
                     {
+                        if (local_connexion == 0)
+                        {
+                            int sock_local;
+                            struct sockaddr_in serv_addr;
+                            if ((sock_local = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+                            {
+                                close(sock_local);
+                                printf("\n Socket creation error \n");
+                            }
+                            serv_addr.sin_family = AF_INET;
+                            serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); // INADDR_ANY always gives an IP of 0.0.0.0
+                            serv_addr.sin_port = htons(1235);
+
+                            struct linger so_linger;
+                            so_linger.l_onoff = 1;
+                            so_linger.l_linger = 1;
+                            if (setsockopt(sock_local, SOL_SOCKET, SO_LINGER, &so_linger, sizeof(so_linger)) == -1)
+                            {
+                                close(sock_local);
+                            }
+
+                            // printf("Waiting for connection\n");
+                            if (connect(sock_local, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+                            {
+                                sleep(0.01);
+                            }
+                            local_connexion++;
+                        }
                         sending_local(buffer);
                     }
                     else
