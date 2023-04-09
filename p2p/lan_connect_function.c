@@ -61,7 +61,7 @@ int sending_local(char *msg)
         }
         if (send(sock_local, msg, strlen(msg), 0) < 0)
         {
-            perror("send error ");
+            perror("send error local");
         }
     }
     return 1;

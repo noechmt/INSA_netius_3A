@@ -156,7 +156,7 @@ void receiving(int fd)
                 else
                 {
                     printf("i recv %i\n", i);
-                    valread = recv(i, buffer, 1024, MSG_WAITALL);
+                    valread = recv(i, buffer, 1024, 0);
 
                     /*Adding new player if the buffer is an IP adress*/
                     printf("oui\n");
