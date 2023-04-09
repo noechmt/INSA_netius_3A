@@ -66,6 +66,10 @@ class Map:  # Un ensemble de cellule
         self.migrantQueue = []
         self.laborAdvisorQueue = []
         self.buildings = []
+        self.governors = [Governor(self.spawn_cells[0], None),
+                           Governor(self.spawn_cells[1], None), 
+                           Governor(self.spawn_cells[2], None), 
+                           Governor(self.spawn_cells[3], None)]
         self.path_graph = nx.DiGraph()
         self.init_paths()
         if not first_online:
@@ -118,6 +122,9 @@ class Map:  # Un ensemble de cellule
         # To-do spawn at the city-hall
         self.init_city_halls()
         self.governor = Governor(self.spawn_cell, username)
+        self.governors[self.num_player - 1] = self.governor
+        if not first_online:
+            encode.governor(self.name_user, self.num_player, self.governor.currentCell)
         self.wallet = 5000
         self.update_hover = 0
         self.zoom = 1

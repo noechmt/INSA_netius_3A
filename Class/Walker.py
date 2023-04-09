@@ -3,6 +3,7 @@ import random
 import pygame
 
 import networkx as nx
+import Class.Encoder as encode
 
 
 def rm_dup_list(x):
@@ -45,6 +46,8 @@ class Walker():
     def display(self):
         if not self.inBuilding and self.building.map.get_overlay() not in ("fire", "collapse"):
             if self.previousCell is not None:
+                if self.currentCell.map.players_online > 1:
+                    encode.governor(self.currentCell.map.name_user, self.currentCell.map.num_player, self.currentCell)
                 if self.previousCell.x < self.currentCell.x:
                     SCREEN.blit(pygame.transform.scale(self.walker_sprites["right"][self.currentSprite % 2], (
                         self.currentCell.width, self.currentCell.height)), (self.currentCell.left, self.currentCell.top))
@@ -54,7 +57,7 @@ class Walker():
                 elif self.previousCell.y < self.currentCell.y:
                     SCREEN.blit(pygame.transform.scale(self.walker_sprites["bot"][self.currentSprite % 2], (
                         self.currentCell.width, self.currentCell.height)), (self.currentCell.left, self.currentCell.top))
-                elif self.previousCell.y > self.currentCell.y:
+                elif self.previousCell.y >= self.currentCell.y:
                     SCREEN.blit(pygame.transform.scale(self.walker_sprites["top"][self.currentSprite % 2], (
                         self.currentCell.width, self.currentCell.height)), (self.currentCell.left, self.currentCell.top))
             else:

@@ -89,6 +89,13 @@ def owner(username, cell, owner):
                 "y": cell.y,
                 "owner": owner})
 
+def governor(username, num_player, cell):
+    encodeJSON({"header": "governor",
+                "username": username,
+                "num_player": num_player,
+                "x": cell.x,
+                "y": cell.y})
+
 
 class WalkerBuffer:
 
