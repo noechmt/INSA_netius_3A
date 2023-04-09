@@ -257,21 +257,22 @@ class Map:  # Un ensemble de cellule
         if self.num_player == 1:
             for x in range(self.size // 10 + 1):
                 for y in range(self.size // 10 + 1):
-                    self.array[x][y].owner = self.name_user
+                    self.array[x][y].owner = self.players[self.num_player - 1]
         elif self.num_player == 2:
             for x in range(self.size // 10 + 1):
                 for y in range(self.size - (self.size // 10), self.size):
-                    self.array[x][y].owner = self.name_user
+                    self.array[x][y].owner = self.self.players[self.num_player - 1]
         elif self.num_player == 3:
             for x in range(self.size - (self.size // 10), self.size):
                 for y in range(self.size - (self.size // 10), self.size):
-                    self.array[x][y].owner = self.name_user
+                    self.array[x][y].owner = self.self.players[self.num_player - 1]
         elif self.num_player == 4:
             for x in range(self.size - (self.size // 10), self.size):
                 for y in range(self.size // 10 + 1):
-                    self.array[x][y].owner = self.name_user
+                    self.array[x][y].owner = self.self.players[self.num_player - 1]
         if players_online != 0:
             self.num_player = num_player
+
     def init_city_halls(self):
         self.array[self.size//10 - 1][self.size//10 - 1] = CityHall(
             self.size//10 - 1, self.size//10 - 1, self.height_land, self.width_land, self, self.players[1 - 1])
