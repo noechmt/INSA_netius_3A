@@ -30,7 +30,7 @@ void server_connect(int server_fd)
 
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
     {
-        perror("bind failed");
+        perror("bind failed server");
         close(server_fd);
         exit(EXIT_FAILURE);
     }
@@ -40,6 +40,7 @@ void server_connect(int server_fd)
         close(server_fd);
         exit(EXIT_FAILURE);
     }
+
 }
 void local_connect(int local_fd)
 {
@@ -51,7 +52,7 @@ void local_connect(int local_fd)
 
     if (bind(local_fd, (struct sockaddr *)&address_local, sizeof(address_local)) < 0)
     {
-        perror("bind failed");
+        perror("bind failed local");
         close(local_fd);
         exit(EXIT_FAILURE);
     }
