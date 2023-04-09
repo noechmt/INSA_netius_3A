@@ -24,7 +24,7 @@ class Duel:
         }
 
 
-        self.enemy_name = ""
+        
         self.player_name = ""
 
         self.init_duel()
@@ -57,6 +57,9 @@ class Duel:
         
     
     def init_duel(self) : 
+
+        #other player name
+        self.enemy_name = ""
 
         #game score
         self.my_score = 0

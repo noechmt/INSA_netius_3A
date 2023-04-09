@@ -32,6 +32,21 @@ def clear(username, x, y):
 def chat(message) :
    encodeJSON({"header" : "chat", 
       "message" : message})
+   
+def duel_request(username) :
+   encodeJSON({"header" : "duel_request",
+      "username" : username})
+
+def duel_answer(answer) :
+   encodeJSON({"header" : "duel_answer", 
+      "accept" : answer}) # 1 accept or 2 decline
+   
+def update_round() :
+   encodeJSON({"header" : "update_round"})
+
+
+
+
 
 class WalkerBuffer:  
 

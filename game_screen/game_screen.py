@@ -60,6 +60,7 @@ def game_screen():
         # print(map.array[34][34])
 
     panel = Panel(SCREEN)
+    panel.duel.player_name = map.name_user
     wrapper = Wrapper(map, panel)
     #wrapper.wrap('{"header": "build", "username": "Governor", "x": 5, "y": 5, "type": "house"}')
     #wrapper.wrap('{"header": "walker", "username": "Governor", "array": [{"action": "move", "currentCell": [7, 5], "previousCell": [7, 4], "type": "Migrant"}]}')
@@ -233,15 +234,18 @@ def game_screen():
                             map.handle_button("granary")
 
                   
-                    if panel.duelON :
+                    if panel.duelON and panel.duel.accept_duel == 1 :
                         if panel.continue_button.is_hovered((pos)) :
                             map.handle_button("continue")
+
                                                       
                         if panel.stop_button.is_hovered((pos)) :
                             map.handle_button("stop")
                             
                         if map.get_continued() :
                             panel.duel.continue_bet()
+                            update_round()
+
                             # print(panel.duel.my_score)
                         if map.get_stopped() :
                             panel.duel.stop_bet()
@@ -427,26 +431,26 @@ def game_screen():
                 
 
                 ######## chat commands #########        
-                if (panel.chat.input.message_to_send != '' and panel.chat.input.message_to_send[0] == '/') or panel.duel.ON :
+                if (panel.chat.input.message_to_send != '' and panel.chat.input.message_to_send[0] == '/') :
                     # print(map.players)
                     command = myMap(panel.chat.input.message_to_send)
 
                     if (command != [] and command[0] == '/duel') : 
                         
-                        if command != [] and command[1] != '' and command[1] not in map.players : 
+                        if command != [] and len(command) >=2 and command[1] not in map.players : 
                             panel.chat.history_append("Player does not exist")
                             panel.chat.input.message_to_send = ''
-                        elif command != [] and command[1] != '' and command[1] in map.players :
-                            panel.duel.ask_for_duel() #send a duel request
+                        elif command != [] and len(command) >=2 and command[1] in map.players :
+                            duel_request(command[1]) #send a duel request
                             panel.duelON = True
                             panel.chat.input.message_to_send = ''
 
-                    if (command != [] and command[0] == '/accept') and not panel.duel.waiting_for_response and panel.duel.duel_request > 0:
-                        panel.duel.accept_duel() #send confirmation for duel
+                    if (command != [] and command[0] == '/accept') and panel.duel.duel_request > 0:
+                        duel_answer(1) #send confirmation for duel
                         panel.duelON
 
-                    if (command != [] and command[0] == '/decline') and not panel.duel.waiting_for_response and panel.duel.duel_request > 0:
-                        panel.duel.decline_duel() #send refusal for duel
+                    if (command != [] and command[0] == '/decline') and panel.duel.duel_request > 0:
+                        duel_answer(2) #send refusal for duel
             
 
                         

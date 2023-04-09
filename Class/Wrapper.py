@@ -47,3 +47,13 @@ class Wrapper:
 
          case 'chat' : 
             self.panel.chat.history_append(data['message'])
+
+         case 'duel_request' :
+            if self.panel.duel.player_name == data['username'] and self.panel.duel.duel_request == 0:
+               self.panel.duel.request += 1
+
+         case 'duel_answer' :
+            self.panel.duel.duel_accepted = data['accept']
+
+         case 'update_round' :
+            self.panel.duel.enemy_game_round += 1
