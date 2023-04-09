@@ -1,5 +1,5 @@
 import threading as thread
-from p2p.socket_python import *
+from socket_python import *
 
 def socket_init():
    Server(1235,4)

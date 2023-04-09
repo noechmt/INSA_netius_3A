@@ -147,13 +147,17 @@ void receiving(int fd)
                             sending(player_list->ip_adress, 1234, share_ip->ip_adress, player_list->fd);
                             share_ip = share_ip->next_player;
                         }
-                        sending(player_list->ip_adress, 1234, "maj", player_list->fd);
+                        if(player_list->next_player->next_player != NULL){
+                            sending(player_list->ip_adress, 1234, "maj", player_list->fd);
+                        }
+                        
                     }
                 }
                 else
                 {
                     printf("i recv %i\n", i);
                     valread = recv(i, buffer, 1024, 0);
+                    
                     /*Adding new player if the buffer is an IP adress*/
                     printf("oui\n");
                     printf("valread %i\n", valread);
