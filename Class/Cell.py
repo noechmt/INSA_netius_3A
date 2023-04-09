@@ -292,6 +292,7 @@ class Cell:  # Une case de la map
         if isinstance(self, CityHall) or isinstance(self, CityHallPart):
             pass
         elif not isinstance(self, Empty) and self.type_empty != "rock" and self.type_empty != "water":
+            if self.map.players_online > 1 and self.owner == self.map.name_user: encode.clear(self.owner, self)
             for i in self.map.walkers:
                 if i.building == self:
                     self.map.walkers.remove(i)
@@ -750,9 +751,9 @@ class House(Building):  # la maison fils de building (?)
         # nombre max d'occupant (dépend du niveau de la maison) : int
         self.max_occupants = 5
         self.unemployedCount = 0
+        self.risk = RiskEvent("fire", self)
         if owner == map.name_user:
             self.migrant = Migrant(self, owner)
-            self.risk = RiskEvent("fire", self)
         # Temporary
         self.path_sprite = "game_screen/game_screen_sprites/house_" + \
             str(self.level) + ".png"
@@ -780,6 +781,7 @@ class House(Building):  # la maison fils de building (?)
         self.display_overlay()
 
     def nextLevel(self):
+        if self.map.players_online > 1 and self.owner == self.map.name_user: encode.levelup(self.owner, self, self.level+1)
         self.level += 1
         self.path_sprite = "game_screen/game_screen_sprites/house_" + \
             str(self.level) + ".png"
@@ -868,9 +870,9 @@ class Prefecture(Building):
         self.labor_advisor = LaborAdvisor(self, self.owner)
         self.employees = 0
         self.requiredEmployees = 5
+        self.risk = RiskEvent("collapse", self)
         if self.owner == self.map.name_user:
             self.prefect = Prefect(self, owner)
-            self.risk = RiskEvent("collapse", self)
         self.path_sprite = "game_screen/game_screen_sprites/prefecture.png"
         self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
         self.sprite_display = ""
@@ -922,9 +924,9 @@ class EngineerPost(Building):
         self.labor_advisor = LaborAdvisor(self, self.owner)
         self.employees = 0
         self.requiredEmployees = 5
+        self.risk = RiskEvent("fire", self)
         if self.owner == self.map.name_user:
             self.engineer = Engineer(self, owner)
-            self.risk = RiskEvent("fire", self)
         self.path_sprite = "game_screen/game_screen_sprites/engineerpost.png"
         self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
         self.sprite_display = ""

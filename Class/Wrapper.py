@@ -30,6 +30,12 @@ class Wrapper:
          case 'levelup':
             self.map.get_cell(data["x"], data["y"]).nextLevel()
             assert(self.map.get_cell(data["x"], data["y"]).level == data["level"])
+         case 'risk':
+            if data["type"] == "burn":
+               self.map.get_cell(data["building"][0], data["building"][0]).risk.burn()
+               self.map.get_cell(data["building"][0], data["building"][0]).risk.fireCounter = data["fireCounter"]
+            else:
+               self.map.get_cell(data["building"][0], data["building"][0]).risk.collapse()
          case 'walker':
             for walker in data["array"]:
                if walker["action"] == "move":
