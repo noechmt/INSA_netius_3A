@@ -8,7 +8,8 @@ player *player_list = NULL;
 char name[20];
 int LOCAL_PORT = 1236;
 int PORT_PYTHON = 1235;
-
+int id_thread;
+int local_fd, server_fd;
 int main(int argc, char **argv)
 {
     // initialisation du premier joueur
@@ -17,8 +18,6 @@ int main(int argc, char **argv)
     first_player->next_player = player_list;
     player_list = first_player;
     // ---------------------------------------------------
-
-    int server_fd, local_fd;
 
     /*connexion en local*/
     if ((local_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
@@ -50,10 +49,17 @@ int main(int argc, char **argv)
     }
     pthread_t tid;
     printf("Listening for other players... \n");
-    pthread_create(&tid, NULL, &receive_thread, &server_fd); // Creating thread to keep receiving message in real time
+    id_thread = pthread_create(&tid, NULL, &receive_thread, &server_fd); // Creating thread to keep receiving message in real time
     receive_thread(&local_fd);
+    signal(SIGINT, end_process);
     close(server_fd);
     close(local_fd);
+}
+
+void end_process(int signal){
+    close(local_fd);
+    close(server_fd);
+    pthread_cancel(id_thread);
 }
 
 // Receiving messages on our port

@@ -9,6 +9,7 @@
 #include <sys/select.h>
 #include <errno.h>
 #include <string.h>
+#include <signal.h>
 
 struct player {
     char* ip_adress;
@@ -25,3 +26,4 @@ int sending_local(char *msg);
 void initialize_player(player* play);
 void so_linger(int server_fd, int local_fd);
 void server_connect(int server_fd);
+void end_process(int signal);
