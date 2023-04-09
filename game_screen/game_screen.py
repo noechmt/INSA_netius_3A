@@ -61,6 +61,7 @@ def game_screen():
 
     panel = Panel(SCREEN)
     panel.duel.player_name = map.name_user
+    panel.duel.text["my_name"].text = panel.duel.player_name
     wrapper = Wrapper(map, panel)
     #wrapper.wrap('{"header": "build", "username": "Governor", "x": 5, "y": 5, "type": "house"}')
     #wrapper.wrap('{"header": "walker", "username": "Governor", "array": [{"action": "move", "currentCell": [7, 5], "previousCell": [7, 4], "type": "Migrant"}]}')
@@ -447,6 +448,7 @@ def game_screen():
                             duel_request(command[1]) #send a duel request
                             panel.duelON = True
                             panel.chat.input.message_to_send = ''
+                            panel.duel.update_name(command[1])
                             pchat(map.name_user + " veut te tabasser le fiac dans un duel de gambling !",command[1])
 
                     if (command != [] and command[0] == '/accept') and panel.duel.duel_request > 0:
@@ -470,7 +472,7 @@ def game_screen():
             panel.chatON = False
 
             if panel.duel.duel_accepted == 2  : 
-                print("aloooo")
+                # print("aloooo")
                 panel.duelON = False
                 panel.duel.init_duel()
 
@@ -478,8 +480,26 @@ def game_screen():
 
                 panel.duel.handle_duel_round()
                 if panel.duel.handle_winner() :
-                    panel.duel.init_duel()
+
+                    if panel.duel.lost : 
+                        panel.chat.history_append("Duel perdu !")
+                    
+                    if panel.duel.won : 
+                        panel.chat.history_append("Duel gagné !")
+                    
+                    if panel.duel.draw : 
+                        panel.chat.history_append("Egalité !")
+                    
+                    panel.chat.history_append(panel.duel.player_name + ": " + str(panel.duel.my_score) + " VS " + 
+                                                panel.duel.enemy_name + ": " + str(panel.duel.enemy_score))
+                    
                     panel.duelON = False
+                    panel.chatON = True
+
+                    panel.duel.init_duel()
+                    panel.duel.update_name("")
+
+                    
 
             
 

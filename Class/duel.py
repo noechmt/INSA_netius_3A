@@ -19,7 +19,9 @@ class Duel:
 
             "title" : None,
             "myscore" : None,
-            "enemyscore" : None
+            "enemyscore" : None,
+            "enemy_name" : None,
+            "my_name" : None
 
         }
 
@@ -27,9 +29,10 @@ class Duel:
         
         self.player_name = ""
 
-        self.init_duel()
 
+        self.init_duel()
         self.init_text()
+        
 
     def init_text(self) : 
 
@@ -53,6 +56,21 @@ class Duel:
         (left_text, top_text) = (left_menu*.490, top_menu*1.1)
         self.text["enemyscore"] = Text(left_text, top_text,
                             width_text_name, height_text_name, str(self.enemy_score), text_font)
+        
+        text_font = pygame.font.Font(
+            "GUI/Fonts/Title Screen/Berry Rotunda.ttf", 30)
+        (width_text_name, height_text_name) = (width_menu, height_menu / 3)
+        (left_text, top_text) = (left_menu*.320, top_menu*1.60)
+        self.text["my_name"] = Text(left_text, top_text,
+                            width_text_name, height_text_name, self.player_name, text_font)
+        
+
+        (width_text_name, height_text_name) = (width_menu, height_menu / 3)
+        (left_text, top_text) = (left_menu*.490, top_menu*1.60)
+        self.text["enemy_name"] = Text(left_text, top_text,
+                            width_text_name, height_text_name, "", text_font)
+        
+
 
         
     
@@ -60,6 +78,7 @@ class Duel:
 
         #other player name
         self.enemy_name = ""
+
 
         #game score
         self.my_score = 0
@@ -84,6 +103,9 @@ class Duel:
         self.duel_round = 1
 
 
+        
+
+
     def display(self) : 
         self.update_score()
         self.screen.blit(pygame.transform.scale(self.duel_sprite["background"], (self.width_screen*.450, self.height_screen*.450)),
@@ -92,6 +114,9 @@ class Duel:
         self.text["title"].draw(self.screen)
         self.text["myscore"].draw(self.screen)
         self.text["enemyscore"].draw(self.screen)
+        self.text["my_name"].draw(self.screen)
+        self.text["enemy_name"].draw(self.screen)
+
 
    
     
@@ -154,6 +179,10 @@ class Duel:
             self.duel_round += 1
 
 
+    def update_name(self, username) :
+        self.text["enemy_name"].text = username
+
+
 #TODO rajouter une mise
-# rajouter le nom des joueurs
-# rajouter le vainqueur + le score à la fin
+# indication continue ou stopped
+
