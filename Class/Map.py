@@ -138,7 +138,6 @@ class Map:  # Un ensemble de cellule
     def display_governors(self):
         for governor in self.governors:
             if governor.owner != None and governor.owner != self.name_user:
-                print("Diplay :", governor.owner)
                 governor.display()
 
     def set_spawn_point_governor(self):
@@ -163,7 +162,6 @@ class Map:  # Un ensemble de cellule
                         header = json.loads(data)["header"]
                         if header == "row_received":
                             wrapper.wrap(data)
-                            print(self.row_received)
                             if self.row_received:
                                 response = True
                             else:
@@ -180,7 +178,6 @@ class Map:  # Un ensemble de cellule
                         header = json.loads(data)["header"]
                         if header == "row_received_2":
                             wrapper.wrap(data)
-                            print(self.row_received_2)
                             if self.row_received_2:
                                 response_2 = True
                             else:
