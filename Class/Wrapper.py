@@ -19,7 +19,6 @@ class Wrapper:
         self.panel = panel
 
     def wrap(self, data_json):
-        print("WRAAAPPEDDDDD !")
         try:
             data = json.loads(data_json)
         except:

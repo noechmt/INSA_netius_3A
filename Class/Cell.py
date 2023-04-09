@@ -265,7 +265,7 @@ class Cell:  # Une case de la map
         if isinstance(self, Empty) and self.type_empty != "dirt":
             print("This cell is already taken")
             return
-        if self.map.name_user != self.owner:
+        if (self.map.name_user != self.owner) and not init:
             print("The cell is not yours, you can't build on it")
         else:
             if not init:

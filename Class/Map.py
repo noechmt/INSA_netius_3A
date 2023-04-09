@@ -80,18 +80,19 @@ class Map:  # Un ensemble de cellule
                 # Online version : reading from the requests
                 num_cell_init = 0
                 while num_cell_init != self.size:
-                    time.sleep(1)
                     # protocol to receive packet and if it's cell_init header, decode it
                     data = p2p.get_data()
                     if len(data) != 0:
                         try:
                             header = json.loads(data)["header"]
-                            print("header =", header, " !!!!!!!!!!!")
                             if header == "cell_init":
                                 wrapper.wrap(data)
                                 num_cell_init += 1
                                 print("num_cell_init =", num_cell_init)
                                 encoder.row_received(self.name_user, True)
+                            else:
+                                print("header =", header)
+                                encoder.row_received(self.name_user, False)
                         except:
                             encoder.row_received(self.name_user, False)
 
@@ -122,7 +123,7 @@ class Map:  # Un ensemble de cellule
     def encode(self):
         wrapper = Wrapper(self, None)
         for x in range(self.size):
-            self.row_recieved = False
+            self.row_received = False
             row = []
             for y in range(self.size):
                 row.append(self.array[x][y].encode())
@@ -135,11 +136,15 @@ class Map:  # Un ensemble de cellule
                         header = json.loads(data)["header"]
                         if header == "row_received":
                             wrapper.wrap(data)
+                            print(self.row_received)
                             if self.row_received:
                                 response = True
+                            else:
+                                time.sleep(0.5)
+                                encoder.cell_init_row(self.name_user, row)
                     except:
+                        time.sleep(0.5)
                         encoder.cell_init_row(self.name_user, row)
-            time.sleep(2)
 
     def add_transaction(self, cell):
         if cell.owner == None:
