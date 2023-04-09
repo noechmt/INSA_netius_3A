@@ -55,10 +55,10 @@ class WalkerBuffer:
    def add(self, action, walker):
       self.buffer["array"].append({
              "action": action,
-             "building": self.building,
-             "currentCell": walker.currentCell,
-             "previousCell": walker.previousCell,
-             "type": walker.type})
+             "building": (walker.building.x, walker.building.y),
+             "currentCell": (walker.currentCell.x, walker.currentCell.y) if walker.currentCell != None else None,
+             "previousCell": (walker.previousCell.x, walker.previousCell.y) if walker.previousCell != None else None,
+             "type": str(walker)})
    
    def send(self):
       encodeJSON(self.buffer)

@@ -65,10 +65,19 @@ class Cell:  # Une case de la map
         self.WIDTH_SCREEN, self.HEIGHT_SCREEN = SCREEN.get_size()
         self.init_screen_coordonates()
         self.path_sprite = ""
+        self.price = 5
         self.explored = False
 
     def update_sprite_size(self):
         pass
+
+    def get_cells_around(self):
+        return [self.map.get_cell(self.x-1, self.y) if self.map.inMap(self.x-1, self.y) else self,
+                self.map.get_cell(
+                    self.x+1, self.y) if self.map.inMap(self.x+1, self.y) else self,
+                self.map.get_cell(
+                    self.x, self.y-1) if self.map.inMap(self.x, self.y-1) else self,
+                self.map.get_cell(self.x, self.y+1) if self.map.inMap(self.x, self.y+1) else self]
 
     def isBuildable(self, type=""):
         if type == "Farm":
@@ -107,7 +116,22 @@ class Cell:  # Une case de la map
             self.height/2 + self.y * self.height/2 + self.map.offset_top
 
     def display(self):
-        pass
+        if self.map.get_ownershiped() == True:
+            self.display_ownership()
+
+    def display_ownership(self):
+        if self.owner == self.map.players[0]:
+            draw_polygon_alpha(SCREEN, (0, 100, 255, 95),
+                               self.get_points_polygone())
+        elif self.owner == self.map.players[1]:
+            draw_polygon_alpha(SCREEN, (255, 255, 50, 95),
+                               self.get_points_polygone())
+        elif self.owner == self.map.players[2]:
+            draw_polygon_alpha(SCREEN, (255, 50, 0, 95),
+                               self.get_points_polygone())
+        elif self.owner == self.map.players[3]:
+            draw_polygon_alpha(SCREEN, (255, 50, 255, 95),
+                               self.get_points_polygone())
 
     def display_around(self):
         if (self.y+1 < 40 and (self.map.get_cell(self.x, self.y+1).type_empty != "dirt") and self.map.get_cell(self.x, self.y+1).type != "path"):
@@ -184,8 +208,12 @@ class Cell:  # Une case de la map
             draw_polygon_alpha(SCREEN, (255, 0, 0, 85),
                                self.get_points_polygone())
         else:
-            draw_polygon_alpha(SCREEN, (0, 0, 0, 85),
-                               self.get_points_polygone())
+            if self.map.name_user == self.owner or self.map.get_ownershiped():
+                draw_polygon_alpha(SCREEN, (0, 0, 0, 85),
+                                   self.get_points_polygone())
+            else:
+                draw_polygon_alpha(SCREEN, (255, 0, 0, 85),
+                                   self.get_points_polygone())
 
     def get_points_polygone(self):
         return ((self.left + self.width / 2, self.top), (self.left, self.top + self.height / 2),
@@ -225,10 +253,14 @@ class Cell:  # Une case de la map
 
         return path
 
-    def build(self, type, owner=""):
-        if owner=="": owner=self.owner
+    def build(self, type, owner=None):
+        if owner == None:
+            owner = self.owner
         if isinstance(self, Empty) and self.type_empty != "dirt":
             print("This cell is already taken")
+            return
+        if self.map.name_user != self.owner:
+            print("The cell is not yours, you can't build on it")
         else:
             if self.map.players_online > 1 and owner == self.map.name_user: 
                 encode.build(owner, self.x, self.y, type)
@@ -289,7 +321,7 @@ class Cell:  # Une case de la map
     def clear(self):
         if isinstance(self, Path) and self.x == self.map.governor.currentCell.x and self.y == self.map.governor.currentCell.y:
             pass
-        if isinstance(self, CityHall) or isinstance(self, CityHallPart):
+        if isinstance(self, CityHall) or isinstance(self, CityHallPart) or isinstance(self, GranaryPart) or isinstance(self, FarmPart):
             pass
         elif not isinstance(self, Empty) and self.type_empty != "rock" and self.type_empty != "water":
             if self.map.players_online > 1 and self.owner == self.map.name_user: encode.clear(self.owner, self)
@@ -453,6 +485,7 @@ class Path(Cell):
     def display(self):
         SCREEN.blit(self.sprite_display, (self.left-sqrt(2), self.top-1))
         self.display_overlay()
+        super().display()
 
     def handle_sprites(self, r=0):
         if r < 2:
@@ -689,6 +722,7 @@ class Empty(Cell):
                 SCREEN.blit(self.sprite_display,
                             (self.left-sqrt(2), self.top-1))
             self.display_overlay()
+            super().display()
 
     def clear(self):
         if self.type_empty == "tree":
@@ -723,7 +757,7 @@ class Empty(Cell):
 class Building(Cell):  # un fils de cellule (pas encore sûr de l'utilité)
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width,  map, owner)
-        
+
         self.destroyed = False
         path_around = self.check_cell_around(Path)
         house_around = self.check_cell_around(House)
@@ -779,6 +813,7 @@ class House(Building):  # la maison fils de building (?)
     def display(self):
         SCREEN.blit(self.sprite_display, (self.left-sqrt(2), self.top-1))
         self.display_overlay()
+        super().display()
 
     def nextLevel(self):
         if self.map.players_online > 1 and self.owner == self.map.name_user: encode.levelup(self.owner, self, self.level+1)
@@ -844,6 +879,7 @@ class Well(Building):
             SCREEN.blit(self.sprite_display,
                         (self.left, self.top - self.height*23/30))
         self.display_overlay()
+        super().display()
 
     def __str__(self):
         return "Puit"
@@ -895,6 +931,7 @@ class Prefecture(Building):
             SCREEN.blit(self.sprite_display,
                         (self.left, self.top - self.height*8/30))
         self.display_overlay()
+        super().display()
 
     def __str__(self):
         return f"Prefecture { self.employees}"
@@ -941,6 +978,7 @@ class EngineerPost(Building):
             SCREEN.blit(
                 self.sprite_display, (self.left, self.top - self.height*20/30))
         self.display_overlay()
+        super().display()
 
     def update_sprite_size(self):
         if (self.type == "ruin"):
@@ -1027,6 +1065,7 @@ class Crop(Building):
                 # print(self.x,self.y, i//10)
                 SCREEN.blit(
                     self.sprite_display[4], (self.left+self.width*0.1, self.top-self.height*0.34))
+        super().display()
 
 
 class CityHallPart(Building):
@@ -1039,6 +1078,9 @@ class CityHallPart(Building):
         for i in path_around:
             if len(path_around) != 0:
                 self.map.path_graph.add_edge(i, self.cityhall, weight=2000)
+
+    def display(self):
+        super().display()
 
 
 class CityHall(Building):
@@ -1061,6 +1103,10 @@ class CityHall(Building):
         SCREEN.blit(
             self.sprite_display, (self.left - self.width*108/232, self.top - self.height*170/120))
         self.display_overlay()
+        super().display()
+        self.map.get_cell(self.x - 1, self.y).display()
+        self.map.get_cell(self.x, self.y - 1).display()
+        self.map.get_cell(self.x - 1, self.y - 1).display()
 
     def update_sprite_size(self):
         self.sprite_display = pygame.transform.scale(
@@ -1094,13 +1140,13 @@ class FarmPart(Building):
         self.farm = my_farm
         self.risk = self.farm.risk
 
-    # def display(self) :
-    #     self.farm.display()
-
         path_around = self.check_cell_around(Path)
         for i in path_around:
             if len(path_around) != 0:
                 self.map.path_graph.add_edge(i, self.farm, weight=2000)
+
+    def display(self):
+        super().display()
 
 
 class Farm(Building):
@@ -1150,6 +1196,7 @@ class Farm(Building):
     def display(self):
         SCREEN.blit(
             self.sprite_display, (self.left - self.width*0.5, self.top - self.height*2))
+        super().display()
 
     def crop_grow(self):
         for i in self.crops:
@@ -1212,6 +1259,7 @@ class Granary(Building):
             self.sprite_display[0], (self.left-self.width*0.5, self.top-self.height))
         SCREEN.blit(
             self.sprite_display[1], (self.left-self.width*0.18, self.top-self.height*2))
+        super().display()
 
 
 class GranaryPart(Building):
@@ -1219,6 +1267,9 @@ class GranaryPart(Building):
         super().__init__(x, y, height, width, map, owner)
         self.granary = mygranary
         self.risk = self.granary.risk
+
+    def display(self):
+        super().display()
 
 
 def test_pickle(xThing, lTested=[]):

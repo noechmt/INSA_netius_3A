@@ -84,8 +84,12 @@ class Panel():
             "game_screen/game_screen_sprites/farm_paneling.png").convert_alpha()
         self.granary_button_sprite = pygame.image.load(
             "game_screen/game_screen_sprites/granary_paneling.png").convert_alpha()
-        
-  
+        self.ownership_button_sprite = pygame.image.load(
+            "game_screen/game_screen_sprites/paneling_ownership.png").convert_alpha()
+        self.trade_background = pygame.image.load(
+            "game_screen/game_screen_sprites/trade_background.jpg").convert_alpha()
+        self.buy_button_sprite = pygame.image.load("game_screen/game_screen_sprites/paneling_buy.png").convert_alpha()
+
 
     def init_buttons(self):
         self.grid_button = Button(177*self.width_screen/192, 0.320*self.height_screen,
@@ -110,6 +114,8 @@ class Panel():
                                   self.width_screen/48, self.height_screen/40, self.farm_button_sprite)
         self.granary_button = Button(182*self.width_screen/192, 0.350*self.height_screen,
                                   self.width_screen/48, self.height_screen/40, self.granary_button_sprite)
+        self.ownership_button = Button(187*self.width_screen/192, 0.350*self.height_screen, self.width_screen/48, self.height_screen/40, self.ownership_button_sprite)
+
         self.up_button = Button(
             177*self.width_screen/192, 0.25*self.height_screen+12*self.height_screen/80, self.width_screen/48, self.height_screen/40, self.button_up_sprite)
         self.down_button = Button(
@@ -121,6 +127,7 @@ class Panel():
         self.exit_button = Button(self.width_screen - self.width_screen / 13 + self.width_screen / 48, 0.25*self.height_screen +
                                   41*self.height_screen/80, 1.5*self.width_screen/48, 1.75*self.height_screen/40, self.button_exit_sprite)
         self.governor_button = Button(179.6*self.width_screen/192, self.height_screen/20, self.width_screen/22, self.height_screen/12, self.governor_off)
+        self.buy_button = Button(182*self.width_screen/192, self.height_screen - self.height_screen/30, self.width_screen/48, self.height_screen/40, self.buy_button_sprite)
 
     def display(self):
         for i in range(2):
@@ -190,11 +197,13 @@ class Panel():
 
         self.granary_button.draw(self.screen)
 
+        self.ownership_button.draw(self.screen)
+
         draw_rect_alpha(self.screen, (25, 25, 25, 127), (self.width_screen*(11/12)+2,
                         self.height_screen*(8/17), self.width_screen/12-4, 3*self.height_screen/7-2))
 
-        # self.screen.blit(pygame.transform.scale(self.bottom, (self.width_screen/12,
-        #                                                       self.height_screen/10)), (((11/12)*self.width_screen), (0.9*self.height_screen)))
+        self.screen.blit(pygame.transform.scale(self.bottom, (self.width_screen/12,
+                                                           self.height_screen/10)), (((11/12)*self.width_screen), (0.9*self.height_screen)))
 
         self.up_button.draw(self.screen)
         self.down_button.draw(self.screen)
@@ -202,11 +211,15 @@ class Panel():
         self.save_button.draw(self.screen)
         self.exit_button.draw(self.screen)
 
-
-       
         if self.chatON : 
             self.chat.display()
-            print([self.chat.message_history[i].text for i in range(len(self.chat.message_history))])
+            #print([self.chat.message_history[i].text for i in range(len(self.chat.message_history))])
+
+    
+    def display_trade_window(self):
+        self.screen.blit(pygame.transform.scale(self.trade_background, (self.width_screen/12,
+                                                              self.height_screen/10)), (((11/12)*self.width_screen), (0.9*self.height_screen)))
+   
             
 
             
@@ -233,7 +246,10 @@ class Panel():
         if choice == "none":
             self.window_current = self.window_none
         self.screen.blit(pygame.transform.scale(self.window_current, (self.width_screen /
-                                                                      12-10, self.height_screen/17)), (11*self.width_screen/12+5, 0.18*self.height_screen))
+                                                                    12-10, self.height_screen/17)), (11*self.width_screen/12+5, 0.18*self.height_screen))
+
+    def get_buy_button(self):
+        return self.buy_button
 
     def set_paused_button(self):
         self.pause_button.change_image(self.button_paused_sprite)
@@ -297,3 +313,6 @@ class Panel():
             self.governor_button.change_image(self.governor_on)
         else:
             self.governor_button.change_image(self.governor_off)
+    
+    def get_ownership_button(self):
+        return self.ownership_button
