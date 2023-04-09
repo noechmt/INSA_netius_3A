@@ -1,8 +1,8 @@
 import socket
 from time import sleep
 import select
-
-def showLan() : print("Procsessu Lan : ",LanProcess)
+import threading as thread
+def showLan() : print("Processus Lan : ",LanProcess)
 
 LanProcess = None
 
@@ -88,11 +88,10 @@ def send_data(data,addr="127.0.0.1",port=1236):
     Socket.close()
     
 
-def recv_data(server_socket,freq=1):
+def recv_data(server_socket):
 
     while True :
-        sleep(freq)
-        print(server_socket)
+
         inputs = [server_socket.getSock()]
         
         # Utiliser select pour surveiller les canaux prêts à être lus
@@ -139,4 +138,12 @@ def close_socket(socket):
     socket.close()
 
 
-        
+def lanchPySockets() : 
+    Server(1235,4)
+    thread_recv = thread.Thread(target=recv_data, args=(Server.socket,))
+    thread_recv.start()
+    Client("127.0.0.1",1236)
+
+def CloseSockets() : 
+    Server.socket.close()
+    Client.socket.close()
