@@ -475,7 +475,9 @@ def game_screen():
 
             if panel.duel.duel_accepted == 1 :
 
+                panel.duel.handle_duel_round()
                 if panel.duel.handle_winner() :
+                    panel.duel.init_duel()
                     panel.duelON = False
 
             

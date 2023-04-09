@@ -81,7 +81,7 @@ class Duel:
         self.duel_accepted = 0 # 1 accepted, 2 refused, 0 pending
         self.game_round = 0
         self.enemy_game_round = 0
-        
+        self.duel_round = 1
 
 
     def display(self) : 
@@ -100,22 +100,32 @@ class Duel:
         self.text["enemyscore"].text = str(self.enemy_score)
         
     def continue_bet(self) :
-        if self.game_round <= self.enemy_game_round :
-            if not self.my_bet_stopped : self.my_score += rd.randint(1, 13)
-            if self.my_score > 21 : self.my_bet_stopped = True
+        # if self.game_round <= self.enemy_game_round :
+        #     if not self.my_bet_stopped : self.my_score += rd.randint(1, 13)
+        #     if self.my_score > 21 : self.my_bet_stopped = True
 
-            self.game_round += 1
+        #     self.game_round += 1
+        
+        if self.enemy_bet_stopped : 
+            self.my_score += rd.randint(1, 13)
+        elif self.game_round < self.duel_round:
+            self.my_score += rd.randint(1, 13)
 
-    def continue_bet_enemy_proto(self) :
-        if not self.enemy_bet_stopped : self.enemy_score += rd.randint(1, 13)
-        if self.enemy_score > 21 : self.stop_bet_enemy_proto()
+
+        if self.my_score > 21 : self.my_bet_stopped = True
+        self.game_round += 1
+    
+        pass
+
+   
 
     def stop_bet(self) : 
-        if self.game_round == self.enemy_game_round :
-            self.my_bet_stopped = True
+        # if self.game_round == self.enemy_game_round :
+        self.my_bet_stopped = True
+
+
+        pass
         
-    def stop_bet_enemy_proto(self) :
-        self.enemy_bet_stopped = True
 
     def handle_winner(self) :
         
@@ -126,7 +136,7 @@ class Duel:
                 self.draw = True
             
             elif self.my_score > 21 and self.enemy_score <= 21 : self.lost = True
-            elif self.enemy_score > 21 and self.my_score <= 21 : self.lost = True
+            elif self.enemy_score > 21 and self.my_score <= 21 : self.won = True
             elif self.my_score > self.enemy_score : self.won = True
             else : self.lost = True
 
@@ -137,18 +147,7 @@ class Duel:
         # print("won : ", self.won, "|lost : ", self.lost, "|draw : ", self.draw)
 
 
-    def ask_for_duel(self) : 
-        pass
 
-    def accept_duel(self) :
-        pass 
-
-    def decline_duel(self) :
-        pass
-
-    def receive_enemy_info(self) :
-        pass
-
-
-
-
+    def handle_duel_round(self) :
+        if self.enemy_game_round == self.duel_round == self.game_round :
+            self.duel_round += 1
