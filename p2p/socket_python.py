@@ -67,7 +67,7 @@ def send_data(data,addr="127.0.0.1",port=1236):
     Socket.close()
     
 
-def recv_data(server_socket,freq=1):
+def recv_data(server_socket,freq=.01):
 
     while True :
         sleep(freq)
