@@ -40,6 +40,12 @@ def row_received(username, received):
                 "received": received})
 
 
+def row_received_2(username, received):
+    encodeJSON({"header": "row_received_2",
+                "username": username,
+                "received": received})
+
+
 def build(username, x, y, type):
     encodeJSON({"header": "build",
                 "username": username,

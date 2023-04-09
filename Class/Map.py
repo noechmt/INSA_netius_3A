@@ -42,6 +42,7 @@ class Map:  # Un ensemble de cellule
         # TO-DO request the num
         self.players_online = 1
         self.row_received = False
+        self.row_received_2 = False
         if not first_online:
             print("In responseJoin")
             wrapper = Wrapper(self, None)
@@ -87,14 +88,25 @@ class Map:  # Un ensemble de cellule
                             header = json.loads(data)["header"]
                             if header == "cell_init":
                                 wrapper.wrap(data)
-                                num_cell_init += 1
                                 print("num_cell_init =", num_cell_init)
-                                encoder.row_received(self.name_user, True)
+                                if num_cell_init % 2 == 0:
+                                    encoder.row_received(self.name_user, True)
+                                else:
+                                    encoder.row_received_2(
+                                        self.name_user, True)
+                                num_cell_init += 1
                             else:
-                                print("header =", header)
-                                encoder.row_received(self.name_user, False)
+                                if num_cell_init % 2 == 0:
+                                    encoder.row_received(self.name_user, False)
+                                else:
+                                    encoder.row_received_2(
+                                        self.name_user, False)
                         except:
-                            encoder.row_received(self.name_user, False)
+                            if num_cell_init % 2 == 0:
+                                encoder.row_received(self.name_user, False)
+                            else:
+                                encoder.row_received_2(
+                                    self.name_user, False)
 
         self.spawn_cells = [self.array[0][self.size//10],
                             self.array[0][self.size - self.size//10],
@@ -125,10 +137,13 @@ class Map:  # Un ensemble de cellule
         for x in range(self.size):
             row = []
             self.row_received = False
+            response = False
+            self.row_received_2 = False
+            row_2 = []
+            response_2 = False
             for y in range(self.size//2):
                 row.append(self.array[x][y].encode())
             encoder.cell_init_row(self.name_user, row)
-            response = False
             while not response:
                 data = p2p.get_data()
                 if len(data) != 0:
@@ -143,23 +158,19 @@ class Map:  # Un ensemble de cellule
                                 encoder.cell_init_row(self.name_user, row)
                     except:
                         encoder.cell_init_row(self.name_user, row)
-            row_2 = []
             for y in range(self.size//2, self.size):
                 row_2.append(self.array[x][y].encode())
-            print(row_2)
-            self.row_received = False
             encoder.cell_init_row(self.name_user, row_2)
-            response = False
-            while not response:
+            while not response_2:
                 data = p2p.get_data()
                 if len(data) != 0:
                     try:
                         header = json.loads(data)["header"]
-                        if header == "row_received":
+                        if header == "row_received_2":
                             wrapper.wrap(data)
                             print(self.row_received)
                             if self.row_received:
-                                response = True
+                                response_2 = True
                             else:
                                 encoder.cell_init_row(self.name_user, row)
                     except:
