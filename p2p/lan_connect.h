@@ -19,11 +19,11 @@ struct player {
 
 typedef struct player player;
 
-int sending(char *adress, int port, char *msg, int server_fd);
+int sending(char *adress, int port, char *msg);
 void local_connect(int local_fd);
 /*void receiving_local(int fd);*/
 void* receiving(void* fd_temp);
-int sending_local(char *msg, int local_fd);
+int sending_local(char *msg);
 void initialize_player(player* play);
 void so_linger(int server_fd, int local_fd);
 void server_connect(int server_fd);
