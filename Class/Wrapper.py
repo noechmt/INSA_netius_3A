@@ -69,19 +69,20 @@ class Wrapper:
                 self.panel.chat.history_append(data['message'])
 
             case 'cell_init':
-                if data["type"] == "path" or data["type"] == "house" or data["type"] == "well" \
-                        or data["type"] == "prefecture" or data["type"] == "engineer post" \
-                        or data["type"] == "farm" or data["type"] == "granary":
-                    self.map.get_cell(data["x"], data["y"]).build(
-                        data["type"], data["owner"], True)
-                if data["type_empty"] != "":
+                for cell in data["row"]:
+                    if cell["type"] == "path" or cell["type"] == "house" or cell["type"] == "well" \
+                            or cell["type"] == "prefecture" or cell["type"] == "engineer post" \
+                            or cell["type"] == "farm" or cell["type"] == "granary":
+                        self.map.get_cell(cell["x"], cell["y"]).build(
+                            cell["type"], cell["owner"], True)
+                    if cell["type_empty"] != "":
+                        self.map.get_cell(
+                            cell["x"], cell["y"]).type_empty = cell["type_empty"]
+                        self.map.get_cell(
+                            cell["x"], cell["y"]).type_sprite = cell["type_empty"]
+                        self.map.get_cell(
+                            cell["x"], cell["y"]).init_random_sprites()
                     self.map.get_cell(
-                        data["x"], data["y"]).type_empty = data["type_empty"]
-                    self.map.get_cell(
-                        data["x"], data["y"]).type_sprite = data["type_empty"]
-                    self.map.get_cell(
-                        data["x"], data["y"]).init_random_sprites()
-                self.map.get_cell(
-                    data["x"], data["y"]).owner = data["owner"]
-                print(data["x"], data["y"], data["type"],
-                      data["type_empty"], data["owner"])
+                        cell["x"], cell["y"]).owner = cell["owner"]
+                    print(cell["x"], cell["y"], cell["type"],
+                          cell["type_empty"], cell["owner"])

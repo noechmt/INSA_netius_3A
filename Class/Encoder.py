@@ -3,6 +3,7 @@ import p2p.socket_python as p2p
 
 
 def encodeJSON(data):
+    print("Sending :" + str(len(json.dumps(data))) + " bytes")
     p2p.send_data(json.dumps(data))
 
 
@@ -19,14 +20,18 @@ def joinResponse(username, players_online):
                 })
 
 
-def cell_init(username, x, y, type, type_empty, owner):
+def cell_init_single(x, y, type, type_empty, owner):
+    return {"x": x,
+            "y": y,
+            "type": type,
+            "type_empty": type_empty,
+            "owner": owner}
+
+
+def cell_init_row(username, row):
     encodeJSON({"header": "cell_init",
                 "username": username,
-                "x": x,
-                "y": y,
-                "type": type,
-                "type_empty": type_empty,
-                "owner": owner})
+                "row": row})
 
 
 def build(username, x, y, type):

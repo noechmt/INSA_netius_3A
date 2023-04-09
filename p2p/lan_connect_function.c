@@ -1,8 +1,5 @@
 #include "lan_connect.h"
 
-
-
-
 // Sending messages to port
 int sending(char *ip_adress, int port, char *msg)
 {
@@ -102,4 +99,3 @@ void *receive_thread(void *fd)
         receiving(s_fd);
     }
 }
-

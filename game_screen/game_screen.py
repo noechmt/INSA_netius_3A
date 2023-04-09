@@ -114,8 +114,6 @@ def game_screen(first_online=False):
 
         update_speed = 10 / (speed)
 
-        wrapper.wrap(p2p.get_data())
-
         fire_update_count += 1
         if fire_update_count >= update_speed:
             map.update_fire()

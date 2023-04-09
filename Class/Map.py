@@ -10,6 +10,7 @@ from Class.Cell import *
 from Class.Wrapper import *
 import p2p.socket_python as p2p
 import json
+import Class.Encoder as encoder
 
 SCREEN = None
 
@@ -41,12 +42,14 @@ class Map:  # Un ensemble de cellule
         # TO-DO request the num
         self.players_online = 1
         if not first_online:
+            wrapper = Wrapper(self, None)
             receive_num = False
             while not receive_num:
                 data = p2p.get_data()
-                if json.load(data)["header"] == "responseJoin":
-                    wrapper.wrap(data)
-                    receive_num = True
+                if len(data) != 0:
+                    if json.loads(data)["header"] == "responseJoin":
+                        wrapper.wrap(data)
+                        receive_num = True
         self.num_player = self.players_online
         # TO-DO put names in array and do function to fill it after init
         self.name_user = username
@@ -65,7 +68,6 @@ class Map:  # Un ensemble de cellule
         self.init_ownership()
         if not first_online:
             if load_map:
-                wrapper = Wrapper(self, None)
                 # Local version : reading from a file
                 # f = open("map", 'r')
                 # lines = f.readlines()
@@ -77,9 +79,10 @@ class Map:  # Un ensemble de cellule
                 while num_cell_init != self.size * self.size:
                     # protocol to receive packet and if it's cell_init header, decode it
                     data = p2p.get_data()
-                    if json.load(data)["header"] == "cell_init":
-                        wrapper.wrap(data)
-                    num_cell_init += 1
+                    if len(data) != 0:
+                        if json.loads(data)["header"] == "cell_init":
+                            wrapper.wrap(data)
+                        num_cell_init += 1
 
         self.spawn_cells = [self.array[0][self.size//10],
                             self.array[0][self.size - self.size//10],
@@ -107,8 +110,10 @@ class Map:  # Un ensemble de cellule
 
     def encode(self):
         for x in range(self.size):
+            row = []
             for y in range(self.size):
-                self.array[x][y].encode()
+                row.append(self.array[x][y].encode())
+            encoder.cell_init_row(self.name_user, row)
 
     def add_transaction(self, cell):
         if cell.owner == None:

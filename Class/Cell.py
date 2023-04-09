@@ -69,11 +69,10 @@ class Cell:  # Une case de la map
         self.explored = False
 
     def encode(self):
-        return encode.cell_init(self.map.name_user,
-                                self.x, self.y, self.type,
-                                self.type_empty if isinstance(
-                                    self, Empty) else "",
-                                self.owner)
+        return encode.cell_init_single(self.x, self.y, self.type,
+                                       self.type_empty if isinstance(
+                                           self, Empty) else "",
+                                       self.owner)
 
     def update_sprite_size(self):
         pass
