@@ -399,7 +399,10 @@ class Cell:  # Une case de la map
 
             else:
                 if isinstance(self, Building):
-                    self.map.buildings.remove(self)
+                    try:
+                        self.map.buildings.remove(self)
+                    except:
+                        pass
                 self.map.set_cell_array(self.x, self.y, Empty(
                     self.x, self.y, self.height, self.width, self.map, self.owner, "dirt", 1))
 
