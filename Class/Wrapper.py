@@ -41,10 +41,13 @@ class Wrapper:
             case 'build':
                 self.map.get_cell(data["x"], data["y"]).build(
                     data["type"], data["username"], True)
+                self.map.get_cell(data["x"], data["y"]).owner = data["username"]
             case 'clear':
                 self.map.get_cell(data["x"], data["y"]).clear()
+                self.map.get_cell(data["x"], data["y"]).owner = data["username"]
             case 'levelup':
                 self.map.get_cell(data["x"], data["y"]).nextLevel()
+                self.map.get_cell(data["x"], data["y"]).owner = data["username"]
                 assert (self.map.get_cell(
                     data["x"], data["y"]).level == data["level"])
             case 'risk':
@@ -104,3 +107,5 @@ class Wrapper:
                 self.map.row_received_2 = data["received"]
             case 'owner':
                 self.map.get_cell(data["x"], data["y"]).owner = data["owner"]
+                if (self.map.get_cell(data["x"], data["y"]).owner != data["owner"]):
+                    self.map.get_cell(data["x"], data["y"]).owner = data["owner"]
