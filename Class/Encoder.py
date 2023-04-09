@@ -33,6 +33,11 @@ def chat(message) :
    encodeJSON({"header" : "chat", 
       "message" : message})
    
+def pchat(message, username) :
+   encodeJSON({"header" : "pchat", 
+      "message" : message,
+      "username" : username})
+   
 def duel_request(username) :
    encodeJSON({"header" : "duel_request",
       "username" : username})
@@ -44,6 +49,10 @@ def duel_answer(answer) :
 def update_round(score) :
    encodeJSON({"header" : "update_round", 
       "score" : score})
+
+def finish_duel() :
+   encodeJSON({"header" : "finish_duel"})
+
 
 
 

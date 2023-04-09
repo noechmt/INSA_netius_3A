@@ -114,8 +114,6 @@ class Duel:
         if self.game_round == self.enemy_game_round :
             self.my_bet_stopped = True
         
-
-
     def stop_bet_enemy_proto(self) :
         self.enemy_bet_stopped = True
 

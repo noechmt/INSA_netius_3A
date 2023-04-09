@@ -249,6 +249,7 @@ def game_screen():
                             # print(panel.duel.my_score)
                         if map.get_stopped() :
                             panel.duel.stop_bet()
+                            finish_duel()
 
                     if (panel.up_button.is_hovered(pos)):
                         if speed_index < 9:
@@ -444,6 +445,7 @@ def game_screen():
                             duel_request(command[1]) #send a duel request
                             panel.duelON = True
                             panel.chat.input.message_to_send = ''
+                            pchat(command[1] + " veut te tabasser le fiac dans un duel de gambling !",command[1])
 
                     if (command != [] and command[0] == '/accept') and panel.duel.duel_request > 0:
                         duel_answer(1) #send confirmation for duel
