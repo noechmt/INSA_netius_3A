@@ -17,7 +17,7 @@ int sending(char *ip_adress, int port, char *msg, int server_fd)
         {
             return -1;
         }*/
-        printf("%i %s", server_fd, msg);
+        //printf("%i %s", server_fd, msg);
         if (send(server_fd, msg, strlen(msg), 0) < 0)
         {
             perror("send error ");
