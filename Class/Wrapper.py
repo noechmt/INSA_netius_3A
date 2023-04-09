@@ -50,7 +50,7 @@ class Wrapper:
 
          case 'duel_request' :
             if self.panel.duel.player_name == data['username'] and self.panel.duel.duel_request == 0:
-               self.panel.duel.request += 1
+               self.panel.duel.duel_request += 1
 
          case 'duel_answer' :
             self.panel.duel.duel_accepted = data['accept']
