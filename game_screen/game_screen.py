@@ -234,7 +234,7 @@ def game_screen():
                             map.handle_button("granary")
 
                   
-                    if panel.duelON and panel.duel.accept_duel == 1 :
+                    if panel.duelON and panel.duel.duel_accepted == 1 :
                         if panel.continue_button.is_hovered((pos)) :
                             map.handle_button("continue")
 
@@ -447,11 +447,13 @@ def game_screen():
 
                     if (command != [] and command[0] == '/accept') and panel.duel.duel_request > 0:
                         duel_answer(1) #send confirmation for duel
-                        panel.duelON
+                        panel.duelON = True
+                        panel.duel.duel_accepted = 1
+                        panel.chat.input.message_to_send = ''
 
                     if (command != [] and command[0] == '/decline') and panel.duel.duel_request > 0:
                         duel_answer(2) #send refusal for duel
-            
+                        panel.chat.input.message_to_send = ''
 
                         
 
@@ -463,11 +465,11 @@ def game_screen():
         if panel.duelON :
             panel.chatON = False
 
-            if panel.duel.accept_duel == 2  : 
+            if panel.duel.duel_accepted == 2  : 
                 panel.duelON = False
                 panel.duel.init_duel()
 
-            if panel.duel.accept_duel == 1 :
+            if panel.duel.duel_accepted == 1 :
 
                 if panel.duel.handle_winner() :
                     panel.duelON = False
