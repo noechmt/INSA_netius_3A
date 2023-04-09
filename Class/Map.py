@@ -66,10 +66,6 @@ class Map:  # Un ensemble de cellule
         self.migrantQueue = []
         self.laborAdvisorQueue = []
         self.buildings = []
-        self.governors = [Governor(self.spawn_cells[0], None),
-                           Governor(self.spawn_cells[1], None), 
-                           Governor(self.spawn_cells[2], None), 
-                           Governor(self.spawn_cells[3], None)]
         self.path_graph = nx.DiGraph()
         self.init_paths()
         if not first_online:
@@ -116,6 +112,10 @@ class Map:  # Un ensemble de cellule
                             self.array[self.size -
                                        1][self.size - self.size//10],
                             self.array[self.size - 1][self.size//10]]
+        self.governors = [Governor(self.spawn_cells[0], None),
+                           Governor(self.spawn_cells[1], None), 
+                           Governor(self.spawn_cells[2], None), 
+                           Governor(self.spawn_cells[3], None)]
         # Replace 0 with the player number - 1
         self.spawn_cell = self.spawn_cells[self.num_player - 1]
         # Init a governor at spawn_cell
