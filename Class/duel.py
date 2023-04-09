@@ -102,7 +102,7 @@ class Duel:
     def continue_bet(self) :
         if self.game_round <= self.enemy_game_round :
             if not self.my_bet_stopped : self.my_score += rd.randint(1, 13)
-            if self.my_score > 21 : self.stop_bet()
+            if self.my_score > 21 : self.my_bet_stopped = True
 
             self.game_round += 1
 
@@ -119,7 +119,7 @@ class Duel:
 
     def handle_winner(self) :
         
-        # print(self.my_bet_stopped, self.enemy_bet_stopped)
+        print(self.my_bet_stopped, self.enemy_bet_stopped)
         if self.my_bet_stopped and self.enemy_bet_stopped : 
 
             if (self.my_score > 21 and self.enemy_score > 21) or (self.my_score == self.enemy_score):

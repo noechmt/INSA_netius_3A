@@ -245,6 +245,7 @@ def game_screen():
                         if map.get_continued() :
                             panel.duel.continue_bet()
                             update_round(panel.duel.my_score)
+                            if panel.duel.my_bet_stopped : finish_duel()
 
                             # print(panel.duel.my_score)
                         if map.get_stopped() :
@@ -445,7 +446,7 @@ def game_screen():
                             duel_request(command[1]) #send a duel request
                             panel.duelON = True
                             panel.chat.input.message_to_send = ''
-                            pchat(command[1] + " veut te tabasser le fiac dans un duel de gambling !",command[1])
+                            pchat(map.name_user + " veut te tabasser le fiac dans un duel de gambling !",command[1])
 
                     if (command != [] and command[0] == '/accept') and panel.duel.duel_request > 0:
                         duel_answer(1) #send confirmation for duel
@@ -468,6 +469,7 @@ def game_screen():
             panel.chatON = False
 
             if panel.duel.duel_accepted == 2  : 
+                print("aloooo")
                 panel.duelON = False
                 panel.duel.init_duel()
 
