@@ -61,7 +61,7 @@ void receiving(int fd)
 {
     struct sockaddr_in address;
     int valread;
-    char *buffer = calloc(1024, 1);
+    char *buffer = calloc(10000, 1);
     int addrlen = sizeof(address);
     fd_set current_sockets, ready_sockets;
 
@@ -107,7 +107,7 @@ void receiving(int fd)
                     }
 
                     /*adding ip to the list*/
-                    if (count_check == 0 &&strncmp("127.0.0.1", inet_ntoa(address.sin_addr), strlen(inet_ntoa(address.sin_addr))) != 0)
+                    if (count_check == 0 && strncmp("127.0.0.1", inet_ntoa(address.sin_addr), strlen(inet_ntoa(address.sin_addr))) != 0)
                     {
                         player *new_player = calloc(sizeof(player), 1);
                         initialize_player(new_player);
@@ -115,9 +115,10 @@ void receiving(int fd)
                         player_list = new_player;
                         strncpy(player_list->ip_adress, inet_ntoa(address.sin_addr), strlen(inet_ntoa(address.sin_addr)));
 
-                        player* share_ip = player_list;
+                        player *share_ip = player_list;
                         share_ip = share_ip->next_player;
-                        while(share_ip->next_player != NULL){
+                        while (share_ip->next_player != NULL)
+                        {
                             sending(player_list->ip_adress, 1234, share_ip->ip_adress);
                             share_ip = share_ip->next_player;
                         }
@@ -126,25 +127,28 @@ void receiving(int fd)
                 }
                 else
                 {
-                    valread = recv(i, buffer, 1024, 0);
+                    valread = recv(i, buffer, 10000, 0);
                     /*Adding new player if the buffer is an IP adress*/
-                    
+
                     if (valread < 0)
                     {
                         perror("erreur de recv");
                     }
                     printf("message recu et transmis : %s\n", buffer);
 
-                    if(strncmp(buffer, "192.168", strlen("192.168")) == 0){
+                    if (strncmp(buffer, "192.168", strlen("192.168")) == 0)
+                    {
                         player *new_player = calloc(sizeof(player), 1);
                         initialize_player(new_player);
                         new_player->next_player = player_list;
                         player_list = new_player;
                         strncpy(player_list->ip_adress, buffer, strlen(buffer));
                     }
-                    else if(strncmp(buffer, "maj", strlen("maj")) == 0){
+                    else if (strncmp(buffer, "maj", strlen("maj")) == 0)
+                    {
                         player *sending_to_all = player_list;
-                        while(sending_to_all->next_player != NULL){
+                        while (sending_to_all->next_player != NULL)
+                        {
                             sending(sending_to_all->ip_adress, 1234, "new pelo");
                             sending_to_all = sending_to_all->next_player;
                         }
@@ -157,13 +161,13 @@ void receiving(int fd)
                     {
                         player *send_players = player_list;
                         while (send_players->next_player != NULL)
-                        {  
+                        {
                             printf("send to %s\n : ", send_players->ip_adress);
                             sending(send_players->ip_adress, 1234, buffer);
                             send_players = send_players->next_player;
                         }
                     }
-                    bzero(buffer, 1024);
+                    bzero(buffer, 10000);
                     FD_CLR(i, &current_sockets);
                 }
             }

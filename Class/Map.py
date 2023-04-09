@@ -7,6 +7,10 @@ import _thread as thread
 import Class.Encoder as encode
 import time
 from Class.Cell import *
+from Class.Wrapper import *
+import p2p.socket_python as p2p
+import json
+import Class.Encoder as encoder
 
 SCREEN = None
 
@@ -28,16 +32,28 @@ sound_effect["extinguish"].set_volume(0.1)
 
 class Map:  # Un ensemble de cellule
 
-    def __init__(self, size, height, width, username):
+    def __init__(self, size, height, width, username, load_map=False, wrapper=None, first_online=True):
         self.size = size  # La taille de la map est size*size : int
         self.height_land = height
         self.width_land = width
         self.button_activated = {"house": False, "shovel": False, "road": False,
                                  "prefecture": False, "engineerpost": False, "well": False, "farm": False, "granary": False, "ownership": False}
         self.players = ["Player1", "Player2", "Player3", "Player4"]
-        # TO-DO request the num player
-        self.num_player = 1
+        # TO-DO request the num
         self.players_online = 1
+        self.row_received = False
+        self.row_received_2 = False
+        if not first_online:
+            print("In responseJoin")
+            wrapper = Wrapper(self, None)
+            receive_num = False
+            while not receive_num:
+                data = p2p.get_data()
+                if len(data) != 0:
+                    if json.loads(data)["header"] == "responseJoin":
+                        wrapper.wrap(data)
+                        receive_num = True
+        self.num_player = self.players_online
         # TO-DO put names in array and do function to fill it after init
         self.name_user = username
         self.players[self.num_player - 1] = username
@@ -53,6 +69,45 @@ class Map:  # Un ensemble de cellule
         self.path_graph = nx.DiGraph()
         self.init_paths()
         self.init_ownership()
+        if not first_online:
+            print("In cell_init")
+            if load_map:
+                # Local version : reading from a file
+                # f = open("map", 'r')
+                # lines = f.readlines()
+                # for line in lines:
+                #     wrapper.wrap(line)
+
+                # Online version : reading from the requests
+                num_cell_init = 0
+                while num_cell_init != self.size * 2:
+                    # protocol to receive packet and if it's cell_init header, decode it
+                    data = p2p.get_data()
+                    if len(data) != 0:
+                        try:
+                            header = json.loads(data)["header"]
+                            if header == "cell_init":
+                                wrapper.wrap(data)
+                                print("num_cell_init =", num_cell_init)
+                                if num_cell_init % 2 == 0:
+                                    encoder.row_received(self.name_user, True)
+                                else:
+                                    encoder.row_received_2(
+                                        self.name_user, True)
+                                num_cell_init += 1
+                            else:
+                                if num_cell_init % 2 == 0:
+                                    encoder.row_received(self.name_user, False)
+                                else:
+                                    encoder.row_received_2(
+                                        self.name_user, False)
+                        except:
+                            if num_cell_init % 2 == 0:
+                                encoder.row_received(self.name_user, False)
+                            else:
+                                encoder.row_received_2(
+                                    self.name_user, False)
+
         self.spawn_cells = [self.array[0][self.size//10],
                             self.array[0][self.size - self.size//10],
                             self.array[self.size -
@@ -73,6 +128,53 @@ class Map:  # Un ensemble de cellule
         self.year = 150
         self.transaction = {"cells": [], "amount": 0, "Done": False}
         self.sound_effect = sound_effect
+
+    def set_spawn_point_governor(self):
+        Governor.currentCell = self.spawn_cells[self.num_player - 1]
+
+    def encode(self):
+        wrapper = Wrapper(self, None)
+        for x in range(self.size):
+            row = []
+            self.row_received = False
+            response = False
+            self.row_received_2 = False
+            row_2 = []
+            response_2 = False
+            for y in range(self.size//2):
+                row.append(self.array[x][y].encode())
+            encoder.cell_init_row(self.name_user, row)
+            while not response:
+                data = p2p.get_data()
+                if len(data) != 0:
+                    try:
+                        header = json.loads(data)["header"]
+                        if header == "row_received":
+                            wrapper.wrap(data)
+                            print(self.row_received)
+                            if self.row_received:
+                                response = True
+                            else:
+                                encoder.cell_init_row(self.name_user, row)
+                    except:
+                        pass
+            for y in range(self.size//2, self.size):
+                row_2.append(self.array[x][y].encode())
+            encoder.cell_init_row(self.name_user, row_2)
+            while not response_2:
+                data = p2p.get_data()
+                if len(data) != 0:
+                    try:
+                        header = json.loads(data)["header"]
+                        if header == "row_received_2":
+                            wrapper.wrap(data)
+                            print(self.row_received_2)
+                            if self.row_received_2:
+                                response_2 = True
+                            else:
+                                encoder.cell_init_row(self.name_user, row_2)
+                    except:
+                        pass
 
     def add_transaction(self, cell):
         if cell.owner == None:
@@ -267,21 +369,24 @@ class Map:  # Un ensemble de cellule
                 if any(house.nb_occupants != 0 for house in self.buildings if isinstance(house, House)):
                     i.leave_building()
 
-        if self.players_online > 1 and len(self.walkers) > 0: walkerBuffer = encode.WalkerBuffer(self.name_user)
+        if self.players_online > 1 and len(self.walkers) > 0:
+            walkerBuffer = encode.WalkerBuffer(self.name_user)
         for walker in self.walkers:
             if walker.owner == self.name_user:
                 walker.move()
-                if self.players_online > 1: walkerBuffer.add("move", walker)
+                if self.players_online > 1:
+                    walkerBuffer.add("move", walker)
             else:
                 self.walkers.remove(walker)
-                
-            #if self.get_overlay() not in ("fire", "collapse") and not isinstance(walker, Prefect) or (isinstance(walker, Prefect) and not walker.isWorking):
+
+            # if self.get_overlay() not in ("fire", "collapse") and not isinstance(walker, Prefect) or (isinstance(walker, Prefect) and not walker.isWorking):
             #    walker.display()
             """if not isinstance(i, Migrant):
                 if i.previousCell is not None:
                     i.previousCell.display()"""
-            
-        if self.players_online > 1 and len(self.walkers) > 0: walkerBuffer.send()
+
+        if self.players_online > 1 and len(self.walkers) > 0:
+            walkerBuffer.send()
 
         for i in self.buildings:
             if i.risk and not i.risk.happened and i.owner == self.name_user:
@@ -301,13 +406,15 @@ class Map:  # Un ensemble de cellule
         for i in self.buildings:
             if i.risk and i.risk.happened and i.risk.type == "fire":
                 i.risk.burn()
-                if self.players_online > 1 and i.owner == self.name_user: encode.risk(self.name_user, "burn", i, i.risk.fireCounter)
+                if self.players_online > 1 and i.owner == self.name_user:
+                    encode.risk(self.name_user, "burn", i, i.risk.fireCounter)
 
     def update_collapse(self):
         for i in self.buildings:
             if i.risk and i.risk.happened and i.risk.type == "collapse":
                 i.risk.collapse()
-                if self.map.players_online > 1 and i.owner == self.map.name_user: encode.risk(self.name_user, "collapse", i, None)
+                if self.map.players_online > 1 and i.owner == self.map.name_user:
+                    encode.risk(self.name_user, "collapse", i, None)
 
     def set_cell_array(self, x, y, cell):
         self.array[x][y] = cell

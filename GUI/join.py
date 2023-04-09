@@ -146,7 +146,7 @@ def join_game():
                     subprocess.Popen(['p2p/lan_connect', input_ip.get_text()])
                     sleep(1)
                     encode.join(input_pseudo.get_text())
-                    return True
+                    return (True, False)
 
             if input_ip.handle_event(event, SCREEN):
                 SCREEN.blit(pygame.transform.scale(
