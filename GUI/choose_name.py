@@ -112,7 +112,7 @@ def choose_name():
                         file.close()
                         subprocess.Popen(
                             ['p2p/lan_connect', ''])
-                        return True
+                        return (True, True)
             if (input_name.handle_event(event, SCREEN)):
                 SCREEN.blit(pygame.transform.scale(
                     menu_background, (width_menu, height_menu)), (left_menu, top_menu))

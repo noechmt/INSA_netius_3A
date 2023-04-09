@@ -17,9 +17,10 @@ if os.name == "nt":
 
 
 if __name__ == "__main__":
-    if (title_screen()):
+    retour = title_screen()
+    if (retour[0]):
         from game_screen.game_screen import game_screen
-        game_screen()
+        game_screen(retour[1])
     pygame.quit()
 
 # TO-DO

@@ -4,6 +4,7 @@ from this import d
 import Class.Cell as Cell
 import Class.Walker as Walker
 import Class.Encoder as encode
+import time
 
 # TODO
 # Protocole d'apparition sur la map :
@@ -28,6 +29,8 @@ class Wrapper:
                 self.map.players_online += 1
                 encode.joinResponse(self.map.name_user,
                                     self.map.players_online)
+                time.sleep(3)
+                self.map.encode()
             case 'responseJoin':
                 self.map.players_online = data["players_online"]
             case 'build':
@@ -80,3 +83,5 @@ class Wrapper:
                         data["x"], data["y"]).init_random_sprites()
                 self.map.get_cell(
                     data["x"], data["y"]).owner = data["owner"]
+                print(data["x"], data["y"], data["type"],
+                      data["type_empty"], data["owner"])

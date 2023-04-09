@@ -21,7 +21,7 @@ def draw_rect_alpha(surface, color, rect):
     surface.blit(shape_surf, rect)
 
 
-def game_screen():
+def game_screen(first_online=False):
     pygame.init()
 
     SCREEN = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
@@ -51,7 +51,8 @@ def game_screen():
             map = pickle.load(f1)
         map.display_map()
     else:
-        map = Map(SIZE, height_land, width_land, name_path, True)
+        map = Map(SIZE, height_land, width_land, name_path,
+                  True, first_online=first_online)
 
     panel = Panel(SCREEN)
     wrapper = Wrapper(map, panel)

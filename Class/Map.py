@@ -8,6 +8,8 @@ import Class.Encoder as encode
 import time
 from Class.Cell import *
 from Class.Wrapper import *
+import p2p.socket_python as p2p
+import json
 
 SCREEN = None
 
@@ -29,16 +31,23 @@ sound_effect["extinguish"].set_volume(0.1)
 
 class Map:  # Un ensemble de cellule
 
-    def __init__(self, size, height, width, username, load_map=False, wrapper=None):
+    def __init__(self, size, height, width, username, load_map=False, wrapper=None, first_online=True):
         self.size = size  # La taille de la map est size*size : int
         self.height_land = height
         self.width_land = width
         self.button_activated = {"house": False, "shovel": False, "road": False,
                                  "prefecture": False, "engineerpost": False, "well": False, "farm": False, "granary": False, "ownership": False}
         self.players = ["Player1", "Player2", "Player3", "Player4"]
-        # TO-DO request the num player
-        self.num_player = 1
+        # TO-DO request the num
         self.players_online = 1
+        if not first_online:
+            receive_num = False
+            while not receive_num:
+                data = p2p.get_data()
+                if json.load(data)["header"] == "responseJoin":
+                    wrapper.wrap(data)
+                    receive_num = True
+        self.num_player = self.players_online
         # TO-DO put names in array and do function to fill it after init
         self.name_user = username
         self.players[self.num_player - 1] = username
@@ -54,12 +63,24 @@ class Map:  # Un ensemble de cellule
         self.path_graph = nx.DiGraph()
         self.init_paths()
         self.init_ownership()
-        if load_map:
-            wrapper = Wrapper(self, None)
-            f = open("map", 'r')
-            lines = f.readlines()
-            for line in lines:
-                wrapper.wrap(line)
+        if not first_online:
+            if load_map:
+                wrapper = Wrapper(self, None)
+                # Local version : reading from a file
+                # f = open("map", 'r')
+                # lines = f.readlines()
+                # for line in lines:
+                #     wrapper.wrap(line)
+
+                # Online version : reading from the requests
+                num_cell_init = 0
+                while num_cell_init != self.size * self.size:
+                    # protocol to receive packet and if it's cell_init header, decode it
+                    data = p2p.get_data()
+                    if json.load(data)["header"] == "cell_init":
+                        wrapper.wrap(data)
+                    num_cell_init += 1
+
         self.spawn_cells = [self.array[0][self.size//10],
                             self.array[0][self.size - self.size//10],
                             self.array[self.size -
@@ -85,11 +106,9 @@ class Map:  # Un ensemble de cellule
         Governor.currentCell = self.spawn_cells[self.num_player - 1]
 
     def encode(self):
-        f = open("map", "w")
         for x in range(self.size):
             for y in range(self.size):
-                f.write(str(self.array[x][y].encode() + "\n"))
-        f.close()
+                self.array[x][y].encode()
 
     def add_transaction(self, cell):
         if cell.owner == None:

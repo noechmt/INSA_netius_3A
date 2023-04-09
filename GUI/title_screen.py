@@ -170,14 +170,16 @@ def title_screen():
 
     if window_name:
         # We display again this window if the back button is pressed from choose_name
-        if (not choose_name()):
+        retour = choose_name()
+        if (not retour[0]):
             title_screen()
 
-        return True
+        return (True, retour[1])
 
     if window_join:
         # We display again this window if the back button is pressed from choose_name
-        if (not join_game()):
+        retour = join_game()
+        if (not retour[0]):
             title_screen()
 
-        return True
+        return (True, retour[1])

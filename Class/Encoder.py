@@ -20,13 +20,13 @@ def joinResponse(username, players_online):
 
 
 def cell_init(username, x, y, type, type_empty, owner):
-    return json.dumps({"header": "cell_init",
-                       "username": username,
-                       "x": x,
-                       "y": y,
-                       "type": type,
-                       "type_empty": type_empty,
-                       "owner": owner})
+    encodeJSON({"header": "cell_init",
+                "username": username,
+                "x": x,
+                "y": y,
+                "type": type,
+                "type_empty": type_empty,
+                "owner": owner})
 
 
 def build(username, x, y, type):
