@@ -110,6 +110,7 @@ class Wrapper:
                 if (self.map.get_cell(data["x"], data["y"]).owner != data["owner"]):
                     self.map.get_cell(data["x"], data["y"]).owner = data["owner"]
             case 'governor':
+                self.map.governors[data["num_player"] - 1].owner = data["username"]
                 self.map.governors[data["num_player"] - 1].previousCell = self.map.governors[data["num_player"] - 1].currentCell
                 self.map.governors[data["num_player"] - 1].currentCell = self.map.get_cell(data["x"], data["y"])
                 self.map.governors[data["num_player"] - 1].display()

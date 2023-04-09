@@ -134,6 +134,11 @@ class Map:  # Un ensemble de cellule
         self.year = 150
         self.transaction = {"cells": [], "amount": 0, "Done": False}
         self.sound_effect = sound_effect
+    
+    def display_governors(self):
+        for governor in self.governors:
+            if governor.owner != None or governor.owner == self.name_user:
+                governor.display()
 
     def set_spawn_point_governor(self):
         Governor.currentCell = self.spawn_cells[self.num_player - 1]

@@ -452,6 +452,7 @@ def game_screen(first_online=False):
 
         if not isinstance(map.governor.currentCell, Building):
             map.governor.display()
+            map.display_governors()
         map.display_walkers()
         panel.display()
 
