@@ -137,7 +137,8 @@ class Map:  # Un ensemble de cellule
     
     def display_governors(self):
         for governor in self.governors:
-            if governor.owner != None or governor.owner == self.name_user:
+            if governor.owner != None and governor.owner != self.name_user:
+                print("Diplay :", governor.owner)
                 governor.display()
 
     def set_spawn_point_governor(self):
