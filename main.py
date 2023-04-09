@@ -15,6 +15,9 @@ os.system(str(sys.executable) + " -m pip install -r requirements.txt")
 if os.name == "nt":
     ctypes.windll.shcore.SetProcessDpiAwareness(1)
 
+# Delete the lan_conne process if it exists
+os.system("pgrep -f lan_conne | xargs kill -9")
+
 
 if __name__ == "__main__":
     retour = title_screen()
