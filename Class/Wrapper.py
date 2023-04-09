@@ -38,7 +38,6 @@ class Wrapper:
             case 'responseJoin':
                 self.map.players_online = data["players_online"]
                 self.map.players = data["players"]
-                print(self.map.players)
             case 'build':
                 self.map.get_cell(data["x"], data["y"]).build(
                     data["type"], data["username"], True)
