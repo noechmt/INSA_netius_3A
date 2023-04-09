@@ -111,7 +111,7 @@ class Wrapper:
                     self.map.get_cell(data["x"], data["y"]).owner = data["owner"]
             case 'governor':
                 if self.map.governors[data["num_player"] - 1].owner == None:
-                    encode.governor(self.map.name_user, self.map.num_player, self.map.governor)
+                    encode.governor(self.map.name_user, self.map.num_player, self.map.governor.currentCell)
                 self.map.governors[data["num_player"] - 1].owner = data["username"]
                 self.map.governors[data["num_player"] - 1].previousCell = self.map.governors[data["num_player"] - 1].currentCell
                 self.map.governors[data["num_player"] - 1].currentCell = self.map.get_cell(data["x"], data["y"])
