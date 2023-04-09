@@ -100,7 +100,7 @@ class Duel:
         self.text["enemyscore"].text = str(self.enemy_score)
         
     def continue_bet(self) :
-        if self.game_round == self.enemy_game_round :
+        if self.game_round <= self.enemy_game_round :
             if not self.my_bet_stopped : self.my_score += rd.randint(1, 13)
             if self.my_score > 21 : self.stop_bet()
 

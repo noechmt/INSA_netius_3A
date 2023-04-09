@@ -244,7 +244,7 @@ def game_screen():
                             
                         if map.get_continued() :
                             panel.duel.continue_bet()
-                            update_round()
+                            update_round(panel.duel.my_score)
 
                             # print(panel.duel.my_score)
                         if map.get_stopped() :
