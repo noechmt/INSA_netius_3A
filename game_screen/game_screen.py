@@ -149,7 +149,7 @@ def game_screen(first_online=False):
             if pos[0] >= WIDTH_SCREEN - 60 and map.offset_left <= (map.get_cell(0, 0).width * SIZE / 2) - (WIDTH_SCREEN / 2) / 1.25:
                 if not panel.get_road_button().is_hovered(pos) and not panel.get_well_button().is_hovered(pos):
                     if not panel.get_collapse_button().is_hovered(pos) and not panel.get_exit_button().is_hovered(pos):
-                        if not panel.get_governor_button().is_hovered(pos) and not panel.get_ownership_button:
+                        if not panel.get_governor_button().is_hovered(pos) and not panel.get_ownership_button().is_hovered(pos):
                             if not panel.get_buy_button().is_hovered(pos):
                                 map.offset_left += 5 * \
                                     (3 - (WIDTH_SCREEN - pos[0]
