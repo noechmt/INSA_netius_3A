@@ -22,18 +22,25 @@ def build(username, x, y, type):
       "y": y, 
       "type": type})
 
-def levelup(username, x, y, level):
+def levelup(username, cell, level):
    encodeJSON({"header": "levelup",
       "username": username,
-      "x": x,
-      "y": y, 
+      "x": cell.x,
+      "y": cell.y, 
       "level": level})
    
-def clear(username, x, y):
+def clear(username, cell):
    encodeJSON({"header": "clear",
       "username": username,
-      "x": x,
-      "y": y})
+      "x": cell.x,
+      "y": cell.y})
+   
+def risk(username, type, building, fireCounter):
+   encodeJSON({"header": type,
+      "username": username,
+      "building": (building.x, building.y),
+      "fireCounter": fireCounter
+   })
    
 def chat(message) :
    encodeJSON({"header" : "chat", 
