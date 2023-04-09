@@ -35,7 +35,7 @@ class Wrapper:
                 self.map.players_online = data["players_online"]
             case 'build':
                 self.map.get_cell(data["x"], data["y"]).build(
-                    data["type"], data["username"])
+                    data["type"], data["username"], True)
             case 'clear':
                 self.map.get_cell(data["x"], data["y"]).clear()
             case 'levelup':

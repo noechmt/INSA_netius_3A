@@ -79,7 +79,7 @@ class Map:  # Un ensemble de cellule
 
                 # Online version : reading from the requests
                 num_cell_init = 0
-                while num_cell_init != self.size:
+                while num_cell_init != self.size * 2:
                     # protocol to receive packet and if it's cell_init header, decode it
                     data = p2p.get_data()
                     if len(data) != 0:
@@ -123,8 +123,8 @@ class Map:  # Un ensemble de cellule
     def encode(self):
         wrapper = Wrapper(self, None)
         for x in range(self.size):
-            self.row_received = False
             row = []
+            self.row_received = False
             for y in range(self.size//2):
                 row.append(self.array[x][y].encode())
             encoder.cell_init_row(self.name_user, row)
@@ -143,11 +143,12 @@ class Map:  # Un ensemble de cellule
                                 encoder.cell_init_row(self.name_user, row)
                     except:
                         encoder.cell_init_row(self.name_user, row)
+            row_2 = []
             for y in range(self.size//2, self.size):
-                row.append(self.array[x][y].encode())
+                row_2.append(self.array[x][y].encode())
+            print(row_2)
             self.row_received = False
-            row = []
-            encoder.cell_init_row(self.name_user, row)
+            encoder.cell_init_row(self.name_user, row_2)
             response = False
             while not response:
                 data = p2p.get_data()
