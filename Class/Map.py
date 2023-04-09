@@ -261,15 +261,15 @@ class Map:  # Un ensemble de cellule
         elif self.num_player == 2:
             for x in range(self.size // 10 + 1):
                 for y in range(self.size - (self.size // 10), self.size):
-                    self.array[x][y].owner = self.self.players[self.num_player - 1]
+                    self.array[x][y].owner = self.players[self.num_player - 1]
         elif self.num_player == 3:
             for x in range(self.size - (self.size // 10), self.size):
                 for y in range(self.size - (self.size // 10), self.size):
-                    self.array[x][y].owner = self.self.players[self.num_player - 1]
+                    self.array[x][y].owner = self.players[self.num_player - 1]
         elif self.num_player == 4:
             for x in range(self.size - (self.size // 10), self.size):
                 for y in range(self.size // 10 + 1):
-                    self.array[x][y].owner = self.self.players[self.num_player - 1]
+                    self.array[x][y].owner = self.players[self.num_player - 1]
         if players_online != 0:
             self.num_player = num_player
 
