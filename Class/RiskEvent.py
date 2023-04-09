@@ -1,4 +1,5 @@
 import Class.Cell as Cell
+import Class.Encoder as encode
 import random as rd
 import pygame
 
@@ -35,6 +36,8 @@ class RiskEvent():
             self.riskCounter += rd.randint(0, 1)
 
         if self.riskCounter >= self.riskTreshold:
+            if self.building.map.players_online > 1 and self.building.owner == self.building.map.name_user: 
+                encode.risk(self.building.map.name_user, self.type, self.building, self.fireCounter)
             self.happened = True
             self.building.type = "ruin"
             if self.type == "fire" or self.type == "collapse":
