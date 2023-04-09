@@ -23,7 +23,7 @@ class Duel:
 
         }
 
-
+        self.max_score = 21
         
         self.player_name = ""
 
@@ -113,7 +113,7 @@ class Duel:
             self.game_round += 1
 
 
-        if self.my_score > 21 : self.my_bet_stopped = True
+        if self.my_score > self.max_score : self.my_bet_stopped = True
         
     
         pass
@@ -130,14 +130,14 @@ class Duel:
 
     def handle_winner(self) :
         
-        print(self.my_bet_stopped, self.enemy_bet_stopped)
+        # print(self.my_bet_stopped, self.enemy_bet_stopped)
         if self.my_bet_stopped and self.enemy_bet_stopped : 
 
-            if (self.my_score > 21 and self.enemy_score > 21) or (self.my_score == self.enemy_score):
+            if (self.my_score > self.max_score and self.enemy_score > self.max_score) or (self.my_score == self.enemy_score):
                 self.draw = True
             
-            elif self.my_score > 21 and self.enemy_score <= 21 : self.lost = True
-            elif self.enemy_score > 21 and self.my_score <= 21 : self.won = True
+            elif self.my_score > self.max_score and self.enemy_score <= self.max_score : self.lost = True
+            elif self.enemy_score > self.max_score and self.my_score <= self.max_score : self.won = True
             elif self.my_score > self.enemy_score : self.won = True
             else : self.lost = True
 
@@ -152,3 +152,8 @@ class Duel:
     def handle_duel_round(self) :
         if self.enemy_game_round == self.duel_round == self.game_round :
             self.duel_round += 1
+
+
+#TODO rajouter une mise
+# rajouter le nom des joueurs
+# rajouter le vainqueur + le score à la fin
