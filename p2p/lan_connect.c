@@ -51,10 +51,7 @@ int main(int argc, char **argv)
     pthread_t tid;
     printf("Listening for other players... \n");
     pthread_create(&tid, NULL, &receive_thread, &server_fd); // Creating thread to keep receiving message in real time
-    while (1)
-    {
-        receive_thread(&local_fd);
-    }
+    receive_thread(&local_fd);
     close(server_fd);
     close(local_fd);
 }
