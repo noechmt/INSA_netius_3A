@@ -125,7 +125,7 @@ class Map:  # Un ensemble de cellule
         for x in range(self.size):
             self.row_received = False
             row = []
-            for y in range(self.size):
+            for y in range(self.size//2):
                 row.append(self.array[x][y].encode())
             encoder.cell_init_row(self.name_user, row)
             response = False
@@ -140,10 +140,28 @@ class Map:  # Un ensemble de cellule
                             if self.row_received:
                                 response = True
                             else:
-                                time.sleep(0.5)
                                 encoder.cell_init_row(self.name_user, row)
                     except:
-                        time.sleep(0.5)
+                        encoder.cell_init_row(self.name_user, row)
+            for y in range(self.size//2, self.size):
+                row.append(self.array[x][y].encode())
+            self.row_received = False
+            row = []
+            encoder.cell_init_row(self.name_user, row)
+            response = False
+            while not response:
+                data = p2p.get_data()
+                if len(data) != 0:
+                    try:
+                        header = json.loads(data)["header"]
+                        if header == "row_received":
+                            wrapper.wrap(data)
+                            print(self.row_received)
+                            if self.row_received:
+                                response = True
+                            else:
+                                encoder.cell_init_row(self.name_user, row)
+                    except:
                         encoder.cell_init_row(self.name_user, row)
 
     def add_transaction(self, cell):

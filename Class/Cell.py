@@ -262,7 +262,7 @@ class Cell:  # Une case de la map
     def build(self, type, owner=None, init=False):
         if owner == None:
             owner = self.owner
-        if isinstance(self, Empty) and self.type_empty != "dirt":
+        if (isinstance(self, Empty) and self.type_empty != "dirt") and not init:
             print("This cell is already taken")
             return
         if (self.map.name_user != self.owner) and not init:
