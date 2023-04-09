@@ -41,7 +41,7 @@ class Map:  # Un ensemble de cellule
         self.players = ["Player1", "Player2", "Player3", "Player4"]
         # TO-DO request the num
         self.players_online = 1
-        self.row_recieved = False
+        self.row_received = False
         if not first_online:
             print("In responseJoin")
             wrapper = Wrapper(self, None)
@@ -135,7 +135,7 @@ class Map:  # Un ensemble de cellule
                         header = json.loads(data)["header"]
                         if header == "row_received":
                             wrapper.wrap(data)
-                            if self.row_recieved:
+                            if self.row_received:
                                 response = True
                     except:
                         encoder.cell_init_row(self.name_user, row)
