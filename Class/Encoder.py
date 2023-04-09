@@ -13,10 +13,11 @@ def join(username):
                 })
 
 
-def joinResponse(username, players_online):
+def joinResponse(username, players_online, players):
     encodeJSON({"header": "responseJoin",
                 "username": username,
-                "players_online": players_online
+                "players_online": players_online,
+                "players" : players
                 })
 
 

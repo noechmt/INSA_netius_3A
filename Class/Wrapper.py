@@ -27,12 +27,18 @@ class Wrapper:
             case 'join':
                 # Add here spawnpoints checker
                 self.map.players_online += 1
+                # Add the username to the list of players
+                self.map.players[self.map.players_online - 1] = data["username"]
                 encode.joinResponse(self.map.name_user,
-                                    self.map.players_online)
+                                    self.map.players_online,
+                                    self.map.players)
                 time.sleep(3)
                 self.map.encode()
+                print(self.map.players)
             case 'responseJoin':
                 self.map.players_online = data["players_online"]
+                self.map.players = data["players"]
+                print(self.map.players)
             case 'build':
                 self.map.get_cell(data["x"], data["y"]).build(
                     data["type"], data["username"], True)
