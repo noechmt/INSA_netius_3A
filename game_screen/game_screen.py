@@ -463,10 +463,29 @@ def game_screen(first_online=False):
                         #     panel.chat.history_append("Player does not exist")
                         #     panel.chat.input.message_to_send = ''
                         if command != [] and len(command) >=2 and command[1] in map.players :
-                            duel_request(command[1], map.name_user) #send a duel request
+                            
+                            try :
+                                if command != [] and len(command) >=3 and int(command[2]) : 
+                                    if int(command[2]) > 0 :
+                                        panel.duel.bet = int(command[2])
+                                        send_bet(panel.duel.bet)
+
+                                
+
+                            except : 
+                                panel.chat.history_append("bet must be integer")
+                                
+                            duel_request(command[1]) #send a duel request
                             panel.chat.input.message_to_send = ''
                             panel.duel.update_name(command[1])
                             pchat(map.name_user + " veut te tabasser le fiac dans un duel de gambling !",command[1])
+
+                            if panel.duel.bet != 0 : 
+                                panel.chat.history_append("Mise : " + str(panel.duel.bet))
+                                pchat("Mise : " + str(panel.duel.bet), command[1])
+
+
+                        
 
                     if (command != [] and command[0] == '/accept') and panel.duel.duel_request > 0:
                         duel_answer(1, panel.duel.enemy_name) #send confirmation for duel
@@ -501,9 +520,13 @@ def game_screen(first_online=False):
 
                     if panel.duel.lost : 
                         panel.chat.history_append("Duel perdu !")
+                        if panel.duel.bet > 0 :
+                            map.wallet -= 2*panel.duel.bet
                     
                     if panel.duel.won : 
                         panel.chat.history_append("Duel gagné !")
+                        if panel.duel.bet > 0 :
+                            map.wallet += 2*panel.duel.bet
                     
                     if panel.duel.draw : 
                         panel.chat.history_append("Egalité !")
