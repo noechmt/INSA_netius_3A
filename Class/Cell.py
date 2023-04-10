@@ -69,7 +69,7 @@ class Cell:  # Une case de la map
         self.explored = False
 
     def encode(self):
-        encode.cell_init_single(self.name_user, self.x, self.y, self.type,
+        encode.cell_init_single(self.map.name_user, self.x, self.y, self.type,
                                 self.type_empty if isinstance(
                                     self, Empty) else "",
                                 self.owner)
