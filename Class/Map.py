@@ -102,16 +102,24 @@ class Map:  # Un ensemble de cellule
                                 encoder.row_received(self.name_user, True)
                                 wrapper.wrap(data)
                                 print("num_cell_init =", num_cell_init)
-                                num_cell_init += 1
                                 SCREEN.blit(background, (0, 0))
                                 SCREEN.blit(text_loading, (WIDTH_SCREEN/2 - text_loading.get_width()/2,
                                                            HEIGHT_SCREEN/2 - text_loading.get_height()/2))
                                 pygame.display.flip()
                                 text_loading = self.fps_font.render(
                                     f"Load map : {num_cell_init}/{self.size}", 1, (0, 0, 0))
+                                num_cell_init += 1
                             else:
+                                SCREEN.blit(background, (0, 0))
+                                SCREEN.blit(text_loading, (WIDTH_SCREEN/2 - text_loading.get_width()/2,
+                                                           HEIGHT_SCREEN/2 - text_loading.get_height()/2))
+                                pygame.display.flip()
                                 encoder.row_received(self.name_user, False)
                         except:
+                            SCREEN.blit(background, (0, 0))
+                            SCREEN.blit(text_loading, (WIDTH_SCREEN/2 - text_loading.get_width()/2,
+                                                       HEIGHT_SCREEN/2 - text_loading.get_height()/2))
+                            pygame.display.flip()
                             encoder.row_received(self.name_user, False)
         self.init_ownership()
         self.spawn_cells = [self.array[0][self.size//10],
