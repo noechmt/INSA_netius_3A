@@ -96,8 +96,38 @@ def governor(username, num_player, cell):
                 "x": cell.x,
                 "y": cell.y})
 
+   
+def chat(message) :
+   encodeJSON({"header" : "chat", 
+      "message" : message})
+   
+def pchat(message, username) :
+   encodeJSON({"header" : "pchat", 
+      "message" : message,
+      "username" : username})
+   
+def duel_request(username) :
+   encodeJSON({"header" : "duel_request",
+      "username" : username})
 
-class WalkerBuffer:
+def duel_answer(answer,username) : 
+   encodeJSON({"header" : "duel_answer", 
+      "accept" : answer,
+      "username" : username}) # 1 accept or 2 decline
+   
+def update_round(score) :
+   encodeJSON({"header" : "update_round", 
+      "score" : score})
+
+def finish_duel() :
+   encodeJSON({"header" : "finish_duel"})
+
+
+
+
+
+
+class WalkerBuffer:  
 
     def __init__(self, username):
         self.username = username

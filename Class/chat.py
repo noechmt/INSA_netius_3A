@@ -5,6 +5,8 @@ from Class.Input_box import InputBox
 
 class Chat:
     def __init__(self, screen):
+
+        # useless dict for now, may add another sprite someday (probably not)
         self.chat_sprite = {
             "background": pygame.image.load("game_screen/game_screen_sprites/chat_background.jpg").convert_alpha()
         }
@@ -40,6 +42,7 @@ class Chat:
                               height_input_name, input_name_font, 35, "", (255, 255, 255))
 
     def display(self):
+        # print("darken?")
         self.screen.blit(pygame.transform.scale(self.chat_sprite["background"], (self.width_screen*.450, self.height_screen*.450)),
                          (self.width_screen*1/80, self.height_screen*0.01))
         self.title.draw(self.screen)
@@ -73,3 +76,7 @@ class Chat:
             if event.button == 4 and self.history_index < 95:
 
                 self.history_index += 5
+
+        
+            
+

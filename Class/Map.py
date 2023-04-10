@@ -37,7 +37,7 @@ class Map:  # Un ensemble de cellule
         self.height_land = height
         self.width_land = width
         self.button_activated = {"house": False, "shovel": False, "road": False,
-                                 "prefecture": False, "engineerpost": False, "well": False, "farm": False, "granary": False, "ownership": False}
+                                 "prefecture": False, "engineerpost": False, "well": False, "farm": False, "granary": False, "ownership": False, "stop" : False, "continue" : False}
         self.players = ["Player1", "Player2", "Player3", "Player4"]
         # TO-DO request the num
         self.players_online = 1
@@ -509,6 +509,12 @@ class Map:  # Un ensemble de cellule
 
     def get_granaried(self):
         return self.button_activated["granary"]
+    
+    def get_continued(self) : 
+        return self.button_activated["continue"]
+    
+    def get_stopped(self) :
+        return self.button_activated["stop"]
 
     def get_ownershiped(self):
         return self.button_activated["ownership"]

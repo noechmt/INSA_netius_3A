@@ -85,6 +85,24 @@ class Wrapper:
             case 'chat':
                 self.panel.chat.history_append(data['message'])
 
+            case 'pchat' : 
+               if self.map.name_user == data['username'] : self.panel.chat.history_append(data['message'])
+
+            case 'duel_request' :
+               if self.panel.duel.player_name == data['username'] and self.panel.duel.duel_request == 0:
+                  self.panel.duel.duel_request += 1
+
+            case 'duel_answer' :
+               if data['username'] == self.panel.duel.enemy_name : self.panel.duel.duel_accepted = data['accept']
+
+            case 'update_round' :
+               self.panel.duel.enemy_game_round += 1
+               self.panel.duel.enemy_score = data['score']
+
+            case 'finish_duel' : 
+               self.panel.duel.enemy_bet_stopped = True
+
+
             case 'cell_init':
                 for cell in data["row"]:
                     if cell["type"] == "path" or cell["type"] == "house" or cell["type"] == "well" \
@@ -116,3 +134,7 @@ class Wrapper:
                 self.map.governors[data["num_player"] - 1].previousCell = self.map.governors[data["num_player"] - 1].currentCell
                 self.map.governors[data["num_player"] - 1].currentCell = self.map.get_cell(data["x"], data["y"])
                 self.map.governors[data["num_player"] - 1].display()
+
+
+
+        

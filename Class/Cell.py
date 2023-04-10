@@ -1052,7 +1052,7 @@ class Crop(Building):
         for i in range(5):
             self.sprite_display.append(
                 self.sprite[i])
-        self.risk = None
+        self.risk = RiskEvent("prout", self)
         self.update_sprite_size()
 
     def __str__(self):
@@ -1115,7 +1115,7 @@ class CityHallPart(Building):
 class CityHall(Building):
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width, map, owner)
-        self.risk = None
+        self.risk =RiskEvent("prout", self)
         self.path_sprite = "game_screen/game_screen_sprites/cityhall.png"
         self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
         self.sprite_display = ""
@@ -1183,7 +1183,7 @@ class Farm(Building):
         super().__init__(x, y, height, width, map, owner)
         if self.owner == self.map.name_user:
             self.farmer = Farmer(self, owner)
-        self.risk = None
+        self.risk = RiskEvent("prout", self)
         self.path_sprite = "game_screen/game_screen_sprites/farm.png"
         self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
         self.sprite_display = ""
@@ -1260,7 +1260,7 @@ class Farm(Building):
 class Granary(Building):
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width, map, owner)
-        self.risk = None
+        self.risk = RiskEvent("prout", self)
         self.path_sprite1 = "game_screen/game_screen_sprites/granary_floor.png"
         self.path_sprite2 = "game_screen/game_screen_sprites/granary_body.png"
         self.sprite = [pygame.image.load(self.path_sprite1).convert_alpha(
