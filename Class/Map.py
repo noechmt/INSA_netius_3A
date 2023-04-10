@@ -157,7 +157,7 @@ class Map:  # Un ensemble de cellule
             data_received_2 = []
             for y in range(self.size//2):
                 row.append(self.array[x][y].encode())
-            encoder.cell_init_row(self.name_user, row)
+            encoder.cell_init_row(self.name_user, row, self.players_online)
             while not response:
                 data = p2p.get_data()
                 if len(data) != 0:
@@ -169,12 +169,13 @@ class Map:  # Un ensemble de cellule
                                 if self.row_received:
                                     response = True
                                 else:
-                                    encoder.cell_init_row(self.name_user, row)
+                                    encoder.cell_init_row(
+                                        self.name_user, row, self.players_online)
                     except:
                         pass
             for y in range(self.size//2, self.size):
                 row_2.append(self.array[x][y].encode())
-            encoder.cell_init_row(self.name_user, row_2)
+            encoder.cell_init_row(self.name_user, row_2, self.players_online)
             while not response_2:
                 data = p2p.get_data()
                 if len(data) != 0:
@@ -187,7 +188,7 @@ class Map:  # Un ensemble de cellule
                                     response_2 = True
                                 else:
                                     encoder.cell_init_row(
-                                        self.name_user, row_2)
+                                        self.name_user, row_2, self.players_online)
                     except:
                         pass
         self.init_ownership(self.players_online)
