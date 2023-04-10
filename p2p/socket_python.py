@@ -1,13 +1,23 @@
 import socket
 from time import sleep
 import select
+from OpenSSL import SSL
 
 MSGLEN =  10
 
+# adresse IP et port de l'hôte distant
+remote_host = '127.0.0.1'
+remote_port = 1236
+
+# Initialiser le contexte SSL
+context = SSL.Context(SSL.TLSv1_2_METHOD)
+context.use_privatekey_file('p2p/server.key')
+context.use_certificate_file('p2p/server.crt')
 class MySocket:
     
     def __init__(self, sock=None):
         self.data = []
+
         if sock is None:
             self.sock = socket.socket(
                             socket.AF_INET, socket.SOCK_STREAM)
@@ -62,9 +72,10 @@ def send_data(data,addr="127.0.0.1",port=1236):
     
     Socket = MySocket()
     Socket.connect(addr,port)
+    ssl_sock = ssl_wrap_socket(Socket)
     print("Connected")
-    Socket.mysend(data.encode())
-    Socket.close()
+    ssl_sock.mysend(data.encode())
+    ssl_sock.close()
     
 
 def recv_data(server_socket,freq=1):
@@ -85,12 +96,15 @@ def recv_data(server_socket,freq=1):
                 
                 # Nouvelle connexion entrante
                 client_socket = server_socket.accept()
-                Server.data = client_socket.recv(2048)
+                ssl_conn = SSL.Connection(context, client_socket)
+                ssl_conn.set_accept_state()
+                ssl_conn.do_handshake()
+                Server.data = ssl_conn.recv(2048)
                 Server.data = Server.data.decode()
                 print(f"Data received: ",Server.data)
                 
                 # Ajouter la connexion cliente à la liste de surveillance
-                inputs.append(client_socket)
+                inputs.append(ssl_conn)
 
             else:
                 print("Else")
@@ -117,5 +131,17 @@ def get_data():
 def close_socket(socket):
     socket.close()
 
+def ssl_wrap_socket(sock):
+    # créer un contexte SSL/TLS
+    context = SSL.Context(SSL.TLSv1_2_METHOD)
 
-        
+    # charger les certificats et clés nécessaires
+    context.set_default_verify_paths()
+
+    # envelopper le socket avec SSL/TLS
+    ssl_sock = SSL.Connection(context, sock)
+    ssl_sock.set_connect_state()
+    ssl_sock.set_tlsext_host_name(remote_host.encode())
+    ssl_sock.do_handshake()
+
+    return ssl_sock
