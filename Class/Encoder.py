@@ -106,9 +106,10 @@ def pchat(message, username) :
       "message" : message,
       "username" : username})
    
-def duel_request(username) :
+def duel_request(username, my_name) :
    encodeJSON({"header" : "duel_request",
-      "username" : username})
+      "username" : username,
+      "my_name" : my_name})
 
 def duel_answer(answer,username) : 
    encodeJSON({"header" : "duel_answer", 
