@@ -103,12 +103,12 @@ class Map:  # Un ensemble de cellule
                             if header == "cell_init":
                                 wrapper.wrap(data)
                                 print("num_cell_init =", num_cell_init)
-                                encoder.row_received(self.name_user, True)
                                 num_cell_init += 1
                                 SCREEN.blit(background, (0, 0))
                                 SCREEN.blit(text_loading, (WIDTH_SCREEN/2 - text_loading.get_width()/2,
                                                            HEIGHT_SCREEN/2 - text_loading.get_height()/2))
                                 pygame.display.flip()
+                                encoder.row_received(self.name_user, True)
                             else:
                                 encoder.row_received(self.name_user, False)
                         except:
