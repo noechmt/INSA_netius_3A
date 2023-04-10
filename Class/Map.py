@@ -159,13 +159,13 @@ class Map:  # Un ensemble de cellule
                                 if self.row_received:
                                     response = True
                                 else:
-                                    SCREEN.blit(text_loading, (SCREEN - WIDTH_SCREEN /
+                                    SCREEN.blit(text_loading, (WIDTH_SCREEN - WIDTH_SCREEN /
                                                 13, HEIGHT_SCREEN - HEIGHT_SCREEN/7.5))
                                     encoder.cell_init_row(
                                         self.name_user, row, self.players_online)
                     except:
                         pass
-            SCREEN.blit(text_loading, (SCREEN - WIDTH_SCREEN /
+            SCREEN.blit(text_loading, (WIDTH_SCREEN - WIDTH_SCREEN /
                                        13, HEIGHT_SCREEN - HEIGHT_SCREEN/7.5))
         self.init_ownership(self.players_online)
 
