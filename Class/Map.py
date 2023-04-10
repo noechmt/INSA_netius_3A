@@ -151,6 +151,28 @@ class Map:  # Un ensemble de cellule
     def set_spawn_point_governor(self):
         Governor.currentCell = self.spawn_cells[self.num_player - 1]
 
+    def display_join_message(self, user):
+        WIDTH_SCREEN, HEIGHT_SCREEN = SCREEN.get_size()
+        background = pygame.image.load(
+            "game_screen/game_screen_sprites/chat_background.jpg")
+        new_player = Button(WIDTH_SCREEN/4, HEIGHT_SCREEN/3,
+                            WIDTH_SCREEN/2, HEIGHT_SCREEN/3,
+                            text=f"{user} just landed in the map. Waiting for him to load the map...",
+                            image=background)
+        new_player.draw(SCREEN)
+        pygame.display.flip()
+        done = False
+        while not done:
+            # Wait for the end_join protocol to arrive
+            data = p2p.get_data()
+            if len(data) != 0:
+                try:
+                    header = json.loads(data)["header"]
+                    if header == "end_join":
+                        done = True
+                except:
+                    pass
+
     def encode(self, user_confirmation):
         wrapper = Wrapper(self, None)
         WIDTH_SCREEN, HEIGHT_SCREEN = SCREEN.get_size()
@@ -158,7 +180,7 @@ class Map:  # Un ensemble de cellule
             "game_screen/game_screen_sprites/chat_background.jpg")
         new_player = Button(WIDTH_SCREEN/4, HEIGHT_SCREEN/3,
                             WIDTH_SCREEN/2, HEIGHT_SCREEN/3,
-                            text=f"New player in the map. Loading : 0/75",
+                            text=f"{user_confirmation} just landed in the map. Loading : 0/75",
                             image=background)
         new_player.draw(SCREEN)
         pygame.display.flip()
@@ -183,7 +205,7 @@ class Map:  # Un ensemble de cellule
                             if data_received["username"] == user_confirmation:
                                 wrapper.wrap(data)
                                 if self.row_received:
-                                    new_player.text = f"New player in the map. Loading : {x}/{75}"
+                                    new_player.text = f"{user_confirmation} just landed in the map. Loading : {x}/{75}"
                                     new_player.draw(SCREEN)
                                     pygame.display.flip()
                                     response = True

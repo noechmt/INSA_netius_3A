@@ -22,6 +22,17 @@ def joinResponse(username, players_online, players):
                 })
 
 
+def start_join(username, new_player):
+    encodeJSON({"header": "start_join",
+                "username": username,
+                "new_player": new_player})
+
+
+def end_join(username):
+    encodeJSON({"header": "end_join",
+                "username": username})
+
+
 def cell_init_single(x, y, type, type_empty, owner):
     return ({"x": x,
             "y": y,
