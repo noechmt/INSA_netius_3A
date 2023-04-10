@@ -51,7 +51,7 @@ class Wrapper:
                 assert (self.map.get_cell(
                     data["x"], data["y"]).level == data["level"])
             case 'risk':
-                if data["type"] == "burn":
+                if data["type"] == "fire":
                     self.map.get_cell(
                         data["building"][0], data["building"][0]).risk.happened = True
                     self.map.get_cell(
@@ -76,6 +76,7 @@ class Wrapper:
                                 walker_ghost = Walker.Engineer(self.map.get_cell(
                                     walker["building"][0], walker["building"][1]), data["username"])
 
+                        walker_ghost.inBuilding = False
                         walker_ghost.currentCell = self.map.get_cell(
                             walker["currentCell"][0], walker["currentCell"][1])
                         walker_ghost.previousCell = self.map.get_cell(

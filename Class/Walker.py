@@ -177,7 +177,7 @@ class Migrant(Walker):
             self.cell_assignement(self.currentCell.map.spawn_cells[self.currentCell.map.num_player - 1])
             self.currentCell.map.migrantQueue.append(self)
             self.spawnCount = 0
-            self.previousCell = None
+        self.previousCell = None
         # building.map.walkers.append(self)
         self.walker_sprites = dict((k, pygame.image.load(
             "walker_sprites/migrant_sprites/mg_" + k + ".png").convert_alpha()) for k in ["top", "bot", "left", "right"])
@@ -264,7 +264,8 @@ class LaborAdvisor(Walker):
     def __init__(self, building, owner):
         super().__init__("labor advisor", building, True, owner)
         # self.leave_building()
-        self.building.map.laborAdvisorQueue.append(self)
+        if self.building != None and self.building.map.name_user == owner:
+            self.building.map.laborAdvisorQueue.append(self)
         self.walker_sprites = dict((k, [0, 0])
                                    for k in ["top", "bot", "left", "right"])
         for i in self.walker_sprites:
