@@ -422,15 +422,11 @@ class Map:  # Un ensemble de cellule
         for i in self.buildings:
             if i.risk and i.risk.happened and i.risk.type == "fire":
                 i.risk.burn()
-                if self.players_online > 1 and i.owner == self.name_user:
-                    encode.risk(self.name_user, "burn", i, i.risk.fireCounter)
 
     def update_collapse(self):
         for i in self.buildings:
             if i.risk and i.risk.happened and i.risk.type == "collapse":
                 i.risk.collapse()
-                if self.map.players_online > 1 and i.owner == self.map.name_user:
-                    encode.risk(self.name_user, "collapse", i, None)
 
     def set_cell_array(self, x, y, cell):
         self.array[x][y] = cell

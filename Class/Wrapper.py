@@ -53,12 +53,12 @@ class Wrapper:
             case 'risk':
                 if data["type"] == "burn":
                     self.map.get_cell(
-                        data["building"][0], data["building"][0]).risk.burn()
+                        data["building"][0], data["building"][0]).risk.happened = True
                     self.map.get_cell(
                         data["building"][0], data["building"][0]).risk.fireCounter = data["fireCounter"]
                 else:
                     self.map.get_cell(
-                        data["building"][0], data["building"][0]).risk.collapse()
+                        data["building"][0], data["building"][0]).risk.happened = True
             case 'walker':
                 for walker in data["array"]:
                     if walker["action"] == "move":
@@ -81,6 +81,7 @@ class Wrapper:
                         walker_ghost.previousCell = self.map.get_cell(
                             walker["previousCell"][0], walker["previousCell"][1])
                         self.map.walkers.append(walker_ghost)
+                        walker_ghost.display()
 
             case 'chat':
                 self.panel.chat.history_append(data['message'])

@@ -791,9 +791,9 @@ class Building(Cell):  # un fils de cellule (pas encore sûr de l'utilité)
         path_around = self.check_cell_around(Path)
         house_around = self.check_cell_around(House)
         self.path_sprite = ""
+        self.map.buildings.append(self)
 
         if self.owner == self.map.name_user:
-            self.map.buildings.append(self)
             for j in path_around:
                 # if isinstance
                 self.map.path_graph.add_edge(j, self)
