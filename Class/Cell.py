@@ -750,8 +750,8 @@ class Empty(Cell):
             self.display_overlay()
             super().display()
 
-    def clear(self):
-        if self.owner == self.map.name_user:
+    def clear(self, username):
+        if self.owner == username:
             if self.map.players_online > 1:
                 encode.clear(self.owner, self)
             if self.type_empty == "tree":
