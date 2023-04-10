@@ -202,8 +202,8 @@ class Map:  # Un ensemble de cellule
             for cell in self.transaction["cells"]:
                 cell.owner = self.name_user
                 self.wallet -= cell.price
-                encoder.owner(self.name_user, cell, self.name_user)
                 cell.price = cell.price * 2
+                encoder.owner(self.name_user, cell, self.name_user)
             self.transaction["Done"] = True
 
         return self.transaction["Done"]
@@ -211,11 +211,11 @@ class Map:  # Un ensemble de cellule
     def check_valid_buy(self):
         if self.transaction["amount"] <= self.wallet:
             for cell in self.transaction["cells"]:
-                if cell.owner == None or cell.owner == self.name_user:
-                    cell_around = cell.get_cells_around()
-                    for i in cell_around:
-                        if i.owner == self.name_user:
-                            return True
+                #if cell.owner == None or cell.owner == self.name_user:
+                cell_around = cell.get_cells_around()
+                for i in cell_around:
+                    if i.owner == self.name_user:
+                        return True
         return False
 
 
