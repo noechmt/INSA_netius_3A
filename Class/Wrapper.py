@@ -38,7 +38,8 @@ class Wrapper:
                 encode.end_join(self.map.name_user)
                 print(self.map.players)
             case 'start_join':
-                self.map.display_join_message()
+                self.map.display_join_message(
+                    data["username"], data["new_player"])
             case 'responseJoin':
                 self.map.players_online = data["players_online"]
                 self.map.players = data["players"]
