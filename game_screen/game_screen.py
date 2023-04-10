@@ -462,9 +462,8 @@ def game_screen(first_online=False):
                         # if command != [] and len(command) >=2 and """command[1] not in map.players""" : 
                         #     panel.chat.history_append("Player does not exist")
                         #     panel.chat.input.message_to_send = ''
-                        if command != [] and len(command) >=2 and """command[1] in map.players""" :
+                        if command != [] and len(command) >=2 and command[1] in map.players :
                             duel_request(command[1]) #send a duel request
-                            panel.duelON = True
                             panel.chat.input.message_to_send = ''
                             panel.duel.update_name(command[1])
                             pchat(map.name_user + " veut te tabasser le fiac dans un duel de gambling !",command[1])

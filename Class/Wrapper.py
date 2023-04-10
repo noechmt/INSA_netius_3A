@@ -93,7 +93,9 @@ class Wrapper:
                   self.panel.duel.duel_request += 1
 
             case 'duel_answer' :
-               if data['username'] == self.panel.duel.enemy_name : self.panel.duel.duel_accepted = data['accept']
+               if data['username'] == self.panel.duel.enemy_name : 
+                  self.panel.duel.duel_accepted = data['accept']
+                  self.panel.duelON = True
 
             case 'update_round' :
                self.panel.duel.enemy_game_round += 1
