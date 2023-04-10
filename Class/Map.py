@@ -79,7 +79,7 @@ class Map:  # Un ensemble de cellule
 
                 # Online version : reading from the requests
                 num_cell_init = 0
-                while num_cell_init != self.size * self.size:
+                while num_cell_init != self.size:
                     # protocol to receive packet and if it's cell_init header, decode it
                     data = p2p.get_data()
                     if len(data) != 0:
