@@ -22,7 +22,7 @@ def joinResponse(username, players_online, players):
                 })
 
 
-def start_join(username, new_player):
+def join_start(username, new_player):
     encodeJSON({"header": "start_join",
                 "username": username,
                 "new_player": new_player})
