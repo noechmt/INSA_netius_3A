@@ -72,7 +72,7 @@ def send_data(data,addr="127.0.0.1",port=1236):
     
     Socket = MySocket()
     Socket.connect(addr,port)
-    ssl_sock = ssl_wrap_socket(Socket)
+    ssl_sock = ssl_wrap_socket(Socket.getSock())
     print("Connected")
     ssl_sock.mysend(data.encode())
     ssl_sock.close()
