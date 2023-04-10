@@ -153,6 +153,7 @@ class Map:  # Un ensemble de cellule
 
     def display_join_message(self, user, new_player):
         if self.name_user == user or self.name_user == new_player:
+            print("In the return")
             return
         WIDTH_SCREEN, HEIGHT_SCREEN = SCREEN.get_size()
         background = pygame.image.load(
