@@ -37,7 +37,7 @@ class Map:  # Un ensemble de cellule
         self.height_land = height
         self.width_land = width
         self.button_activated = {"house": False, "shovel": False, "road": False,
-                                 "prefecture": False, "engineerpost": False, "well": False, "farm": False, "granary": False, "ownership": False, "stop" : False, "continue" : False}
+                                 "prefecture": False, "engineerpost": False, "well": False, "farm": False, "granary": False, "ownership": False, "stop": False, "continue": False}
         self.players = ["Player1", "Player2", "Player3", "Player4"]
         # TO-DO request the num
         self.players_online = 1
@@ -113,9 +113,9 @@ class Map:  # Un ensemble de cellule
                                        1][self.size - self.size//10],
                             self.array[self.size - 1][self.size//10]]
         self.governors = [Governor(self.spawn_cells[0], None),
-                           Governor(self.spawn_cells[1], None), 
-                           Governor(self.spawn_cells[2], None), 
-                           Governor(self.spawn_cells[3], None)]
+                          Governor(self.spawn_cells[1], None),
+                          Governor(self.spawn_cells[2], None),
+                          Governor(self.spawn_cells[3], None)]
         # Replace 0 with the player number - 1
         self.spawn_cell = self.spawn_cells[self.num_player - 1]
         # Init a governor at spawn_cell
@@ -124,7 +124,8 @@ class Map:  # Un ensemble de cellule
         self.governor = Governor(self.spawn_cell, username)
         self.governors[self.num_player - 1] = self.governor
         if not first_online:
-            encode.governor(self.name_user, self.num_player, self.governor.currentCell)
+            encode.governor(self.name_user, self.num_player,
+                            self.governor.currentCell)
         self.wallet = 5000
         self.update_hover = 0
         self.zoom = 1
@@ -134,7 +135,7 @@ class Map:  # Un ensemble de cellule
         self.year = 150
         self.transaction = {"cells": [], "amount": 0, "Done": False}
         self.sound_effect = sound_effect
-    
+
     def display_governors(self):
         for governor in self.governors:
             if governor.owner != None and governor.owner != self.name_user:
@@ -187,7 +188,7 @@ class Map:  # Un ensemble de cellule
         self.init_ownership(self.players_online)
 
     def add_transaction(self, cell):
-        #if cell.owner == None:
+        # if cell.owner == None:
         if cell not in self.transaction["cells"]:
             self.transaction["cells"].append(cell)
             self.transaction["amount"] += cell.price
@@ -211,15 +212,16 @@ class Map:  # Un ensemble de cellule
     def check_valid_buy(self):
         if self.transaction["amount"] <= self.wallet:
             for cell in self.transaction["cells"]:
-                #if cell.owner == None or cell.owner == self.name_user:
-                cell_around = cell.get_cells_around()
-                for i in cell_around:
-                    if i.owner == self.name_user:
-                        return True
+                # if cell.owner == None or cell.owner == self.name_user:
+                if cell.owner == None or (cell.owner != self.name_user and isinstance(cell, Empty)):
+                    cell_around = cell.get_cells_around()
+                    for i in cell_around:
+                        if i.owner == self.name_user:
+                            return True
         return False
 
-
     # Permet d'initialiser le chemin de terre sur la map.
+
     def init_paths(self):
         # Generate the init path of player 1 (top of the map)
         for x in range(self.size // 10):
@@ -512,11 +514,11 @@ class Map:  # Un ensemble de cellule
 
     def get_granaried(self):
         return self.button_activated["granary"]
-    
-    def get_continued(self) : 
+
+    def get_continued(self):
         return self.button_activated["continue"]
-    
-    def get_stopped(self) :
+
+    def get_stopped(self):
         return self.button_activated["stop"]
 
     def get_ownershiped(self):
