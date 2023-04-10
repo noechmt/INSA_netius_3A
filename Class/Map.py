@@ -187,10 +187,10 @@ class Map:  # Un ensemble de cellule
         self.init_ownership(self.players_online)
 
     def add_transaction(self, cell):
-        if cell.owner == None:
-            if cell not in self.transaction["cells"]:
-                self.transaction["cells"].append(cell)
-                self.transaction["amount"] += cell.price
+        #if cell.owner == None:
+        if cell not in self.transaction["cells"]:
+            self.transaction["cells"].append(cell)
+            self.transaction["amount"] += cell.price
 
     def reset_transaction(self):
         self.transaction["cells"] = []
@@ -204,6 +204,14 @@ class Map:  # Un ensemble de cellule
                 self.wallet -= cell.price
                 encoder.owner(self.name_user, cell, self.name_user)
             self.transaction["Done"] = True
+        elif self.check_buy_to_other():
+            for cell in self.transaction["cells"]:
+                cell.price = cell.price*2
+                cell.owner = self.name_user
+                self.wallet -= cell.price
+                encoder.owner(self.name_user, cell, self.name_user)
+            self.transaction["Done"] = True
+
         return self.transaction["Done"]
 
     def check_valid_buy(self):
@@ -215,6 +223,17 @@ class Map:  # Un ensemble de cellule
                         if i.owner == self.name_user:
                             return True
         return False
+    
+    def check_buy_to_other(self):
+        if self.transaction["amount"] <= self.wallet:
+            for cell in self.transaction["cells"]:
+                if not (cell.owner == None or cell.owner == self.name_user):
+                    cell_around = cell.get_cells_around()
+                    for i in cell_around:
+                        if i.owner == self.name_user:
+                            return True
+        return False
+
 
     # Permet d'initialiser le chemin de terre sur la map.
     def init_paths(self):
