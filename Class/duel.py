@@ -130,7 +130,7 @@ class Duel:
         #     if self.my_score > 21 : self.my_bet_stopped = True
 
         #     self.game_round += 1
-        
+        if self.my_bet_stopped : return
         if self.enemy_bet_stopped : 
             self.my_score += rd.randint(1, 13)
         elif self.game_round < self.duel_round:
