@@ -17,7 +17,8 @@ if os.name == "nt":
 
 # Delete the lan_conne process if it exists
 os.system("pgrep -f lan_conne | xargs kill -9")
-
+os.system("make clean -C p2p")
+os.system("make -C p2p")
 
 if __name__ == "__main__":
     retour = title_screen()
