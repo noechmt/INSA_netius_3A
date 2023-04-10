@@ -71,8 +71,9 @@ def clear(username, cell):
 
 
 def risk(username, type, building, fireCounter):
-    encodeJSON({"header": type,
+    encodeJSON({"header": "risk",
                 "username": username,
+                "type": type,
                 "building": (building.x, building.y),
                 "fireCounter": fireCounter
                 })

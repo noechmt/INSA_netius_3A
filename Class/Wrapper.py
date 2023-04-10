@@ -52,13 +52,17 @@ class Wrapper:
                     data["x"], data["y"]).level == data["level"])
             case 'risk':
                 if data["type"] == "fire":
+                    print(self.map.get_cell(
+                        data["building"][0], data["building"][0]))
                     self.map.get_cell(
                         data["building"][0], data["building"][0]).risk.happened = True
                     self.map.get_cell(
                         data["building"][0], data["building"][0]).risk.fireCounter = data["fireCounter"]
+                    print(self.map.buildings)
                 else:
                     self.map.get_cell(
                         data["building"][0], data["building"][0]).risk.happened = True
+                    print(self.map.buildings)
             case 'walker':
                 for walker in data["array"]:
                     if walker["action"] == "move":
