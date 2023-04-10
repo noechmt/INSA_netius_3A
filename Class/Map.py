@@ -152,27 +152,28 @@ class Map:  # Un ensemble de cellule
         Governor.currentCell = self.spawn_cells[self.num_player - 1]
 
     def display_join_message(self, user, new_player):
-        if self.name_user != user:
-            WIDTH_SCREEN, HEIGHT_SCREEN = SCREEN.get_size()
-            background = pygame.image.load(
-                "game_screen/game_screen_sprites/chat_background.jpg")
-            new_player = Button(WIDTH_SCREEN/4, HEIGHT_SCREEN/3,
-                                WIDTH_SCREEN/2, HEIGHT_SCREEN/3,
-                                text=f"{new_player} just landed in the map. Waiting for him to load the map...",
-                                image=background)
-            new_player.draw(SCREEN)
-            pygame.display.flip()
-            done = False
-            while not done:
-                # Wait for the end_join protocol to arrive
-                data = p2p.get_data()
-                if len(data) != 0:
-                    try:
-                        header = json.loads(data)["header"]
-                        if header == "end_join":
-                            done = True
-                    except:
-                        pass
+        if self.name_user == user or self.name_user == new_player:
+            return
+        WIDTH_SCREEN, HEIGHT_SCREEN = SCREEN.get_size()
+        background = pygame.image.load(
+            "game_screen/game_screen_sprites/chat_background.jpg")
+        new_player = Button(WIDTH_SCREEN/4, HEIGHT_SCREEN/3,
+                            WIDTH_SCREEN/2, HEIGHT_SCREEN/3,
+                            text=f"{new_player} just landed in the map. Waiting for him to load the map...",
+                            image=background)
+        new_player.draw(SCREEN)
+        pygame.display.flip()
+        done = False
+        while not done:
+            # Wait for the end_join protocol to arrive
+            data = p2p.get_data()
+            if len(data) != 0:
+                try:
+                    header = json.loads(data)["header"]
+                    if header == "end_join":
+                        done = True
+                except:
+                    pass
 
     def encode(self, user_confirmation):
         wrapper = Wrapper(self, None)
