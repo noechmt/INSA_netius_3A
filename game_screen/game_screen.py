@@ -470,13 +470,14 @@ def game_screen():
                             pchat(map.name_user + " veut te tabasser le fiac dans un duel de gambling !",command[1])
 
                     if (command != [] and command[0] == '/accept') and panel.duel.duel_request > 0:
-                        duel_answer(1) #send confirmation for duel
+                        duel_answer(1, panel.duel.enemy_name) #send confirmation for duel
                         panel.duelON = True
                         panel.duel.duel_accepted = 1
                         panel.chat.input.message_to_send = ''
 
                     if (command != [] and command[0] == '/decline') and panel.duel.duel_request > 0:
-                        duel_answer(2) #send refusal for duel
+                        duel_answer(2, panel.duel.enemy_name) #send refusal for duel
+                        panel.duel.init_duel()
                         panel.chat.input.message_to_send = ''
 
                         
