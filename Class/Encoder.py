@@ -1,5 +1,6 @@
 import json
 import p2p.socket_python as p2p
+import time
 
 
 def encodeJSON(data):
@@ -17,32 +18,29 @@ def joinResponse(username, players_online, players):
     encodeJSON({"header": "responseJoin",
                 "username": username,
                 "players_online": players_online,
-                "players" : players
+                "players": players
                 })
 
 
 def cell_init_single(x, y, type, type_empty, owner):
-    return {"x": x,
+    return ({"x": x,
             "y": y,
-            "type": type,
-            "type_empty": type_empty,
-            "owner": owner}
+             "type": type,
+             "type_empty": type_empty,
+             "owner": owner})
 
 
-def cell_init_row(username, row):
+def cell_init_row(username, row, num_online):
     encodeJSON({"header": "cell_init",
                 "username": username,
                 "row": row})
+    print(num_online)
+    if num_online > 2:
+        time.sleep(0.25)
 
 
 def row_received(username, received):
     encodeJSON({"header": "row_received",
-                "username": username,
-                "received": received})
-
-
-def row_received_2(username, received):
-    encodeJSON({"header": "row_received_2",
                 "username": username,
                 "received": received})
 
@@ -82,12 +80,14 @@ def chat(message):
     encodeJSON({"header": "chat",
                 "message": message})
 
+
 def owner(username, cell, owner):
     encodeJSON({"header": "owner",
                 "username": username,
                 "x": cell.x,
                 "y": cell.y,
                 "owner": owner})
+
 
 def governor(username, num_player, cell):
     encodeJSON({"header": "governor",
@@ -96,43 +96,45 @@ def governor(username, num_player, cell):
                 "x": cell.x,
                 "y": cell.y})
 
-   
-def chat(message) :
-   encodeJSON({"header" : "chat", 
-      "message" : message})
-   
-def pchat(message, username) :
-   encodeJSON({"header" : "pchat", 
-      "message" : message,
-      "username" : username})
-   
-def duel_request(username, my_name) :
-   encodeJSON({"header" : "duel_request",
-      "username" : username,
-      "my_name" : my_name})
 
-def duel_answer(answer,username) : 
-   encodeJSON({"header" : "duel_answer", 
-      "accept" : answer,
-      "username" : username}) # 1 accept or 2 decline
-   
-def update_round(score) :
-   encodeJSON({"header" : "update_round", 
-      "score" : score})
-
-def finish_duel() :
-   encodeJSON({"header" : "finish_duel"})
-
-def send_bet(value) : 
-    encodeJSON({"header" : "send_bet",
-        "value" : value})
+def chat(message):
+    encodeJSON({"header": "chat",
+                "message": message})
 
 
+def pchat(message, username):
+    encodeJSON({"header": "pchat",
+                "message": message,
+                "username": username})
 
 
+def duel_request(username, my_name):
+    encodeJSON({"header": "duel_request",
+                "username": username,
+                "my_name": my_name})
 
 
-class WalkerBuffer:  
+def duel_answer(answer, username):
+    encodeJSON({"header": "duel_answer",
+                "accept": answer,
+                "username": username})  # 1 accept or 2 decline
+
+
+def update_round(score):
+    encodeJSON({"header": "update_round",
+                "score": score})
+
+
+def finish_duel():
+    encodeJSON({"header": "finish_duel"})
+
+
+def send_bet(value):
+    encodeJSON({"header": "send_bet",
+                "value": value})
+
+
+class WalkerBuffer:
 
     def __init__(self, username):
         self.username = username
