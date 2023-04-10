@@ -123,6 +123,8 @@ class Map:  # Un ensemble de cellule
         self.year = 150
         self.transaction = {"cells": [], "amount": 0, "Done": False}
         self.sound_effect = sound_effect
+        self.fps_font = pygame.font.Font(
+            "GUI/Fonts/Title Screen/Berry Rotunda.ttf", 14)
 
     def display_governors(self):
         for governor in self.governors:
@@ -134,7 +136,10 @@ class Map:  # Un ensemble de cellule
 
     def encode(self, user_confirmation):
         wrapper = Wrapper(self, None)
+        HEIGHT_SCREEN, WIDTH_SCREEN = SCREEN.get_size()
         for x in range(self.size):
+            text_loading = self.fps_font.render(
+                f"Load map : {x}/75", 1, (255, 255, 255))
             row = []
             self.row_received = False
             response = False
@@ -154,10 +159,14 @@ class Map:  # Un ensemble de cellule
                                 if self.row_received:
                                     response = True
                                 else:
+                                    SCREEN.blit(text_loading, (SCREEN - WIDTH_SCREEN /
+                                                13, HEIGHT_SCREEN - HEIGHT_SCREEN/7.5))
                                     encoder.cell_init_row(
                                         self.name_user, row, self.players_online)
                     except:
                         pass
+            SCREEN.blit(text_loading, (SCREEN - WIDTH_SCREEN /
+                                       13, HEIGHT_SCREEN - HEIGHT_SCREEN/7.5))
         self.init_ownership(self.players_online)
 
     def add_transaction(self, cell):
