@@ -30,11 +30,13 @@ def cell_init_single(x, y, type, type_empty, owner):
             "owner": owner}
 
 
-def cell_init_row(username, row):
+def cell_init_row(username, row, num_online):
     encodeJSON({"header": "cell_init",
                 "username": username,
                 "row": row})
-    time.sleep(2)
+    print(num_online)
+    if num_online > 2:
+        time.sleep(0.25)
 
 
 def row_received(username, received):
