@@ -11,6 +11,7 @@ from Class.Wrapper import *
 import p2p.socket_python as p2p
 import json
 import Class.Encoder as encoder
+from Class.Button import Button
 
 SCREEN = None
 
@@ -152,10 +153,19 @@ class Map:  # Un ensemble de cellule
 
     def encode(self, user_confirmation):
         wrapper = Wrapper(self, None)
-        HEIGHT_SCREEN, WIDTH_SCREEN = SCREEN.get_size()
+        WIDTH_SCREEN, HEIGHT_SCREEN = SCREEN.get_size()
+        background = pygame.image.load(
+            "game_screen/game_screen_sprites/chat_background.jpg")
+        new_player = Button(WIDTH_SCREEN/4, HEIGHT_SCREEN/3,
+                            WIDTH_SCREEN/2, HEIGHT_SCREEN/3,
+                            text=f"New player in the map. Loading : 0/75",
+                            image=background)
+        new_player.draw(SCREEN)
+        pygame.display.flip()
+        time.sleep(1)
         for x in range(self.size):
-            text_loading = self.fps_font.render(
-                f"Load map : {x}/75", 1, (0, 0, 0))
+            new_player.draw(SCREEN)
+            pygame.display.flip()
             row = []
             self.row_received = False
             response = False
@@ -173,6 +183,9 @@ class Map:  # Un ensemble de cellule
                             if data_received["username"] == user_confirmation:
                                 wrapper.wrap(data)
                                 if self.row_received:
+                                    new_player.text = f"New player in the map. Loading : {x}/{75}"
+                                    new_player.draw(SCREEN)
+                                    pygame.display.flip()
                                     response = True
                                 else:
                                     encoder.cell_init_row(

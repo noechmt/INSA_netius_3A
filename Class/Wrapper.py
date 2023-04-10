@@ -33,7 +33,6 @@ class Wrapper:
                 encode.joinResponse(self.map.name_user,
                                     self.map.players_online,
                                     self.map.players)
-                time.sleep(3)
                 self.map.encode(data["username"])
                 print(self.map.players)
             case 'responseJoin':
