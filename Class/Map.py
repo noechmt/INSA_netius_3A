@@ -158,7 +158,7 @@ class Map:  # Un ensemble de cellule
             for y in range(self.size//2):
                 row.append(self.array[x][y].encode())
             if self.num_player > 2:
-                time.sleep(0.5 * self.num_player - 2)
+                time.sleep(2 * (self.num_player - 2))
             encoder.cell_init_row(self.name_user, row)
             while not response:
                 data = p2p.get_data()
@@ -172,14 +172,14 @@ class Map:  # Un ensemble de cellule
                                     response = True
                                 else:
                                     if self.num_player > 2:
-                                        time.sleep(0.5 * self.num_player - 2)
+                                        time.sleep(2 * (self.num_player - 2))
                                     encoder.cell_init_row(self.name_user, row)
                     except:
                         pass
             for y in range(self.size//2, self.size):
                 row_2.append(self.array[x][y].encode())
             if self.num_player > 2:
-                time.sleep(0.5 * self.num_player - 2)
+                time.sleep(2 * (self.num_player - 2))
             encoder.cell_init_row(self.name_user, row_2)
             while not response_2:
                 data = p2p.get_data()
@@ -193,7 +193,7 @@ class Map:  # Un ensemble de cellule
                                     response_2 = True
                                 else:
                                     if self.num_player > 2:
-                                        time.sleep(0.5 * self.num_player - 2)
+                                        time.sleep(2 * (self.num_player - 2))
                                     encoder.cell_init_row(
                                         self.name_user, row_2)
                     except:
