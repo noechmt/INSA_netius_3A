@@ -147,7 +147,7 @@ class Map:  # Un ensemble de cellule
         wrapper = Wrapper(self, None)
         for x in range(self.size):
             for y in range(self.size):
-                self.map.get_cell(x, y).encode()
+                self.get_cell(x, y).encode()
         # for x in range(self.size):
         #     row = []
         #     self.row_received = False
