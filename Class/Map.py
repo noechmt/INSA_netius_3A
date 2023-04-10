@@ -90,27 +90,10 @@ class Map:  # Un ensemble de cellule
                                 print("num_cell_init =", num_cell_init)
                                 encoder.row_received(self.name_user, True)
                                 num_cell_init += 1
-                                # if num_cell_init % 2 == 0:
-                                #     encoder.row_received(self.name_user, True)
-                                # else:
-                                #     encoder.row_received_2(
-                                #         self.name_user, True)
-                                # num_cell_init += 1
                             else:
                                 encoder.row_received(self.name_user, False)
-                                # if num_cell_init % 2 == 0:
-                                #     encoder.row_received(
-                                #         self.name_user, False)
-                                # else:
-                                #     encoder.row_received_2(
-                                #         self.name_user, False)
                         except:
                             encoder.row_received(self.name_user, False)
-                            # if num_cell_init % 2 == 0:
-                            #     encoder.row_received(self.name_user, False)
-                            # else:
-                            #     encoder.row_received_2(
-                            #         self.name_user, False)
         self.init_ownership()
         self.spawn_cells = [self.array[0][self.size//10],
                             self.array[0][self.size - self.size//10],
@@ -178,24 +161,6 @@ class Map:  # Un ensemble de cellule
                                         self.name_user, row, self.players_online)
                     except:
                         pass
-            # for y in range(self.size//2, self.size):
-            #     row_2.append(self.array[x][y].encode())
-            # encoder.cell_init_row(self.name_user, row_2, self.players_online)
-            # while not response_2:
-            #     data = p2p.get_data()
-            #     if len(data) != 0:
-            #         try:
-            #             data_received_2 = json.loads(data)
-            #             if data_received_2["header"] == "row_received_2":
-            #                 if data_received_2["username"] == user_confirmation:
-            #                     wrapper.wrap(data)
-            #                     if self.row_received_2:
-            #                         response_2 = True
-            #                     else:
-            #                         encoder.cell_init_row(
-            #                             self.name_user, row_2, self.players_online)
-            #         except:
-            #             pass
         self.init_ownership(self.players_online)
 
     def add_transaction(self, cell):

@@ -34,19 +34,10 @@ def cell_init_row(username, row, num_online):
     encodeJSON({"header": "cell_init",
                 "username": username,
                 "row": row})
-    print(num_online)
-    if num_online > 2:
-        time.sleep(0.6)
 
 
 def row_received(username, received):
     encodeJSON({"header": "row_received",
-                "username": username,
-                "received": received})
-
-
-def row_received_2(username, received):
-    encodeJSON({"header": "row_received_2",
                 "username": username,
                 "received": received})
 
