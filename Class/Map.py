@@ -85,10 +85,11 @@ class Map:  # Un ensemble de cellule
                     if len(data) != 0:
                         try:
                             header = json.loads(data)["header"]
-                            if header == "cell_init_single":
+                            if header == "cell_init":
                                 wrapper.wrap(data)
                                 print("num_cell_init =", num_cell_init)
                                 encoder.row_received(self.name_user, True)
+                                num_cell_init += 1
                                 # if num_cell_init % 2 == 0:
                                 #     encoder.row_received(self.name_user, True)
                                 # else:
