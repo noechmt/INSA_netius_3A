@@ -150,5 +150,5 @@ class Wrapper:
                     Cell.Granary.pillager = data['player']
 
             case 'gain_stack' :
-                if self.name_user == data['username'] :Cell.Granary.stack += 1
+                if self.map.name_user == data['username'] :Cell.Granary.stack += 1
         
