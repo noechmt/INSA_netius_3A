@@ -169,6 +169,8 @@ class Map:  # Un ensemble de cellule
                                 if self.row_received:
                                     response = True
                                 else:
+                                    if self.num_player > 2:
+                                        time.sleep(0.25 * self.num_player - 2)
                                     encoder.cell_init_row(self.name_user, row)
                     except:
                         pass
@@ -186,6 +188,8 @@ class Map:  # Un ensemble de cellule
                                 if self.row_received_2:
                                     response_2 = True
                                 else:
+                                    if self.num_player > 2:
+                                        time.sleep(0.25 * self.num_player - 2)
                                     encoder.cell_init_row(
                                         self.name_user, row_2)
                     except:
