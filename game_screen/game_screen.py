@@ -488,9 +488,11 @@ def game_screen(first_online=False):
                         
 
                     if (command != [] and command[0] == '/accept') and panel.duel.duel_request > 0:
+
                         duel_answer(1, panel.duel.enemy_name) #send confirmation for duel
                         panel.duelON = True
                         panel.duel.duel_accepted = 1
+                        panel.duel.update_name(panel.duel.enemy_name)
                         panel.chat.input.message_to_send = ''
 
                     if (command != [] and command[0] == '/decline') and panel.duel.duel_request > 0:

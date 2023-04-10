@@ -91,11 +91,13 @@ class Wrapper:
             case 'duel_request' :
                if self.panel.duel.player_name == data['username'] and self.panel.duel.duel_request == 0:
                   self.panel.duel.enemy_name = data['my_name']
+                  print("afezafzafazaf", self.panel.duel.enemy_name)
                   self.panel.duel.duel_request += 1
 
             case 'duel_answer' :
-               if data['username'] == self.panel.duel.enemy_name : 
+               if data['username'] == self.panel.duel.player_name : 
                   self.panel.duel.duel_accepted = data['accept']
+                  self.panel.duel.enemy_name = data['username']
                   self.panel.duelON = True
 
             case 'update_round' :
