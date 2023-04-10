@@ -5,17 +5,18 @@ from Class.Input_box import InputBox
 from Class.Text import Text
 import threading as thread
 import Class.Encoder as encode
-from p2p.socket_python import *
+import p2p.socket_python as spy
 import subprocess
-
+from time import sleep
 
 def join_game():
 
     pygame.init()
-    Server(1235, 4)
+    spy.Server(1235, 4)
+    spy.Spython()
+    spy.Spython.startThread()
 
-    thread_recv = thread.Thread(target=recv_data, args=(Server.socket,))
-    thread_recv.start()
+
 
     # Create screen variable and set the size of the screen
     SCREEN = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
@@ -143,7 +144,8 @@ def join_game():
                         file = open("Saves/temp.txt", "w")
                         file.write(input_pseudo.get_text())
                         file.close()
-                    subprocess.Popen(['p2p/lan_connect', input_ip.get_text()])
+                        
+                    spy.Spython.startLanProcess(input_ip.get_text())
                     sleep(1)
                     encode.join(input_pseudo.get_text())
                     return (True, False)
