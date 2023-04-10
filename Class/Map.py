@@ -32,15 +32,19 @@ class Map:  # Un ensemble de cellule
         self.size = size  # La taille de la map est size*size : int
         self.height_land = height
         self.width_land = width
-        self.players = ["Player1", "", "", ""]
+        self.button_activated = {"house": False, "shovel": False, "road": False,
+                                 "prefecture": False, "engineerpost": False, "well": False, "farm": False, "granary": False, "ownership": False}
+        self.players = ["Player1", "Player2", "Player3", "Player4"]
         # TO-DO request the num player
         self.num_player = 1
+        self.players_online = 1
         # TO-DO put names in array and do function to fill it after init
         self.name_user = username
+        self.players[self.num_player - 1] = username
         self.offset_top = 0
         self.offset_left = 0
         self.overlay = ""
-        self.array = [[Empty(j, i, self.height_land, self.width_land, self, username) for i in range(
+        self.array = [[Empty(j, i, self.height_land, self.width_land, self, None) for i in range(
             size)] for j in range(size)]  # tableau de cellule (voir classe cellule) : list
         self.walkers = []
         self.migrantQueue = []
@@ -48,6 +52,7 @@ class Map:  # Un ensemble de cellule
         self.buildings = []
         self.path_graph = nx.DiGraph()
         self.init_paths()
+        self.init_ownership()
         self.spawn_cells = [self.array[0][self.size//10],
                             self.array[0][self.size - self.size//10],
                             self.array[self.size -
@@ -61,25 +66,53 @@ class Map:  # Un ensemble de cellule
         self.governor = Governor(self.spawn_cell, username)
         self.wallet = 5000
         self.update_hover = 0
-        self.button_activated = {"house": False, "shovel": False, "road": False,
-                                 "prefecture": False, "engineerpost": False, "well": False, "farm": False, "granary": False, "continue" : False, "stop" : False}
         self.zoom = 1
         self.zoom_coef = 1
         self.population = 0
         self.month_index = 0
         self.year = 150
+        self.transaction = {"cells": [], "amount": 0, "Done": False}
         self.sound_effect = sound_effect
+
+    def add_transaction(self, cell):
+        if cell.owner == None:
+            if cell not in self.transaction["cells"]:
+                self.transaction["cells"].append(cell)
+                self.transaction["amount"] += cell.price
+
+    def reset_transaction(self):
+        self.transaction["cells"] = []
+        self.transaction["amount"] = 0
+        self.transaction["Done"] = False
+
+    def buy_cells(self):
+        if self.check_valid_buy():
+            for cell in self.transaction["cells"]:
+                cell.owner = self.name_user
+                self.wallet -= cell.price
+            self.transaction["Done"] = True
+        return self.transaction["Done"]
+
+    def check_valid_buy(self):
+        if self.transaction["amount"] <= self.wallet:
+            for cell in self.transaction["cells"]:
+                if cell.owner == None or cell.owner == self.name_user:
+                    cell_around = cell.get_cells_around()
+                    for i in cell_around:
+                        if i.owner == self.name_user:
+                            return True
+        return False
 
     # Permet d'initialiser le chemin de terre sur la map.
     def init_paths(self):
         # Generate the init path of player 1 (top of the map)
         for x in range(self.size // 10):
             self.array[x][self.size // 10] = Path(
-                x, self.size // 10, self.height_land, self.width_land, self, self.name_user)
+                x, self.size // 10, self.height_land, self.width_land, self, None)
             self.array[x][self.size // 10].handle_sprites()
         for y in range((self.size // 10) + 1):
             self.array[self.size // 10][y] = Path(
-                self.size // 10, y, self.height_land, self.width_land, self, self.name_user)
+                self.size // 10, y, self.height_land, self.width_land, self, None)
             self.array[self.size // 10][y].handle_sprites()
 
         # Generate the init path of player 2 (left of the map)
@@ -114,6 +147,24 @@ class Map:  # Un ensemble de cellule
             self.array[self.size - (self.size // 10)][y].handle_sprites()
 
         self.display_map()
+
+    def init_ownership(self):
+        if self.num_player == 1:
+            for x in range(self.size // 10 + 1):
+                for y in range(self.size // 10 + 1):
+                    self.array[x][y].owner = self.name_user
+        elif self.num_player == 2:
+            for x in range(self.size // 10 + 1):
+                for y in range(self.size - (self.size // 10), self.size):
+                    self.array[x][y].owner = self.name_user
+        elif self.num_player == 3:
+            for x in range(self.size - (self.size // 10), self.size):
+                for y in range(self.size - (self.size // 10), self.size):
+                    self.array[x][y].owner = self.name_user
+        elif self.num_player == 4:
+            for x in range(self.size - (self.size // 10), self.size):
+                for y in range(self.size // 10 + 1):
+                    self.array[x][y].owner = self.name_user
 
     def init_city_halls(self):
         self.array[self.size//10 - 1][self.size//10 - 1] = CityHall(
@@ -216,22 +267,24 @@ class Map:  # Un ensemble de cellule
                 if any(house.nb_occupants != 0 for house in self.buildings if isinstance(house, House)):
                     i.leave_building()
 
-        #walkerBuffer = encode.WalkerBuffer(self.name_user)
+        if self.players_online > 1 and len(self.walkers) > 0: walkerBuffer = encode.WalkerBuffer(self.name_user)
         for walker in self.walkers:
             if walker.owner == self.name_user:
                 walker.move()
-                #walkerBuffer.add("move", walker)
-
-            if self.get_overlay() not in ("fire", "collapse") and not isinstance(walker, Prefect) or (isinstance(walker, Prefect) and not walker.isWorking):
-                walker.display()
+                if self.players_online > 1: walkerBuffer.add("move", walker)
+            else:
+                self.walkers.remove(walker)
+                
+            #if self.get_overlay() not in ("fire", "collapse") and not isinstance(walker, Prefect) or (isinstance(walker, Prefect) and not walker.isWorking):
+            #    walker.display()
             """if not isinstance(i, Migrant):
                 if i.previousCell is not None:
                     i.previousCell.display()"""
-
-        # walkerBuffer.send()
+            
+        if self.players_online > 1 and len(self.walkers) > 0: walkerBuffer.send()
 
         for i in self.buildings:
-            if i.risk and not i.risk.happened:
+            if i.risk and not i.risk.happened and i.owner == self.name_user:
                 i.risk.riskIncrease()
 
     def display_walkers(self):
@@ -248,11 +301,13 @@ class Map:  # Un ensemble de cellule
         for i in self.buildings:
             if i.risk and i.risk.happened and i.risk.type == "fire":
                 i.risk.burn()
+                if self.players_online > 1 and i.owner == self.name_user: encode.risk(self.name_user, "burn", i, i.risk.fireCounter)
 
     def update_collapse(self):
         for i in self.buildings:
             if i.risk and i.risk.happened and i.risk.type == "collapse":
                 i.risk.collapse()
+                if self.map.players_online > 1 and i.owner == self.map.name_user: encode.risk(self.name_user, "collapse", i, None)
 
     def set_cell_array(self, x, y, cell):
         self.array[x][y] = cell
@@ -337,6 +392,9 @@ class Map:  # Un ensemble de cellule
     
     def get_stopped(self) :
         return self.button_activated["stop"]
+
+    def get_ownershiped(self):
+        return self.button_activated["ownership"]
 
     def get_height_land(self):
         return self.height_land

@@ -63,8 +63,6 @@ def game_screen():
     panel.duel.player_name = map.name_user
     panel.duel.text["my_name"].text = panel.duel.player_name
     wrapper = Wrapper(map, panel)
-    #wrapper.wrap('{"header": "build", "username": "Governor", "x": 5, "y": 5, "type": "house"}')
-    #wrapper.wrap('{"header": "walker", "username": "Governor", "array": [{"action": "move", "currentCell": [7, 5], "previousCell": [7, 4], "type": "Migrant"}]}')
 
     # Dims without left panel
     height_wo_panel = HEIGH_SCREEN
@@ -111,7 +109,6 @@ def game_screen():
     pf = fps_font.render(f"pf", 1, (255, 255, 255))
     rn = fps_font.render(f"rn", 1, (255, 255, 255))
     pn = fps_font.render(f"pn", 1, (255, 255, 255))
-    ##############################
 
     map.center_camera_governor()
 
@@ -145,32 +142,35 @@ def game_screen():
                 map.offset_top += 5*(3 - pos[1] / 20)/(zoom/move_coeff)
                 map.handle_move("up", (3 - pos[1] / 20)/(zoom/move_coeff))
             if pos[1] >= HEIGH_SCREEN - 60 and map.offset_top >= -map.get_cell(0, 0).height * SIZE + HEIGH_SCREEN / 1.25:
-                map.offset_top -= 5 * \
-                    (3 - (HEIGH_SCREEN - pos[1]) / 20)/(zoom/move_coeff)
-                map.handle_move(
-                    "down", (3 - (HEIGH_SCREEN - pos[1]) / 20) / (zoom/move_coeff))
+                if pos[0] <= width_wo_panel:
+                    map.offset_top -= 5 * \
+                        (3 - (HEIGH_SCREEN - pos[1]) / 20)/(zoom/move_coeff)
+                    map.handle_move(
+                        "down", (3 - (HEIGH_SCREEN - pos[1]) / 20) / (zoom/move_coeff))
             if pos[0] <= 60 and map.offset_left >= (-map.get_cell(0, 0).width * SIZE / 2) + (WIDTH_SCREEN / 2) / 1.25:
                 map.offset_left -= 5*(3 - pos[0] / 20)/(zoom/move_coeff)
                 map.handle_move("left", (3 - pos[0] / 20)/(zoom/move_coeff))
             if pos[0] >= WIDTH_SCREEN - 60 and map.offset_left <= (map.get_cell(0, 0).width * SIZE / 2) - (WIDTH_SCREEN / 2) / 1.25:
                 if not panel.get_road_button().is_hovered(pos) and not panel.get_well_button().is_hovered(pos):
                     if not panel.get_collapse_button().is_hovered(pos) and not panel.get_exit_button().is_hovered(pos):
-                        if not panel.get_governor_button().is_hovered(pos):
-                            map.offset_left += 5 * \
-                                (3 - (WIDTH_SCREEN - pos[0]
-                                      ) / 20)/(zoom/move_coeff)
-                            map.handle_move(
-                                "right", (3 - (WIDTH_SCREEN - pos[0]) / 20) / (zoom/move_coeff))
+                        if not panel.get_governor_button().is_hovered(pos) and not panel.get_ownership_button:
+                            if not panel.get_buy_button().is_hovered(pos):
+                                map.offset_left += 5 * \
+                                    (3 - (WIDTH_SCREEN - pos[0]
+                                          ) / 20)/(zoom/move_coeff)
+                                map.handle_move(
+                                    "right", (3 - (WIDTH_SCREEN - pos[0]) / 20) / (zoom/move_coeff))
             move_update = 0
 
          # If the mouse is in the map, we display the hovered cell(s)
-        if selection["is_active"]:
+        if selection["is_active"] or (map.get_ownershiped() and len(selection["cells"]) > 0):
             for i in selection["cells"]:
                 map.get_cell(i[0], i[1]).handle_hover_button()
         else:
             if map.inMap(x, y) and pos[0] < width_wo_panel:
                 map.get_cell(x, y).handle_hover_button()
 
+        # Always display selected cell
         zoom_update += 1
         for event in pygame.event.get():
             pos = pygame.mouse.get_pos()
@@ -179,6 +179,10 @@ def game_screen():
                 run = 0
 
             if event.type == pygame.MOUSEBUTTONDOWN:
+                if map.get_ownershiped() and map.inMap(x, y) and pos[0] < width_wo_panel:
+                    selection["cells"].clear()
+                    selection["is_active"] = 0
+                    map.reset_transaction()
                 if event.button == 1:
                     if governor_movements == True:
                         if map.inMap(x, y):
@@ -224,15 +228,21 @@ def game_screen():
                             panel.set_window("well")
                             map.handle_button("well")
                             map.set_overlay("water")
-
                         if (panel.farm_button.is_hovered(pos)):
                             panel.set_window("farm")
                             map.handle_button("farm")
 
-                            # map.display_map()
+                        # map.display_map()
                         if (panel.granary_button.is_hovered(pos)):
                             panel.set_window("granary")
                             map.handle_button("granary")
+                        if (panel.get_ownership_button().is_hovered(pos)):
+                            map.handle_button("ownership")
+                        if map.get_ownershiped() and panel.get_buy_button().is_hovered(pos):
+                            if (map.buy_cells()):
+                                map.reset_transaction()
+                                selection["cells"].clear()
+                                selection["is_active"] = 0
 
                   
                     if panel.duelON and panel.duel.duel_accepted == 1 :
@@ -317,6 +327,8 @@ def game_screen():
                             selected_cell.build("prefecture")
                         elif map.get_engineered() and selected_cell.isBuildable():
                             selected_cell.build("engineer post")
+                        elif map.get_ownershiped():
+                            map.add_transaction(selected_cell)
                         elif map.get_farmed() and selected_cell.isBuildable("Farm"):
                             selected_cell.build("farm")
                         elif map.get_granaried() and selected_cell.isBuildable("Granary"):
@@ -336,8 +348,11 @@ def game_screen():
 
                     # map.buildings.sort(key=lambda i: (i.x, i.y))
                     # print([(i.x, i.y) for i in map.buildings])
-                    selection["cells"].clear()
-                    selection["is_active"] = 0
+                    if not (map.transaction["Done"] == False and map.get_ownershiped()):
+                        selection["cells"].clear()
+                        selection["is_active"] = 0
+                    else:
+                        selection["is_active"] = 0
 
             if event.type == pygame.MOUSEMOTION:
                 # Display previous cell without hover
@@ -384,6 +399,9 @@ def game_screen():
                 panel.get_collapse_button().handle_hover_button(pos, SCREEN)
                 panel.get_exit_button().handle_hover_button(pos, SCREEN)
                 panel.get_governor_button().handle_hover_button(pos, SCREEN)
+                panel.get_ownership_button().handle_hover_button(pos, SCREEN)
+                if map.get_ownershiped():
+                    panel.get_buy_button().handle_hover_button(pos, SCREEN)
 
             if event.type == pygame.KEYDOWN:
                 if pygame.key.get_pressed()[pygame.K_ESCAPE]:
@@ -525,7 +543,6 @@ def game_screen():
         #     fire_upadte_count = 0
 
         walker_update_count += 1
-        governor_update_count += 1
         if walker_update_count >= update_speed // 2:
             # print(walker_update_count)
             map.update_walkers()
@@ -536,6 +553,7 @@ def game_screen():
             # print("break")
             walker_update_count = 0
 
+        governor_update_count += 1
         if governor_update_count >= update_speed // 4:
             if map.governor.move():
                 map.center_camera_governor()
@@ -617,6 +635,36 @@ def game_screen():
         if Prefect.risk_reset:
             SCREEN.blit(pn, (WIDTH_SCREEN - WIDTH_SCREEN /
                              13 + WIDTH_SCREEN / 16, HEIGH_SCREEN - HEIGH_SCREEN/8.3))
+
+        # diplsay trade backgroung bottom left if button is ativated
+        if map.get_ownershiped():
+            panel.display_trade_window()
+
+            # cell range display
+            first_cell = "0"
+            last_cell = "0"
+            if len(map.transaction["cells"]) >= 1:
+                first_cell = str(
+                    map.transaction["cells"][0].x) + "," + str(map.transaction["cells"][0].y)
+                last_cell = first_cell
+            if len(map.transaction["cells"]) >= 2:
+                last_cell = str(
+                    map.transaction["cells"][-1].x) + "," + str(map.transaction["cells"][-1].y)
+            text_range_cells = fps_font.render(
+                f"Start cell : ({first_cell})", 1, (0, 0, 0))
+            SCREEN.blit(text_range_cells, (WIDTH_SCREEN - WIDTH_SCREEN /
+                        13, HEIGH_SCREEN - HEIGH_SCREEN/11))
+            text_range_cells = fps_font.render(
+                f"Stop cell : ({last_cell})", 1, (0, 0, 0))
+            SCREEN.blit(text_range_cells, (WIDTH_SCREEN - WIDTH_SCREEN /
+                        13, HEIGH_SCREEN - HEIGH_SCREEN/11 + text_range_cells.get_size()[1]))
+            # price display
+            text_price = fps_font.render(
+                f"Price : {map.transaction['amount']}", 1, (0, 0, 0))
+            SCREEN.blit(text_price, (WIDTH_SCREEN - WIDTH_SCREEN /
+                        13, HEIGH_SCREEN - HEIGH_SCREEN/11 + 2*text_range_cells.get_size()[1]))
+            # Buy button
+            panel.get_buy_button().draw(SCREEN)
 
         clock.tick(FPS)
         pygame.display.flip()

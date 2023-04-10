@@ -9,6 +9,12 @@ def join(username):
       "username": username
    })
 
+def joinResponse(username, players_online):
+   encodeJSON({"header": "responseJoin",
+      "username": username,
+      "players_online": players_online
+   })
+
 def build(username, x, y, type):
    encodeJSON({"header": "build",
       "username": username,
@@ -16,18 +22,25 @@ def build(username, x, y, type):
       "y": y, 
       "type": type})
 
-def levelup(username, x, y, level):
+def levelup(username, cell, level):
    encodeJSON({"header": "levelup",
       "username": username,
-      "x": x,
-      "y": y, 
+      "x": cell.x,
+      "y": cell.y, 
       "level": level})
    
-def clear(username, x, y):
+def clear(username, cell):
    encodeJSON({"header": "clear",
       "username": username,
-      "x": x,
-      "y": y})
+      "x": cell.x,
+      "y": cell.y})
+   
+def risk(username, type, building, fireCounter):
+   encodeJSON({"header": type,
+      "username": username,
+      "building": (building.x, building.y),
+      "fireCounter": fireCounter
+   })
    
 def chat(message) :
    encodeJSON({"header" : "chat", 
@@ -67,10 +80,10 @@ class WalkerBuffer:
    def add(self, action, walker):
       self.buffer["array"].append({
              "action": action,
-             "building": self.building,
-             "currentCell": walker.currentCell,
-             "previousCell": walker.previousCell,
-             "type": walker.type})
+             "building": (walker.building.x, walker.building.y),
+             "currentCell": (walker.currentCell.x, walker.currentCell.y) if walker.currentCell != None else None,
+             "previousCell": (walker.previousCell.x, walker.previousCell.y) if walker.previousCell != None else None,
+             "type": str(walker)})
    
    def send(self):
       encodeJSON(self.buffer)

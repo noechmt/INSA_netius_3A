@@ -4,6 +4,7 @@ from Class.Button import Button
 from Class.Input_box import InputBox
 from Class.Text import Text
 import threading as thread
+import Class.Encoder as encode
 from p2p.socket_python import *
 import subprocess
 
@@ -143,6 +144,8 @@ def join_game():
                         file.write(input_pseudo.get_text())
                         file.close()
                     subprocess.Popen(['p2p/lan_connect', input_ip.get_text()])
+                    sleep(1)
+                    encode.join(input_pseudo.get_text())
                     return True
 
             if input_ip.handle_event(event, SCREEN):

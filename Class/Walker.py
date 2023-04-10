@@ -60,7 +60,7 @@ class Walker():
             else:
                 SCREEN.blit(pygame.transform.scale(self.walker_sprites["right"][self.currentSprite % 2], (
                     self.currentCell.width, self.currentCell.height)), (self.currentCell.left, self.currentCell.top))
-
+            
             self.currentSprite += 1
         # elif self.inBuilding == True :
         #     self.currentCell.display()
@@ -349,7 +349,7 @@ class Prefect(Walker):
         elif self.isWorking:
             self.extinguishFire()
 
-        elif any((i. risk != None and i.risk.type == "fire" and i.risk.fireCounter > 0 and i not in self.currentCell.check_cell_around(Cell.Building))
+        elif any((i.risk != None and i.risk.type == "fire" and i.risk.fireCounter > 0 and i not in self.currentCell.check_cell_around(Cell.Building))
                  for i in self.current_building.map.buildings) and not self.isWorking and not self.inBuilding:
             print(self.building.map.buildings[0].risk.fireCounter)
             self.building.map.buildings.sort(
@@ -392,10 +392,10 @@ class Prefect(Walker):
     def reset_fire_risk(self):
         cell = self.currentCell.check_cell_around(Cell.Building)
         for i in cell:
-            if not isinstance(i, Cell.Prefecture) and not isinstance(i, Cell.Well) and not i.risk.happened:
+            if not isinstance(i, Cell.Prefecture) and not isinstance(i, Cell.Well) and i.risk != None and not i.risk.happened:
                 i.risk.resetEvent()
             for j in i.check_cell_around(Cell.Building):
-                if not isinstance(j, Cell.Prefecture) and not isinstance(j, Cell.Well) and not j.risk.happened:
+                if not isinstance(j, Cell.Prefecture) and not isinstance(j, Cell.Well) and i.risk != None and not j.risk.happened:
                     j.risk.resetEvent()
 
     def extinguishFire(self, update=1):
@@ -486,6 +486,9 @@ class Engineer(Walker):
             if not isinstance(i, Cell.EngineerPost):
                 i.risk.resetEvent()
 
+    def __str__(self):
+        return "Engineer"
+
     def __getstate__(self):
         state = self.__dict__.copy()
         state.pop("walker_sprites")
@@ -509,6 +512,9 @@ class Governor(Walker):
                 self.walker_sprites[i][j] = pygame.image.load(
                     "walker_sprites/governor_sprites/governor_" + i + "_" + str(j) + ".png").convert_alpha()
 
+    def __str__(self) -> str:
+        return "Governor"
+
     def set_pathfinding(self, cell_to_go):
         # Set the pathfinding to the cell_to_go
         self.path_finding(self.currentCell, cell_to_go)
@@ -521,6 +527,11 @@ class Governor(Walker):
             self.currentSprite += 1
             return True
         return False
+    
+    def display(self):
+        super().display()
+        # Decrease the currentSprite bc when displayed it will be increased, we don't want that
+        self.currentSprite -= 1
 
     def __getstate__(self):
         state = self.__dict__.copy()

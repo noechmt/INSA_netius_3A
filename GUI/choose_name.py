@@ -3,12 +3,20 @@ import pygame
 from Class.Button import Button
 from Class.Input_box import InputBox
 from Class.Text import Text
+from p2p.socket_python import *
+import threading as thread
 import subprocess
 
 
 def choose_name():
 
     pygame.init()
+
+    pygame.init()
+    Server(1235, 4)
+
+    thread_recv = thread.Thread(target=recv_data, args=(Server.socket,))
+    thread_recv.start()
 
     # Create screen variable and set the size of the screen
     SCREEN = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
