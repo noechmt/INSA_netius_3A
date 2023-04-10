@@ -144,15 +144,17 @@ class Map:  # Un ensemble de cellule
     def set_spawn_point_governor(self):
         Governor.currentCell = self.spawn_cells[self.num_player - 1]
 
-    def encode(self):
+    def encode(self, user_confirmation):
         wrapper = Wrapper(self, None)
         for x in range(self.size):
             row = []
             self.row_received = False
             response = False
+            data_received = []
             self.row_received_2 = False
             row_2 = []
             response_2 = False
+            data_received_2 = []
             for y in range(self.size//2):
                 row.append(self.array[x][y].encode())
             encoder.cell_init_row(self.name_user, row)
@@ -160,13 +162,14 @@ class Map:  # Un ensemble de cellule
                 data = p2p.get_data()
                 if len(data) != 0:
                     try:
-                        header = json.loads(data)["header"]
-                        if header == "row_received":
-                            wrapper.wrap(data)
-                            if self.row_received:
-                                response = True
-                            else:
-                                encoder.cell_init_row(self.name_user, row)
+                        data_received = json.loads(data)
+                        if data_received["header"] == "row_received":
+                            if data_received["username"] == user_confirmation:
+                                wrapper.wrap(data)
+                                if self.row_received:
+                                    response = True
+                                else:
+                                    encoder.cell_init_row(self.name_user, row)
                     except:
                         pass
             for y in range(self.size//2, self.size):
@@ -176,13 +179,15 @@ class Map:  # Un ensemble de cellule
                 data = p2p.get_data()
                 if len(data) != 0:
                     try:
-                        header = json.loads(data)["header"]
-                        if header == "row_received_2":
-                            wrapper.wrap(data)
-                            if self.row_received_2:
-                                response_2 = True
-                            else:
-                                encoder.cell_init_row(self.name_user, row_2)
+                        data_received_2 = json.loads(data)
+                        if data_received_2["header"] == "row_received_2":
+                            if data_received_2["username"] == user_confirmation:
+                                wrapper.wrap(data)
+                                if self.row_received_2:
+                                    response_2 = True
+                                else:
+                                    encoder.cell_init_row(
+                                        self.name_user, row_2)
                     except:
                         pass
         self.init_ownership(self.players_online)
