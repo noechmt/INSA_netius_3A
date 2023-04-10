@@ -121,7 +121,7 @@ def close_socket(socket):
 
 
 
-thread_recv = thread.Thread(target=recv_data, )
+thread_recv = thread.Thread(target=recv_data )
 stopEvent = thread.Event()
 LanProcess = None
 

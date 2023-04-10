@@ -142,9 +142,11 @@ def join_game():
                         file.close()
                         
                         
-                    spy.StartSockets()
+                    spy.Server(1235,5)
+                    spy.thread_recv.start()
+                    sleep(1)
                     spy.LanProcess = subprocess.Popen(['p2p/lan_connect', input_ip.get_text()])
-                    sleep(.1)
+                    sleep(1)
                     encode.join(input_pseudo.get_text())
                     return (True, False)
 
