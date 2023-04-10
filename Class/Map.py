@@ -93,8 +93,6 @@ class Map:  # Un ensemble de cellule
                 # Online version : reading from the requests
                 num_cell_init = 0
                 while num_cell_init != self.size:
-                    text_loading = self.fps_font.render(
-                        f"Load map : {num_cell_init}/{self.size}", 1, (0, 0, 0))
                     # protocol to receive packet and if it's cell_init header, decode it
                     data = p2p.get_data()
                     if len(data) != 0:
@@ -108,6 +106,8 @@ class Map:  # Un ensemble de cellule
                                 SCREEN.blit(text_loading, (WIDTH_SCREEN/2 - text_loading.get_width()/2,
                                                            HEIGHT_SCREEN/2 - text_loading.get_height()/2))
                                 pygame.display.flip()
+                                text_loading = self.fps_font.render(
+                                    f"Load map : {num_cell_init}/{self.size}", 1, (0, 0, 0))
                                 encoder.row_received(self.name_user, True)
                             else:
                                 encoder.row_received(self.name_user, False)
