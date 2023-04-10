@@ -140,9 +140,6 @@ class Map:  # Un ensemble de cellule
             response = False
             data_received = []
             self.row_received_2 = False
-            row_2 = []
-            response_2 = False
-            data_received_2 = []
             for y in range(self.size):
                 row.append(self.array[x][y].encode())
             encoder.cell_init_row(self.name_user, row, self.players_online)
