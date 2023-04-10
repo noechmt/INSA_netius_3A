@@ -43,8 +43,20 @@ class Map:  # Un ensemble de cellule
         self.players_online = 1
         self.row_received = False
         self.row_received_2 = False
+        WIDTH_SCREEN, HEIGHT_SCREEN = SCREEN.get_size()
+        self.fps_font = pygame.font.Font(
+            "GUI/Fonts/Title Screen/Berry Rotunda.ttf", 50)
+        background = pygame.image.load(
+            "game_screen/game_screen_sprites/loading_map.png")
+        background = pygame.transform.scale(
+            background, (SCREEN.get_width(), SCREEN.get_height()))
         if not first_online:
-            print("In responseJoin")
+            text_loading = self.fps_font.render(
+                f"Load map : {0}/{self.size}", 1, (0, 0, 0))
+            SCREEN.blit(background, (0, 0))
+            SCREEN.blit(text_loading, (WIDTH_SCREEN/2 - text_loading.get_width()/2,
+                                       HEIGHT_SCREEN/2 - text_loading.get_height()/2))
+            pygame.display.flip()
             wrapper = Wrapper(self, None)
             receive_num = False
             while not receive_num:
@@ -80,6 +92,8 @@ class Map:  # Un ensemble de cellule
                 # Online version : reading from the requests
                 num_cell_init = 0
                 while num_cell_init != self.size:
+                    text_loading = self.fps_font.render(
+                        f"Load map : {num_cell_init}/{self.size}", 1, (0, 0, 0))
                     # protocol to receive packet and if it's cell_init header, decode it
                     data = p2p.get_data()
                     if len(data) != 0:
@@ -90,6 +104,10 @@ class Map:  # Un ensemble de cellule
                                 print("num_cell_init =", num_cell_init)
                                 encoder.row_received(self.name_user, True)
                                 num_cell_init += 1
+                                SCREEN.blit(background, (0, 0))
+                                SCREEN.blit(text_loading, (WIDTH_SCREEN/2 - text_loading.get_width()/2,
+                                                           HEIGHT_SCREEN/2 - text_loading.get_height()/2))
+                                pygame.display.flip()
                             else:
                                 encoder.row_received(self.name_user, False)
                         except:
@@ -123,8 +141,6 @@ class Map:  # Un ensemble de cellule
         self.year = 150
         self.transaction = {"cells": [], "amount": 0, "Done": False}
         self.sound_effect = sound_effect
-        self.fps_font = pygame.font.Font(
-            "GUI/Fonts/Title Screen/Berry Rotunda.ttf", 14)
 
     def display_governors(self):
         for governor in self.governors:
@@ -139,7 +155,7 @@ class Map:  # Un ensemble de cellule
         HEIGHT_SCREEN, WIDTH_SCREEN = SCREEN.get_size()
         for x in range(self.size):
             text_loading = self.fps_font.render(
-                f"Load map : {x}/75", 1, (255, 255, 255))
+                f"Load map : {x}/75", 1, (0, 0, 0))
             row = []
             self.row_received = False
             response = False
@@ -159,14 +175,10 @@ class Map:  # Un ensemble de cellule
                                 if self.row_received:
                                     response = True
                                 else:
-                                    SCREEN.blit(text_loading, (WIDTH_SCREEN - WIDTH_SCREEN /
-                                                13, HEIGHT_SCREEN - HEIGHT_SCREEN/7.5))
                                     encoder.cell_init_row(
                                         self.name_user, row, self.players_online)
                     except:
                         pass
-            SCREEN.blit(text_loading, (WIDTH_SCREEN - WIDTH_SCREEN /
-                                       13, HEIGHT_SCREEN - HEIGHT_SCREEN/7.5))
         self.init_ownership(self.players_online)
 
     def add_transaction(self, cell):
