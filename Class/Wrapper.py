@@ -28,7 +28,8 @@ class Wrapper:
                 # Add here spawnpoints checker
                 self.map.players_online += 1
                 # Add the username to the list of players
-                self.map.players[self.map.players_online - 1] = data["username"]
+                self.map.players[self.map.players_online -
+                                 1] = data["username"]
                 encode.joinResponse(self.map.name_user,
                                     self.map.players_online,
                                     self.map.players)
@@ -41,13 +42,16 @@ class Wrapper:
             case 'build':
                 self.map.get_cell(data["x"], data["y"]).build(
                     data["type"], data["username"], True)
-                self.map.get_cell(data["x"], data["y"]).owner = data["username"]
+                self.map.get_cell(data["x"], data["y"]
+                                  ).owner = data["username"]
             case 'clear':
                 self.map.get_cell(data["x"], data["y"]).clear()
-                self.map.get_cell(data["x"], data["y"]).owner = data["username"]
+                self.map.get_cell(data["x"], data["y"]
+                                  ).owner = data["username"]
             case 'levelup':
                 self.map.get_cell(data["x"], data["y"]).nextLevel()
-                self.map.get_cell(data["x"], data["y"]).owner = data["username"]
+                self.map.get_cell(data["x"], data["y"]
+                                  ).owner = data["username"]
                 assert (self.map.get_cell(
                     data["x"], data["y"]).level == data["level"])
             case 'risk':
@@ -85,29 +89,29 @@ class Wrapper:
             case 'chat':
                 self.panel.chat.history_append(data['message'])
 
-            case 'pchat' : 
-               if self.map.name_user == data['username'] : self.panel.chat.history_append(data['message'])
+            case 'pchat':
+                if self.map.name_user == data['username']:
+                    self.panel.chat.history_append(data['message'])
 
-            case 'duel_request' :
-               if self.panel.duel.player_name == data['username'] and self.panel.duel.duel_request == 0:
-                  self.panel.duel.enemy_name = data['my_name']
-                  self.panel.duel.duel_request += 1
+            case 'duel_request':
+                if self.panel.duel.player_name == data['username'] and self.panel.duel.duel_request == 0:
+                    self.panel.duel.enemy_name = data['my_name']
+                    self.panel.duel.duel_request += 1
 
-            case 'duel_answer' :
-               if data['username'] == self.panel.duel.enemy_name : 
-                  self.panel.duel.duel_accepted = data['accept']
-                  self.panel.duelON = True
+            case 'duel_answer':
+                if data['username'] == self.panel.duel.enemy_name:
+                    self.panel.duel.duel_accepted = data['accept']
+                    self.panel.duelON = True
 
-            case 'update_round' :
-               self.panel.duel.enemy_game_round += 1
-               self.panel.duel.enemy_score = data['score']
+            case 'update_round':
+                self.panel.duel.enemy_game_round += 1
+                self.panel.duel.enemy_score = data['score']
 
-            case 'finish_duel' : 
-               self.panel.duel.enemy_bet_stopped = True
+            case 'finish_duel':
+                self.panel.duel.enemy_bet_stopped = True
 
-            case 'send_bet' :
+            case 'send_bet':
                 self.panel.duel.bet = data['value']
-
 
             case 'cell_init':
                 for cell in data["row"]:
@@ -131,16 +135,19 @@ class Wrapper:
                 self.map.row_received_2 = data["received"]
             case 'owner':
                 self.map.get_cell(data["x"], data["y"]).owner = data["owner"]
+                self.map.get_cell(data["x"], data["y"]).price = self.map.get_cell(
+                    data["x"], data["y"]).price * 2
                 if (self.map.get_cell(data["x"], data["y"]).owner != data["owner"]):
-                    self.map.get_cell(data["x"], data["y"]).owner = data["owner"]
+                    self.map.get_cell(
+                        data["x"], data["y"]).owner = data["owner"]
             case 'governor':
                 if self.map.governors[data["num_player"] - 1].owner == None:
-                    encode.governor(self.map.name_user, self.map.num_player, self.map.governor.currentCell)
-                self.map.governors[data["num_player"] - 1].owner = data["username"]
-                self.map.governors[data["num_player"] - 1].previousCell = self.map.governors[data["num_player"] - 1].currentCell
-                self.map.governors[data["num_player"] - 1].currentCell = self.map.get_cell(data["x"], data["y"])
+                    encode.governor(
+                        self.map.name_user, self.map.num_player, self.map.governor.currentCell)
+                self.map.governors[data["num_player"] -
+                                   1].owner = data["username"]
+                self.map.governors[data["num_player"] -
+                                   1].previousCell = self.map.governors[data["num_player"] - 1].currentCell
+                self.map.governors[data["num_player"] -
+                                   1].currentCell = self.map.get_cell(data["x"], data["y"])
                 self.map.governors[data["num_player"] - 1].display()
-
-
-
-        
