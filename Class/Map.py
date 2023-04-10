@@ -146,53 +146,50 @@ class Map:  # Un ensemble de cellule
     def encode(self, user_confirmation):
         wrapper = Wrapper(self, None)
         for x in range(self.size):
+            row = []
+            self.row_received = False
+            response = False
+            data_received = []
+            self.row_received_2 = False
+            row_2 = []
+            response_2 = False
+            data_received_2 = []
             for y in range(self.size):
-                self.get_cell(x, y).encode()
-        # for x in range(self.size):
-        #     row = []
-        #     self.row_received = False
-        #     response = False
-        #     data_received = []
-        #     self.row_received_2 = False
-        #     row_2 = []
-        #     response_2 = False
-        #     data_received_2 = []
-        #     for y in range(self.size//2):
-        #         row.append(self.array[x][y].encode())
-        #     encoder.cell_init_row(self.name_user, row, self.players_online)
-        #     while not response:
-        #         data = p2p.get_data()
-        #         if len(data) != 0:
-        #             try:
-        #                 data_received = json.loads(data)
-        #                 if data_received["header"] == "row_received":
-        #                     if data_received["username"] == user_confirmation:
-        #                         wrapper.wrap(data)
-        #                         if self.row_received:
-        #                             response = True
-        #                         else:
-        #                             encoder.cell_init_row(
-        #                                 self.name_user, row, self.players_online)
-        #             except:
-        #                 pass
-        #     for y in range(self.size//2, self.size):
-        #         row_2.append(self.array[x][y].encode())
-        #     encoder.cell_init_row(self.name_user, row_2, self.players_online)
-        #     while not response_2:
-        #         data = p2p.get_data()
-        #         if len(data) != 0:
-        #             try:
-        #                 data_received_2 = json.loads(data)
-        #                 if data_received_2["header"] == "row_received_2":
-        #                     if data_received_2["username"] == user_confirmation:
-        #                         wrapper.wrap(data)
-        #                         if self.row_received_2:
-        #                             response_2 = True
-        #                         else:
-        #                             encoder.cell_init_row(
-        #                                 self.name_user, row_2, self.players_online)
-        #             except:
-        #                 pass
+                row.append(self.array[x][y].encode())
+            encoder.cell_init_row(self.name_user, row, self.players_online)
+            while not response:
+                data = p2p.get_data()
+                if len(data) != 0:
+                    try:
+                        data_received = json.loads(data)
+                        if data_received["header"] == "row_received":
+                            if data_received["username"] == user_confirmation:
+                                wrapper.wrap(data)
+                                if self.row_received:
+                                    response = True
+                                else:
+                                    encoder.cell_init_row(
+                                        self.name_user, row, self.players_online)
+                    except:
+                        pass
+            # for y in range(self.size//2, self.size):
+            #     row_2.append(self.array[x][y].encode())
+            # encoder.cell_init_row(self.name_user, row_2, self.players_online)
+            # while not response_2:
+            #     data = p2p.get_data()
+            #     if len(data) != 0:
+            #         try:
+            #             data_received_2 = json.loads(data)
+            #             if data_received_2["header"] == "row_received_2":
+            #                 if data_received_2["username"] == user_confirmation:
+            #                     wrapper.wrap(data)
+            #                     if self.row_received_2:
+            #                         response_2 = True
+            #                     else:
+            #                         encoder.cell_init_row(
+            #                             self.name_user, row_2, self.players_online)
+            #         except:
+            #             pass
         self.init_ownership(self.players_online)
 
     def add_transaction(self, cell):
