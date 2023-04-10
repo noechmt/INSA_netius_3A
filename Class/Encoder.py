@@ -122,6 +122,10 @@ def update_round(score) :
 def finish_duel() :
    encodeJSON({"header" : "finish_duel"})
 
+def send_bet(value) : 
+    encodeJSON({"header" : "send_bet",
+        "value" : value})
+
 
 
 

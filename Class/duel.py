@@ -80,9 +80,10 @@ class Duel:
         self.enemy_name = ""
 
 
-        #game score
+        #game score and bet
         self.my_score = 0
         self.enemy_score = 0
+        self.bet = 0
         
         #determine win or loss
         self.won = False

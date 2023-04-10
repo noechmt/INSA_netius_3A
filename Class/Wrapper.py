@@ -104,6 +104,9 @@ class Wrapper:
             case 'finish_duel' : 
                self.panel.duel.enemy_bet_stopped = True
 
+            case 'send_bet' :
+                self.panel.duel.bet = data['value']
+
 
             case 'cell_init':
                 for cell in data["row"]:
