@@ -42,6 +42,8 @@ def cell_init_single(x, y, type, type_empty, owner):
 
 
 def cell_init_row(username, row, num_online):
+    if num_online > 2:
+        time.sleep(0.25)
     encodeJSON({"header": "cell_init",
                 "username": username,
                 "row": row})

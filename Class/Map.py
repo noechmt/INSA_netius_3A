@@ -99,6 +99,7 @@ class Map:  # Un ensemble de cellule
                         try:
                             header = json.loads(data)["header"]
                             if header == "cell_init":
+                                encoder.row_received(self.name_user, True)
                                 wrapper.wrap(data)
                                 print("num_cell_init =", num_cell_init)
                                 num_cell_init += 1
@@ -108,7 +109,6 @@ class Map:  # Un ensemble de cellule
                                 pygame.display.flip()
                                 text_loading = self.fps_font.render(
                                     f"Load map : {num_cell_init}/{self.size}", 1, (0, 0, 0))
-                                encoder.row_received(self.name_user, True)
                             else:
                                 encoder.row_received(self.name_user, False)
                         except:
