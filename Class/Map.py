@@ -97,7 +97,7 @@ class Map:  # Un ensemble de cellule
                                 #         self.name_user, True)
                                 # num_cell_init += 1
                             else:
-                                encoder.row_received(self.name_user, True)
+                                encoder.row_received(self.name_user, False)
                                 # if num_cell_init % 2 == 0:
                                 #     encoder.row_received(
                                 #         self.name_user, False)
@@ -105,7 +105,7 @@ class Map:  # Un ensemble de cellule
                                 #     encoder.row_received_2(
                                 #         self.name_user, False)
                         except:
-                            encoder.row_received(self.name_user, True)
+                            encoder.row_received(self.name_user, False)
                             # if num_cell_init % 2 == 0:
                             #     encoder.row_received(self.name_user, False)
                             # else:
