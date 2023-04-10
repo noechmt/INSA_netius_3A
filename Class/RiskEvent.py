@@ -71,6 +71,8 @@ class RiskEvent():
         if not self.happened or self.building.destroyed:
             return
         if self.fireCounter >= 500:
+            if self.building.map.players_online > 1 and self.building.owner == self.building.map.name_user: 
+                encode.risk(self.building.map.name_user, "burnt", self.building, self.fireCounter)
             # self.building.screen.blit(pygame.transform.scale(pygame.image.load("game_screen/game_screen_sprites/dirt_0.png"), (self.building.width, self.building.height)), (self.building.left, self.building.top))
             if self.building.sprite != pygame.image.load("risks_sprites/house_fire/fire_9.png").convert_alpha():
                 # self.building.screen.blit(pygame.transform.scale(self.fire_sprites[9], (self.building.width, self.building.height)), (self.building.left, self.building.top))

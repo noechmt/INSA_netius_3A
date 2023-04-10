@@ -372,7 +372,7 @@ class Map:  # Un ensemble de cellule
                                                    (i.currentCell.width, i.currentCell.height)), (i.currentCell.left, i.currentCell.top))
                 waitfornext = True
             elif i.spawnCount == 100:
-                i.building.clear()
+                i.building.clear(i.building.owner)
             else:
                 i.spawnCount += 1
 

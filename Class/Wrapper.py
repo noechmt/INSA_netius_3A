@@ -43,7 +43,7 @@ class Wrapper:
                     data["type"], data["username"], True)
                 self.map.get_cell(data["x"], data["y"]).owner = data["username"]
             case 'clear':
-                self.map.get_cell(data["x"], data["y"]).clear()
+                self.map.get_cell(data["x"], data["y"]).clear(data["username"])
                 self.map.get_cell(data["x"], data["y"]).owner = data["username"]
             case 'levelup':
                 self.map.get_cell(data["x"], data["y"]).nextLevel()
@@ -52,17 +52,18 @@ class Wrapper:
                     data["x"], data["y"]).level == data["level"])
             case 'risk':
                 if data["type"] == "fire":
-                    print(self.map.get_cell(
-                        data["building"][0], data["building"][0]))
                     self.map.get_cell(
-                        data["building"][0], data["building"][0]).risk.happened = True
+                        data["building"][0], data["building"][1]).risk.happened = True
                     self.map.get_cell(
-                        data["building"][0], data["building"][0]).risk.fireCounter = data["fireCounter"]
-                    print(self.map.buildings)
+                        data["building"][0], data["building"][1]).risk.fireCounter = data["fireCounter"]
+                elif data["type"] == "collapse":
+                    self.map.get_cell(
+                        data["building"][0], data["building"][1]).risk.happened = True
                 else:
                     self.map.get_cell(
-                        data["building"][0], data["building"][0]).risk.happened = True
-                    print(self.map.buildings)
+                        data["building"][0], data["building"][1]).risk.fireCounter = data["fireCounter"]
+                    self.map.get_cell(
+                        data["building"][0], data["building"][1]).burn()
             case 'walker':
                 for walker in data["array"]:
                     if walker["action"] == "move":
