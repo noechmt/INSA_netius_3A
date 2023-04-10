@@ -83,28 +83,33 @@ class Map:  # Un ensemble de cellule
                     # protocol to receive packet and if it's cell_init header, decode it
                     data = p2p.get_data()
                     if len(data) != 0:
-                        header = json.loads(data)["header"]
-                        if header == "cell_init_single":
-                            wrapper.wrap(data)
-                            print("num_cell_init =", num_cell_init)
+                        try:
+                            header = json.loads(data)["header"]
+                            if header == "cell_init_single":
+                                wrapper.wrap(data)
+                                print("num_cell_init =", num_cell_init)
+                                encoder.row_received(self.name_user, True)
+                                # if num_cell_init % 2 == 0:
+                                #     encoder.row_received(self.name_user, True)
+                                # else:
+                                #     encoder.row_received_2(
+                                #         self.name_user, True)
+                                # num_cell_init += 1
+                            else:
+                                encoder.row_received(self.name_user, True)
+                                # if num_cell_init % 2 == 0:
+                                #     encoder.row_received(
+                                #         self.name_user, False)
+                                # else:
+                                #     encoder.row_received_2(
+                                #         self.name_user, False)
+                        except:
+                            encoder.row_received(self.name_user, True)
                             # if num_cell_init % 2 == 0:
-                            #     encoder.row_received(self.name_user, True)
+                            #     encoder.row_received(self.name_user, False)
                             # else:
                             #     encoder.row_received_2(
-                            #         self.name_user, True)
-                            num_cell_init += 1
-                        #     else:
-                        #         if num_cell_init % 2 == 0:
-                        #             encoder.row_received(self.name_user, False)
-                        #         else:
-                        #             encoder.row_received_2(
-                        #                 self.name_user, False)
-                        # except:
-                        #     if num_cell_init % 2 == 0:
-                        #         encoder.row_received(self.name_user, False)
-                        #     else:
-                        #         encoder.row_received_2(
-                        #             self.name_user, False)
+                            #         self.name_user, False)
         self.init_ownership()
         self.spawn_cells = [self.array[0][self.size//10],
                             self.array[0][self.size - self.size//10],
