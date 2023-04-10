@@ -11,13 +11,16 @@ assert sys.version[0:4] == "3.10" or sys.version[0:
 
 # Check if all the dependencies are installed
 os.system(str(sys.executable) + " -m pip install -r requirements.txt")
+os.system("make clean -C ./p2p")
+os.system("make -C ./p2p")
+
 
 if os.name == "nt":
     ctypes.windll.shcore.SetProcessDpiAwareness(1)
 
 # Delete the lan_conne process if it exists
 os.system("pgrep -f lan_conne | xargs kill -9")
-
+os.system("")
 
 if __name__ == "__main__":
     retour = title_screen()

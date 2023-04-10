@@ -1,7 +1,8 @@
 import socket
 from time import sleep
 import select
-
+import threading as thread
+import subprocess
 MSGLEN = 10
 
 
@@ -54,6 +55,9 @@ class Server:
         Server.socket.bind("127.0.0.1", port)
         Server.socket.listen(number)
 
+    def close() :
+        Server.socket.close()
+
 
 def send_data(data, addr="127.0.0.1", port=1236):
 
@@ -63,12 +67,12 @@ def send_data(data, addr="127.0.0.1", port=1236):
     Socket.close()
 
 
-def recv_data(server_socket, freq=.0001):
+def recv_data(freq=.0001):
 
-    while True:
+    while not stopEvent.is_set():
         sleep(freq)
-        print(server_socket)
-        inputs = [server_socket.getSock()]
+    
+        inputs = [Server.socket]
 
         # Utiliser select pour surveiller les canaux prêts à être lus
         readable, writable, exceptional = select.select(inputs, [], [])
@@ -77,13 +81,13 @@ def recv_data(server_socket, freq=.0001):
 
         for s in readable:
 
-            if s is server_socket.getSock():
+            if s is Server.socket:
 
                 # Nouvelle connexion entrante
-                client_socket = server_socket.accept()
+                client_socket = Server.socket.accept()
                 Server.data = client_socket.recv(10000)
                 Server.data = Server.data.decode()
-                print(f"Data received: ", Server.data)
+
 
                 # Ajouter la connexion cliente à la liste de surveillance
                 inputs.append(client_socket)
@@ -114,3 +118,19 @@ def get_data():
 
 def close_socket(socket):
     socket.close()
+
+
+
+thread_recv = thread.Thread(target=recv_data, )
+stopEvent = thread.Event()
+LanProcess = None
+
+def StartSockets() : 
+    Server(1235,5)
+    thread_recv.start()
+
+def EndSockets() : 
+    stopEvent.set()
+    LanProcess.kill()
+    sleep(.5)
+    Server.close()
