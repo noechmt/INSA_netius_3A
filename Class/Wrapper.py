@@ -35,6 +35,7 @@ class Wrapper:
                                     self.map.players)
                 time.sleep(3)
                 self.map.encode(data["username"])
+                self.map.encode(data["username"])
                 print(self.map.players)
             case 'responseJoin':
                 self.map.players_online = data["players_online"]
