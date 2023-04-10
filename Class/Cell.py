@@ -1248,16 +1248,29 @@ class Farm(Building):
             # if not ingraph :
             #     print("salut")
             #     return
+            
             for i in self.map.buildings:
                 if isinstance(i, Granary):
-                    tmpPath = nx.dijkstra_path(
-                        self.map.path_graph, self.farmer.currentCell, i)
+                    try :
+                        print("allo")
+                        tmpPath = nx.dijkstra_path(
+                            self.map.path_graph, self.farmer.currentCell, i)
+                    except :
+                        print("et là?")
+                        tmpPath = [] 
                     # print(tmpPath)
                     if len(self.farmer.path) == 0 or len(self.farmer.path) > len(tmpPath):
                         self.farmer.path = tmpPath
+                        
+            
+            if len(self.farmer.path) != 0 : pass
+            Granary.stack += 1
 
 
 class Granary(Building):
+    stack = 0
+    pillaged = False
+    pillager = ""
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width, map, owner)
         self.risk = RiskEvent("prout", self)
@@ -1267,6 +1280,9 @@ class Granary(Building):
         ), pygame.image.load(self.path_sprite2).convert_alpha()]
         self.sprite_display = [None, None]
         self.update_sprite_size()
+        
+
+        
 
         self.map.array[self.x - 1][self.y] = GranaryPart(
             self.x - 1, self.y, height, width, map, owner, self)

@@ -144,5 +144,11 @@ class Wrapper:
                 self.map.governors[data["num_player"] - 1].display()
 
 
+            case 'pillage' : 
+                if self.map.name_user == data['username'] : 
+                    Cell.Granary.pillaged = True
+                    Cell.Granary.pillager = data['player']
 
+            case 'gain_stack' :
+                if self.name_user == data['username'] :Cell.Granary.stack += 1
         
