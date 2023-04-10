@@ -3,6 +3,7 @@ import random
 import pygame
 
 import networkx as nx
+import Class.Encoder as encode
 
 
 def rm_dup_list(x):
@@ -54,7 +55,7 @@ class Walker():
                 elif self.previousCell.y < self.currentCell.y:
                     SCREEN.blit(pygame.transform.scale(self.walker_sprites["bot"][self.currentSprite % 2], (
                         self.currentCell.width, self.currentCell.height)), (self.currentCell.left, self.currentCell.top))
-                elif self.previousCell.y > self.currentCell.y:
+                elif self.previousCell.y >= self.currentCell.y:
                     SCREEN.blit(pygame.transform.scale(self.walker_sprites["top"][self.currentSprite % 2], (
                         self.currentCell.width, self.currentCell.height)), (self.currentCell.left, self.currentCell.top))
             else:
@@ -349,7 +350,7 @@ class Prefect(Walker):
         elif self.isWorking:
             self.extinguishFire()
 
-        elif any((i. risk != None and i.risk.type == "fire" and i.risk.fireCounter > 0 and i not in self.currentCell.check_cell_around(Cell.Building))
+        elif any((i.risk != None and i.risk.type == "fire" and i.risk.fireCounter > 0 and i not in self.currentCell.check_cell_around(Cell.Building))
                  for i in self.current_building.map.buildings) and not self.isWorking and not self.inBuilding:
             print(self.building.map.buildings[0].risk.fireCounter)
             self.building.map.buildings.sort(
@@ -392,10 +393,10 @@ class Prefect(Walker):
     def reset_fire_risk(self):
         cell = self.currentCell.check_cell_around(Cell.Building)
         for i in cell:
-            if not isinstance(i, Cell.Prefecture) and not isinstance(i, Cell.Well) and not i.risk.happened:
+            if not isinstance(i, Cell.Prefecture) and not isinstance(i, Cell.Well) and i.risk != None and not i.risk.happened:
                 i.risk.resetEvent()
             for j in i.check_cell_around(Cell.Building):
-                if not isinstance(j, Cell.Prefecture) and not isinstance(j, Cell.Well) and not j.risk.happened:
+                if not isinstance(j, Cell.Prefecture) and not isinstance(j, Cell.Well) and i.risk != None and not j.risk.happened:
                     j.risk.resetEvent()
 
     def extinguishFire(self, update=1):
@@ -525,6 +526,8 @@ class Governor(Walker):
         if len(self.path) != 0:
             self.movePathFinding()
             self.currentSprite += 1
+            if self.currentCell.map.players_online > 1 and isinstance(self, Governor):
+                encode.governor(self.currentCell.map.name_user, self.currentCell.map.num_player, self.currentCell)
             return True
         return False
     

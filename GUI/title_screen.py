@@ -124,12 +124,12 @@ def title_screen():
             # Check for QUIT event
             if event.type == pygame.QUIT:
                 running = False
-                return False
+                return (False, False)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if not choosing_save:
                     if leave_game_button.is_hovered(pos):
                         running = False
-                        return False
+                        return (False, False)
                     if start_game_button.is_hovered(pos):
                         window_name = True
                         running = False
@@ -145,7 +145,7 @@ def title_screen():
                     for fichier in listeFichiers:
                         if fichier.is_hovered(pos):
                             file.write("Saves/" + str(fichier.get_text()))
-                            return True
+                            return (True, False)
 
             if event.type == pygame.MOUSEMOTION:
                 if not choosing_save:
@@ -170,14 +170,16 @@ def title_screen():
 
     if window_name:
         # We display again this window if the back button is pressed from choose_name
-        if (not choose_name()):
+        retour = choose_name()
+        if (not retour[0]):
             title_screen()
 
-        return True
+        return (True, retour[1])
 
     if window_join:
         # We display again this window if the back button is pressed from choose_name
-        if (not join_game()):
+        retour = join_game()
+        if (not retour[0]):
             title_screen()
 
-        return True
+        return (True, retour[1])

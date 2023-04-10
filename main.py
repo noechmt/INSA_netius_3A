@@ -15,11 +15,15 @@ os.system(str(sys.executable) + " -m pip install -r requirements.txt")
 if os.name == "nt":
     ctypes.windll.shcore.SetProcessDpiAwareness(1)
 
+# Delete the lan_conne process if it exists
+os.system("pgrep -f lan_conne | xargs kill -9")
+
 
 if __name__ == "__main__":
-    if (title_screen()):
+    retour = title_screen()
+    if (retour[0]):
         from game_screen.game_screen import game_screen
-        game_screen()
+        game_screen(retour[1])
     pygame.quit()
 
 # TO-DO

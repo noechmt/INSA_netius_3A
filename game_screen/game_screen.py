@@ -21,7 +21,7 @@ def draw_rect_alpha(surface, color, rect):
     surface.blit(shape_surf, rect)
 
 
-def game_screen():
+def game_screen(first_online=False):
     pygame.init()
 
     SCREEN = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
@@ -51,14 +51,16 @@ def game_screen():
             map = pickle.load(f1)
         map.display_map()
     else:
-        map = Map(SIZE, height_land, width_land, name_path)
-        # map.array[33][33] = Farm(33, 33, height_land, width_land, SCREEN, map)
-        # map.array[37][37] = Crop(37, 37, height_land, width_land, SCREEN, map, map.array[33][33])
-        # print(map.array[33][33])
-        # print(map.array[34][34])
+        map = Map(SIZE, height_land, width_land, name_path,
+                  True, first_online=first_online)
 
     panel = Panel(SCREEN)
     wrapper = Wrapper(map, panel)
+    # FAire dans init map
+    zoom = 0.8
+    zoom += 0.05
+    map.handle_zoom(1)
+    # map.encode()
 
     # Dims without left panel
     height_wo_panel = HEIGH_SCREEN
@@ -80,7 +82,6 @@ def game_screen():
 
     selection = {"is_active": 0, "start": tuple, "cells": []}
     hovered_cell = None
-    zoom = 0.8
     move = 1
     zoom_update = 0
     move_update = 0
@@ -111,9 +112,8 @@ def game_screen():
     while run:
         pos = pygame.mouse.get_pos()
 
-        update_speed = 10 / (speed)
-
         wrapper.wrap(p2p.get_data())
+        update_speed = 10 / (speed)
 
         fire_update_count += 1
         if fire_update_count >= update_speed:
@@ -149,7 +149,7 @@ def game_screen():
             if pos[0] >= WIDTH_SCREEN - 60 and map.offset_left <= (map.get_cell(0, 0).width * SIZE / 2) - (WIDTH_SCREEN / 2) / 1.25:
                 if not panel.get_road_button().is_hovered(pos) and not panel.get_well_button().is_hovered(pos):
                     if not panel.get_collapse_button().is_hovered(pos) and not panel.get_exit_button().is_hovered(pos):
-                        if not panel.get_governor_button().is_hovered(pos) and not panel.get_ownership_button:
+                        if not panel.get_governor_button().is_hovered(pos) and not panel.get_ownership_button().is_hovered(pos):
                             if not panel.get_buy_button().is_hovered(pos):
                                 map.offset_left += 5 * \
                                     (3 - (WIDTH_SCREEN - pos[0]
@@ -452,6 +452,7 @@ def game_screen():
 
         if not isinstance(map.governor.currentCell, Building):
             map.governor.display()
+            map.display_governors()
         map.display_walkers()
         panel.display()
 

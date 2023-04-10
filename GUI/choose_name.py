@@ -104,7 +104,7 @@ def choose_name():
                 text_continue.handle_hover_text(pos, SCREEN)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if text_back.is_hovered(pos):
-                    return False
+                    return (False, False)
                 if text_continue.is_hovered(pos):
                     if input_name.get_text() != '':
                         file = open("Saves/temp.txt", "w")
@@ -112,7 +112,7 @@ def choose_name():
                         file.close()
                         subprocess.Popen(
                             ['p2p/lan_connect', ''])
-                        return True
+                        return (True, True)
             if (input_name.handle_event(event, SCREEN)):
                 SCREEN.blit(pygame.transform.scale(
                     menu_background, (width_menu, height_menu)), (left_menu, top_menu))

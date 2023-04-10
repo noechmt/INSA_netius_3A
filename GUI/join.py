@@ -137,7 +137,7 @@ def join_game():
                 text_connect.handle_hover_text(pos, SCREEN)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if text_back.is_hovered(pos):
-                    return False
+                    return (False, False)
                 if text_connect.is_hovered(pos):
                     if input_pseudo.get_text() != '':
                         file = open("Saves/temp.txt", "w")
@@ -146,7 +146,7 @@ def join_game():
                     subprocess.Popen(['p2p/lan_connect', input_ip.get_text()])
                     sleep(1)
                     encode.join(input_pseudo.get_text())
-                    return True
+                    return (True, False)
 
             if input_ip.handle_event(event, SCREEN):
                 SCREEN.blit(pygame.transform.scale(
