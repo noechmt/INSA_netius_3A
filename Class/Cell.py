@@ -69,10 +69,10 @@ class Cell:  # Une case de la map
         self.explored = False
 
     def encode(self):
-        return encode.cell_init_single(self.x, self.y, self.type,
-                                       self.type_empty if isinstance(
-                                           self, Empty) else "",
-                                       self.owner)
+        encode.cell_init_single(self.name_user, self.x, self.y, self.type,
+                                self.type_empty if isinstance(
+                                    self, Empty) else "",
+                                self.owner)
 
     def update_sprite_size(self):
         pass
@@ -759,7 +759,8 @@ class Empty(Cell):
                 self.type_sprite = "dirt"
                 self.path_sprite = "game_screen/game_screen_sprites/" + \
                     self.type_sprite + "_" + str(self.aleatoire) + ".png"
-                self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
+                self.sprite = pygame.image.load(
+                    self.path_sprite).convert_alpha()
                 self.map.wallet -= 2
             self.update_sprite_size()
             self.display()
@@ -845,7 +846,8 @@ class House(Building):  # la maison fils de building (?)
         super().display()
 
     def nextLevel(self):
-        if self.map.players_online > 1 and self.owner == self.map.name_user: encode.levelup(self.owner, self, self.level+1)
+        if self.map.players_online > 1 and self.owner == self.map.name_user:
+            encode.levelup(self.owner, self, self.level+1)
         self.level += 1
         self.path_sprite = "game_screen/game_screen_sprites/house_" + \
             str(self.level) + ".png"
@@ -1115,7 +1117,7 @@ class CityHallPart(Building):
 class CityHall(Building):
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width, map, owner)
-        self.risk =RiskEvent("prout", self)
+        self.risk = RiskEvent("prout", self)
         self.path_sprite = "game_screen/game_screen_sprites/cityhall.png"
         self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
         self.sprite_display = ""

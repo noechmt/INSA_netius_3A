@@ -22,12 +22,14 @@ def joinResponse(username, players_online, players):
                 })
 
 
-def cell_init_single(x, y, type, type_empty, owner):
-    return {"x": x,
-            "y": y,
-            "type": type,
-            "type_empty": type_empty,
-            "owner": owner}
+def cell_init_single(username, x, y, type, type_empty, owner):
+    encodeJSON({"header": "cell_init_single",
+                "username": username,
+                "x": x,
+                "y": y,
+                "type": type,
+                "type_empty": type_empty,
+                "owner": owner})
 
 
 def cell_init_row(username, row, num_online):

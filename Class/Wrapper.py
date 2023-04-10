@@ -154,3 +154,18 @@ class Wrapper:
                 self.map.governors[data["num_player"] -
                                    1].currentCell = self.map.get_cell(data["x"], data["y"])
                 self.map.governors[data["num_player"] - 1].display()
+        case 'cell_init_single':
+            if cell["type"] == "path" or cell["type"] == "house" or cell["type"] == "well" \
+                            or cell["type"] == "prefecture" or cell["type"] == "engineer post" \
+                            or cell["type"] == "farm" or cell["type"] == "granary":
+                        self.map.get_cell(cell["x"], cell["y"]).build(
+                            cell["type"], cell["owner"], True)
+                    if cell["type_empty"] != "":
+                        self.map.get_cell(
+                            cell["x"], cell["y"]).type_empty = cell["type_empty"]
+                        self.map.get_cell(
+                            cell["x"], cell["y"]).type_sprite = cell["type_empty"]
+                        self.map.get_cell(
+                            cell["x"], cell["y"]).init_random_sprites()
+                    self.map.get_cell(
+                        cell["x"], cell["y"]).owner = cell["owner"]
