@@ -176,7 +176,7 @@ def game_screen(first_online=False):
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if map.get_ownershiped() and map.inMap(x, y) and pos[0] < width_wo_panel:
-                    selection["cells"].clear(map.name_user)
+                    selection["cells"].clear()
                     selection["is_active"] = 0
                     map.reset_transaction()
                 if event.button == 1:
@@ -237,7 +237,7 @@ def game_screen(first_online=False):
                         if map.get_ownershiped() and panel.get_buy_button().is_hovered(pos):
                             if (map.buy_cells()):
                                 map.reset_transaction()
-                                selection["cells"].clear(map.name_user)
+                                selection["cells"].clear()
                                 selection["is_active"] = 0
 
                     if (panel.up_button.is_hovered(pos)):
@@ -320,7 +320,7 @@ def game_screen(first_online=False):
                     # map.buildings.sort(key=lambda i: (i.x, i.y))
                     # print([(i.x, i.y) for i in map.buildings])
                     if not (map.transaction["Done"] == False and map.get_ownershiped()):
-                        selection["cells"].clear(map.name_user)
+                        selection["cells"].clear()
                         selection["is_active"] = 0
                     else:
                         selection["is_active"] = 0
@@ -343,7 +343,7 @@ def game_screen(first_online=False):
                     # print([(i.x, i.y) for i in map.buildings])
                     for i in selection["cells"]:
                         map.get_cell(i[0], i[1]).display()
-                    selection["cells"].clear(map.name_user)
+                    selection["cells"].clear()
                     range_x = range(
                         selection["start"][0], x+1, 1) if selection["start"][0] <= x else range(selection["start"][0], x-1, -1)
                     range_y = range(
