@@ -21,10 +21,8 @@ class Wrapper:
     def wrap(self, data_json):
         if len(data_json) == 0:
             return
-        print("WRAPPING")
         try:
             data = json.loads(data_json)
-            print(data)
         except:
             encode.row_received(self.map.name_user, False)
             return
