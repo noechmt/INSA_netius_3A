@@ -20,7 +20,7 @@ int sending(char *ip_adress, int port, char *msg)
     // printf("Waiting for connection\n");
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
-        sleep(0.01);
+        sleep(0.001);
         return 1;
     }
     if (strlen(msg) != 0)
@@ -70,7 +70,7 @@ int sending_local(char *msg)
     // printf("Waiting for connection\n");
     if (connect(sock_local, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
-        sleep(0.01);
+        sleep(0.001);
         return 1;
     }
     if (strlen(msg) != 0)
