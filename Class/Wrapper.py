@@ -52,13 +52,31 @@ class Wrapper:
                     data["x"], data["y"]).level == data["level"])
             case 'risk':
                 if data["type"] == "fire":
-                    self.map.get_cell(
-                        data["building"][0], data["building"][1]).risk.happened = True
-                    self.map.get_cell(
-                        data["building"][0], data["building"][1]).risk.fireCounter = data["fireCounter"]
+                    building = self.map.get_cell(data["building"][0], data["building"][1])
+                    building.risk.happened = True
+                    building.risk.fireCounter = data["fireCounter"]
+                    if isinstance(self.building, Cell.EngineerPost):
+                        if building.labor_advisor in building.map.walkers:
+                            building.labor_advisor.currentCell.display()
+                            building.map.walkers.remove(
+                                building.labor_advisor)
+                        else:
+                            building.engineer.currentCell.display()
+                            if building.engineer in building.map.walkers:
+                                building.map.walkers.remove(
+                                    building.engineer)
                 elif data["type"] == "collapse":
-                    self.map.get_cell(
-                        data["building"][0], data["building"][1]).risk.happened = True
+                    building = self.map.get_cell(data["building"][0], data["building"][1])
+                    building.risk.happened = True
+                    if isinstance(building, Cell.Prefecture):
+                        if building.labor_advisor in building.map.walkers:
+                            building.labor_advisor.currentCell.display()
+                            building.map.walkers.remove(
+                                building.labor_advisor)
+                        else:
+                            building.prefect.currentCell.display()
+                            if building.prefect in building.map.walkers:
+                                building.map.walkers.remove(building.prefect)
                 elif data["type"] == "burnt":
                     self.map.get_cell(
                         data["building"][0], data["building"][1]).risk.fireCounter = data["fireCounter"]
@@ -109,8 +127,6 @@ class Wrapper:
                         match walker["type"]:
                             case 'Migrant':
                                 building.migrant.enter_building()
-                                self.map.walkers.remove(building.migrant)
-                                print("Le migrant est entré dans la maison")
                             case 'Labor Advisor':
                                 building.labor_advisor.enter_building()
                             case 'Prefect':
