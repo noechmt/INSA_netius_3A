@@ -63,7 +63,7 @@ def send_data(data, addr="127.0.0.1", port=1236):
     Socket.close()
 
 
-def recv_data(server_socket, freq=.0001):
+def recv_data(server_socket, freq=.001):
 
     while not Spython.stopEvent.is_set():
         sleep(freq)
