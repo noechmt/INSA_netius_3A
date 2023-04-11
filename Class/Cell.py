@@ -339,7 +339,7 @@ class Cell:  # Une case de la map
             pass
         elif not isinstance(self, Empty) and self.type_empty != "rock" and self.type_empty != "water":
             if self.owner == username:
-                if self.map.players_online > 1:
+                if self.map.players_online > 1 and self.owner == self.map.name_user:
                     encode.clear(self.owner, self)
                 for i in self.map.walkers:
                     if i.building == self:
@@ -752,7 +752,7 @@ class Empty(Cell):
 
     def clear(self, username):
         if self.owner == username:
-            if self.map.players_online > 1:
+            if self.map.players_online > 1 and self.owner == self.map.name_user:
                 encode.clear(self.owner, self)
             if self.type_empty == "tree":
                 self.type_empty = "dirt"
