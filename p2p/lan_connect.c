@@ -195,6 +195,8 @@ void receiving(int fd)
                     }
 
                     bzero(buffer, BUFSIZE);
+                    close(client_socket);
+                    FD_CLR(client_socket, &current_sockets);
                     FD_CLR(i, &current_sockets);
                 }
             }
