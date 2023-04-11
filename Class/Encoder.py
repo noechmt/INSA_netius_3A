@@ -128,7 +128,14 @@ def send_bet(value) :
         "value" : value})
 
 
+def pillage(username, player) :
+    encodeJSON({"header" : "pillage",
+        "username" : username,
+        "player" : player})
 
+def gain_stack(username) :
+    encodeJSON({"header" : "gain_stack",
+        "username" : username})
 
 
 

@@ -91,6 +91,7 @@ def game_screen(first_online=False):
     move_update = 0
     fire_update_count = 0
     governor_movements = 0
+    granary_update_count = 0
 
     count_day = 0
     count_month = map.month_index
@@ -192,6 +193,16 @@ def game_screen(first_online=False):
                         selection["cells"].append((x, y))
                         selection["is_active"] = 1
 
+                    # if isinstance(map.get_cell(x, y), Granary) : 
+                    #     for i in map.get_cell(x, y).check_cell_around(Path) : 
+                    #         print("path:", i.x, i.y)
+                    # print("governor : ", map.governor.currentCell.x, map.governor.currentCell.y)
+                    if isinstance(map.get_cell(x, y), Granary) and map.governor.currentCell in map.get_cell(x, y).check_cell_around(Path) :
+                        if map.get_cell(x, y).owner != map.name_user :
+                            pillage(map.get_cell(x, y).owner, map.name_user)
+
+                    
+
                     if (panel.get_governor_button().is_hovered(pos)):
                         # panel.set_window("none")
                         map.handle_esc()
@@ -243,7 +254,6 @@ def game_screen(first_online=False):
                                 map.reset_transaction()
                                 selection["cells"].clear()
                                 selection["is_active"] = 0
-
                   
                     if panel.duelON and panel.duel.duel_accepted == 1 :
                         if panel.continue_button.is_hovered((pos)) :
@@ -343,7 +353,7 @@ def game_screen(first_online=False):
                         else:
                             selected_cell.display()
 
-                    
+                        
 
 
                     # map.buildings.sort(key=lambda i: (i.x, i.y))
@@ -506,7 +516,13 @@ def game_screen(first_online=False):
                 panel.chat.handle_history_scroll(event)
                  # print(panel.chat.history_index)
 
-        
+        if Granary.pillaged : 
+            print("allo")
+            if Granary.stack > 0  :
+                Granary.stack -= 1
+                gain_stack(Granary.pillager)
+            Granary.pillaged = False
+            Granary.pillager = ""
 
         if panel.duelON :
             panel.chatON = False
@@ -523,8 +539,6 @@ def game_screen(first_online=False):
 
                     if panel.duel.lost : 
                         panel.chat.history_append("Duel perdu !")
-                        if panel.duel.bet > 0 :
-                            map.wallet -= 2*panel.duel.bet
                     
                     if panel.duel.won : 
                         panel.chat.history_append("Duel gagné !")
@@ -578,6 +592,11 @@ def game_screen(first_online=False):
                         (speed_left, speed_top))
             # print("break")
             walker_update_count = 0
+
+        granary_update_count += 1 
+        if granary_update_count >= update_speed *2.5 :
+            map.update_granary()
+            granary_update_count = 0
 
         governor_update_count += 1
         if governor_update_count >= update_speed // 4:

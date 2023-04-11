@@ -491,6 +491,12 @@ class Map:  # Un ensemble de cellule
                     return
                 i.crop_grow()
 
+    def update_granary(self) : 
+        for i in self.buildings :
+            if isinstance(i, Granary) :
+                self.wallet += 10*i.stack
+                break
+
     def get_housed(self):
         return self.button_activated["house"]
 
