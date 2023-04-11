@@ -314,7 +314,7 @@ def game_screen(first_online=False):
                         spy.Spython.endThread()
                         spy.Spython.endLanProcess()
                         spy.Server.socket.close()
-                        print("Je quite : ", map.name_user)
+                        print("Je quitte : ", map.name_user)
 
                         run = False
 
