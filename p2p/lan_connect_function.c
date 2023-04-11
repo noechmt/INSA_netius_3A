@@ -14,6 +14,7 @@ int sending(char *ip_adress, int port, char *msg)
         printf("\n Socket creation error \n");
         return -1;
     }
+    printf("soket fd : %i\n", sock);
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = inet_addr(ip_adress); // INADDR_ANY always gives an IP of 0.0.0.0
     serv_addr.sin_port = htons(port);
