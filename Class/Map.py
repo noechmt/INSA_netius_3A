@@ -66,7 +66,6 @@ class Map:  # Un ensemble de cellule
                     if json.loads(data)["header"] == "responseJoin":
                         wrapper.wrap(data)
                         receive_num = True
-                        print("Received num")
         self.num_player = self.players_online
         # TO-DO put names in array and do function to fill it after init
         self.name_user = username
@@ -82,7 +81,6 @@ class Map:  # Un ensemble de cellule
         self.buildings = []
         self.path_graph = nx.DiGraph()
         self.init_paths()
-        print("Before first online")
         if not first_online:
             print("In cell_init")
             if load_map:
@@ -101,7 +99,6 @@ class Map:  # Un ensemble de cellule
                         try:
                             header = json.loads(data)["header"]
                             if header == "cell_init":
-                                print("True cell_init")
                                 encoder.row_received(self.name_user, True)
                                 wrapper.wrap(data)
                                 print("num_cell_init =", num_cell_init)
@@ -113,14 +110,12 @@ class Map:  # Un ensemble de cellule
                                     f"Load map : {num_cell_init}/{self.size}", 1, (0, 0, 0))
                                 num_cell_init += 1
                             else:
-                                print("False cell_init")
                                 SCREEN.blit(background, (0, 0))
                                 SCREEN.blit(text_loading, (WIDTH_SCREEN/2 - text_loading.get_width()/2,
                                                            HEIGHT_SCREEN/2 - text_loading.get_height()/2))
                                 pygame.display.flip()
                                 encoder.row_received(self.name_user, False)
                         except:
-                            print("False cell_init")
                             SCREEN.blit(background, (0, 0))
                             SCREEN.blit(text_loading, (WIDTH_SCREEN/2 - text_loading.get_width()/2,
                                                        HEIGHT_SCREEN/2 - text_loading.get_height()/2))
@@ -168,7 +163,6 @@ class Map:  # Un ensemble de cellule
 
     def display_join_message(self, user, new_player):
         if self.name_user == user or self.name_user == new_player:
-            print("In the return")
             return
         WIDTH_SCREEN, HEIGHT_SCREEN = SCREEN.get_size()
         background = pygame.image.load(
