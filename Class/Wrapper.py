@@ -24,6 +24,7 @@ class Wrapper:
         try:
             data = json.loads(data_json)
         except:
+            print("Error in Wrapper loads !")
             encode.row_received(self.map.name_user, False)
             return
         match data["header"]:
