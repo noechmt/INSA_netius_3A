@@ -121,6 +121,8 @@ class Map:  # Un ensemble de cellule
                                                        HEIGHT_SCREEN/2 - text_loading.get_height()/2))
                             pygame.display.flip()
                             encoder.row_received(self.name_user, False)
+                    if num_cell_init == self.size:
+                        encoder.end_join(self.name_user)
         self.init_ownership()
         self.spawn_cells = [self.array[0][self.size//10],
                             self.array[0][self.size - self.size//10],
@@ -223,6 +225,8 @@ class Map:  # Un ensemble de cellule
                                 else:
                                     encoder.cell_init_row(
                                         self.name_user, row, self.players_online)
+                        elif data_received["header"] == 'end_join':
+                            response = True
                     except:
                         pass
         self.init_ownership(self.players_online)
