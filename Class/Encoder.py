@@ -72,11 +72,15 @@ def levelup(username, cell, level):
                 "level": level})
 
 
-def clear(username, cell):
+def clear(username, row):
     encodeJSON({"header": "clear",
                 "username": username,
-                "x": cell.x,
-                "y": cell.y})
+                "row": row})
+
+
+def clear_single(cell):
+    return ({"x": cell[0],
+            "y": cell[1]})
 
 
 def risk(username, type, building, fireCounter):
@@ -168,12 +172,13 @@ def pillage(username, player):
 
 def quit(Username):
     encodeJSON({"header": "quit", "username": Username})
-    
-def crop_state(x, y, state) : 
-    encodeJSON({"header" : "cropt_state",
-        "x" : x, 
-        "y" : y,
-        "state" : state })
+
+
+def crop_state(x, y, state):
+    encodeJSON({"header": "cropt_state",
+                "x": x,
+                "y": y,
+                "state": state})
 
 
 def gain_stack(username):
