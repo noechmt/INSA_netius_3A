@@ -112,7 +112,7 @@ class Walker():
         self.previousCell.display()
         if self.building.map.players_online > 0 and self.building.owner == self.building.map.name_user:
             encode.WalkerBuffer.add("enter", self)
-
+            encode.WalkerBuffer.send()
         if not isinstance(self, Prefect) and not isinstance(self, Engineer) and not isinstance(self, Farmer):
             self.building.map.walkers.remove(self)
 

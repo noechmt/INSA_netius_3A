@@ -123,8 +123,10 @@ class WalkerBuffer:
             "currentCell": (walker.currentCell.x, walker.currentCell.y) if walker.currentCell != None else None,
             "previousCell": (walker.previousCell.x, walker.previousCell.y) if walker.previousCell != None else None,
             "type": str(walker)})
+        print("Addd", action)
 
-    def send(self):
-        encodeJSON(self.buffer)
+    def send():
+        encodeJSON(WalkerBuffer.buffer)
         WalkerBuffer.buffer = {"header": "walker",
-                       "username": self.username, "array": []}
+                       "username": WalkerBuffer.username, "array": []}
+        print("Buffer send")
