@@ -205,7 +205,6 @@ class Map:  # Un ensemble de cellule
             self.row_received = False
             response = False
             data_received = []
-            self.row_received_2 = False
             for y in range(self.size):
                 row.append(self.array[x][y].encode())
             encoder.cell_init_row(self.name_user, row, self.players_online)
@@ -225,7 +224,7 @@ class Map:  # Un ensemble de cellule
                                 else:
                                     encoder.cell_init_row(
                                         self.name_user, row, self.players_online)
-                        elif data_received["header"] == 'end_join':
+                        elif data_received["header"] == 'governor' and data_received["username"] == user_confirmation:
                             response = True
                             self.init_ownership(self.players_online)
                             return
