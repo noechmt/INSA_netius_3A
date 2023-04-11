@@ -298,6 +298,7 @@ def game_screen(first_online=False):
                         text_last_save = fps_font.render(
                             current_time, 1, (255, 255, 255))
                     if panel.get_exit_button().is_hovered(pos):
+                        
                         spy.Spython.endThread()
                         spy.Spython.endLanProcess()
                         spy.Server.socket.close()
@@ -473,6 +474,7 @@ def game_screen(first_online=False):
                                 if command != [] and len(command) >=3 and int(command[2]) : 
                                     if int(command[2]) > 0 :
                                         panel.duel.bet = int(command[2])
+                                        map.wallet -= panel.duel.bet
                                         send_bet(panel.duel.bet)
 
                                 
@@ -494,7 +496,7 @@ def game_screen(first_online=False):
 
                     if (command != [] and command[0] == '/accept') and panel.duel.duel_request > 0:
 
-                        duel_answer(1, panel.duel.enemy_name) #send confirmation for duel
+                        duel_answer(1, panel.duel.player_name) #send confirmation for duel
                         panel.duelON = True
                         panel.duel.duel_accepted = 1
                         panel.duel.update_name(panel.duel.enemy_name)
