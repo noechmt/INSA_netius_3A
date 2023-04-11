@@ -13,10 +13,13 @@ import time
 from datetime import datetime
 from Class.Encoder import *
 
-def myMap(message) : 
-    return [*map(str,message.split())]
+
+def myMap(message):
+    return [*map(str, message.split())]
 
 # draw a rectangle with an opacity option
+
+
 def draw_rect_alpha(surface, color, rect):
     shape_surf = pygame.Surface(pygame.Rect(rect).size, pygame.SRCALPHA)
     pygame.draw.rect(shape_surf, color, shape_surf.get_rect())
@@ -43,7 +46,7 @@ def game_screen(first_online=False):
     WIDTH_SCREEN, HEIGH_SCREEN = SCREEN.get_size()
     height_land = HEIGH_SCREEN/45
     width_land = WIDTH_SCREEN*sqrt(2)/60
-    SIZE = 75
+    SIZE = 50
 
     # Load new map or existing one with pickle
     file = open("Saves/temp.txt", "r")
@@ -193,15 +196,13 @@ def game_screen(first_online=False):
                         selection["cells"].append((x, y))
                         selection["is_active"] = 1
 
-                    # if isinstance(map.get_cell(x, y), Granary) : 
-                    #     for i in map.get_cell(x, y).check_cell_around(Path) : 
+                    # if isinstance(map.get_cell(x, y), Granary) :
+                    #     for i in map.get_cell(x, y).check_cell_around(Path) :
                     #         print("path:", i.x, i.y)
                     # print("governor : ", map.governor.currentCell.x, map.governor.currentCell.y)
-                    if isinstance(map.get_cell(x, y), Granary) and map.governor.currentCell in map.get_cell(x, y).check_cell_around(Path) :
-                        if map.get_cell(x, y).owner != map.name_user :
+                    if isinstance(map.get_cell(x, y), Granary) and map.governor.currentCell in map.get_cell(x, y).check_cell_around(Path):
+                        if map.get_cell(x, y).owner != map.name_user:
                             pillage(map.get_cell(x, y).owner, map.name_user)
-
-                    
 
                     if (panel.get_governor_button().is_hovered(pos)):
                         # panel.set_window("none")
@@ -254,23 +255,24 @@ def game_screen(first_online=False):
                                 map.reset_transaction()
                                 selection["cells"].clear()
                                 selection["is_active"] = 0
-                  
-                    if panel.duelON and panel.duel.duel_accepted == 1 :
-                        if panel.continue_button.is_hovered((pos)) :
+
+                    if panel.duelON and panel.duel.duel_accepted == 1:
+                        if panel.continue_button.is_hovered((pos)):
                             map.handle_button("continue")
 
-                                                      
-                        if panel.stop_button.is_hovered((pos)) :
+                        if panel.stop_button.is_hovered((pos)):
                             map.handle_button("stop")
-                            
-                        if map.get_continued() :
+
+                        if map.get_continued():
                             panel.duel.continue_bet()
                             update_round(panel.duel.my_score)
-                            print(panel.duel.duel_round, panel.duel.game_round, panel.duel.enemy_game_round)
-                            if panel.duel.my_bet_stopped : finish_duel()
+                            print(panel.duel.duel_round, panel.duel.game_round,
+                                  panel.duel.enemy_game_round)
+                            if panel.duel.my_bet_stopped:
+                                finish_duel()
 
                             # print(panel.duel.my_score)
-                        if map.get_stopped() :
+                        if map.get_stopped():
                             panel.duel.stop_bet()
                             finish_duel()
 
@@ -313,7 +315,7 @@ def game_screen(first_online=False):
                         spy.Spython.endLanProcess()
                         spy.Server.socket.close()
                         print("Je quite : ", map.name_user)
-                        
+
                         run = False
 
                 if zoom_update > 0 and not panel.chatON:
@@ -358,9 +360,6 @@ def game_screen(first_online=False):
 
                         else:
                             selected_cell.display()
-
-                        
-
 
                     # map.buildings.sort(key=lambda i: (i.x, i.y))
                     # print([(i.x, i.y) for i in map.buildings])
@@ -444,10 +443,10 @@ def game_screen(first_online=False):
                 #         volume = map.sound_effect[i].get_volume()
                 #         map.sound_effect[i].set_volume(volume - 0.05)
 
-                if pygame.key.get_pressed()[pygame.K_e] and panel.duelON :
+                if pygame.key.get_pressed()[pygame.K_e] and panel.duelON:
                     panel.duel.continue_bet_enemy_proto()
 
-                if pygame.key.get_pressed()[pygame.K_s] and panel.duelON :
+                if pygame.key.get_pressed()[pygame.K_s] and panel.duelON:
                     panel.duel.stop_bet_enemy_proto()
 
                 if pygame.key.get_pressed()[pygame.K_t] and not panel.duelON:
@@ -457,125 +456,111 @@ def game_screen(first_online=False):
 
                     # print([panel.chat.message_history[i].text for i in range(len(panel.chat.message_history))])
 
-            if panel.chatON :
+            if panel.chatON:
                 panel.chat.input.handle_event(event, SCREEN, True)
 
                 ######## chat messages #########
-                if panel.chat.input.message_to_send != '' and panel.chat.input.message_to_send[0] != '/' :
+                if panel.chat.input.message_to_send != '' and panel.chat.input.message_to_send[0] != '/':
                     message = map.get_name_user() + " : " + panel.chat.input.message_to_send
                     panel.chat.history_append(message)
                     panel.chat.input.message_to_send = ''
                     chat(message)
-                
 
-                ######## chat commands #########        
-                if (panel.chat.input.message_to_send != '' and panel.chat.input.message_to_send[0] == '/') :
+                ######## chat commands #########
+                if (panel.chat.input.message_to_send != '' and panel.chat.input.message_to_send[0] == '/'):
                     # print(map.players)
                     command = myMap(panel.chat.input.message_to_send)
 
-                    if (command != [] and command[0] == '/duel') : 
-                        
-                        # if command != [] and len(command) >=2 and """command[1] not in map.players""" : 
+                    if (command != [] and command[0] == '/duel'):
+
+                        # if command != [] and len(command) >=2 and """command[1] not in map.players""" :
                         #     panel.chat.history_append("Player does not exist")
                         #     panel.chat.input.message_to_send = ''
-                        if command != [] and len(command) >=2 and command[1] in map.players :
+                        if command != [] and len(command) >= 2 and command[1] in map.players:
 
-                            try :
-                                if command != [] and len(command) >=3 and int(command[2]) : 
-                                    if int(command[2]) > 0 :
+                            try:
+                                if command != [] and len(command) >= 3 and int(command[2]):
+                                    if int(command[2]) > 0:
                                         panel.duel.bet = int(command[2])
                                         send_bet(panel.duel.bet)
 
-                                
+                            except:
+                                panel.chat.history_append(
+                                    "bet must be integer")
 
-                            except : 
-                                panel.chat.history_append("bet must be integer")
-                                
-                            duel_request(command[1], panel.duel.player_name) #send a duel request
+                            # send a duel request
+                            duel_request(command[1], panel.duel.player_name)
                             panel.chat.input.message_to_send = ''
                             panel.duel.update_name(command[1])
-                            pchat(map.name_user + " veut te tabasser le fiac dans un duel de gambling !",command[1])
+                            pchat(
+                                map.name_user + " veut te tabasser le fiac dans un duel de gambling !", command[1])
 
-                            if panel.duel.bet != 0 : 
-                                panel.chat.history_append("Mise : " + str(panel.duel.bet))
-                                pchat("Mise : " + str(panel.duel.bet), command[1])
-
-
-                        
+                            if panel.duel.bet != 0:
+                                panel.chat.history_append(
+                                    "Mise : " + str(panel.duel.bet))
+                                pchat("Mise : " +
+                                      str(panel.duel.bet), command[1])
 
                     if (command != [] and command[0] == '/accept') and panel.duel.duel_request > 0:
 
-                        duel_answer(1, panel.duel.enemy_name) #send confirmation for duel
+                        # send confirmation for duel
+                        duel_answer(1, panel.duel.enemy_name)
                         panel.duelON = True
                         panel.duel.duel_accepted = 1
                         panel.duel.update_name(panel.duel.enemy_name)
                         panel.chat.input.message_to_send = ''
 
                     if (command != [] and command[0] == '/decline') and panel.duel.duel_request > 0:
-                        duel_answer(2, panel.duel.enemy_name) #send refusal for duel
+                        # send refusal for duel
+                        duel_answer(2, panel.duel.enemy_name)
                         panel.duel.init_duel()
                         panel.chat.input.message_to_send = ''
-                        if panel.duel.bet > 0 : map.wallet -= panel.duel.bet
-
-                        
+                        if panel.duel.bet > 0:
+                            map.wallet -= panel.duel.bet
 
                 panel.chat.handle_history_scroll(event)
-                 # print(panel.chat.history_index)
+                # print(panel.chat.history_index)
 
-        if Granary.pillaged : 
+        if Granary.pillaged:
             print("allo")
-            if Granary.stack > 0  :
+            if Granary.stack > 0:
                 Granary.stack -= 1
                 gain_stack(Granary.pillager)
             Granary.pillaged = False
             Granary.pillager = ""
 
-        if panel.duelON :
+        if panel.duelON:
             panel.chatON = False
 
-            if panel.duel.duel_accepted == 2  : 
+            if panel.duel.duel_accepted == 2:
                 # print("aloooo")
                 panel.duelON = False
                 panel.duel.init_duel()
 
-            if panel.duel.duel_accepted == 1 :
-                
+            if panel.duel.duel_accepted == 1:
 
                 panel.duel.handle_duel_round()
-                if panel.duel.handle_winner() :
+                if panel.duel.handle_winner():
 
-                    if panel.duel.lost : 
+                    if panel.duel.lost:
                         panel.chat.history_append("Duel perdu !")
-                    
-                    if panel.duel.won : 
+
+                    if panel.duel.won:
                         panel.chat.history_append("Duel gagné !")
-                        if panel.duel.bet > 0 :
+                        if panel.duel.bet > 0:
                             map.wallet += 2*panel.duel.bet
-                    
-                    if panel.duel.draw : 
+
+                    if panel.duel.draw:
                         panel.chat.history_append("Egalité !")
-                    
-                    panel.chat.history_append(panel.duel.player_name + ": " + str(panel.duel.my_score) + " VS " + 
-                                                panel.duel.enemy_name + ": " + str(panel.duel.enemy_score))
-                    
+
+                    panel.chat.history_append(panel.duel.player_name + ": " + str(panel.duel.my_score) + " VS " +
+                                              panel.duel.enemy_name + ": " + str(panel.duel.enemy_score))
+
                     panel.duelON = False
                     panel.chatON = True
 
                     panel.duel.init_duel()
                     panel.duel.update_name("")
-
-                    
-
-            
-
-
-            
-
-
-
-
-
-
 
         # if event.type == pygame.MOUSEBUTTONDON:
         #     print(event.button)
@@ -600,8 +585,8 @@ def game_screen(first_online=False):
             # print("break")
             walker_update_count = 0
 
-        granary_update_count += 1 
-        if granary_update_count >= update_speed *2.5 :
+        granary_update_count += 1
+        if granary_update_count >= update_speed * 2.5:
             map.update_granary()
             granary_update_count = 0
 

@@ -44,7 +44,7 @@ def cell_init_single(x, y, type, type_empty, owner, level):
 
 def cell_init_row(username, row, num_online):
     if num_online > 2:
-        time.sleep(0.25)
+        time.sleep(0.35)
     encodeJSON({"header": "cell_init",
                 "username": username,
                 "row": row})
@@ -86,15 +86,16 @@ def risk(username, type, building, fireCounter):
                 "building": (building.x, building.y),
                 "fireCounter": fireCounter
                 })
-    
+
+
 def extinguish(username, building, currentCell, extinguishCounter, waterCounter):
     encodeJSON({"header": "extinguish",
-        "username": username,
-        "building": (building.x, building.y),
-        "currentCell": (currentCell.x, currentCell.y),
-        "extinguishCounter": extinguishCounter,
-        "waterCounter": waterCounter
-    })
+                "username": username,
+                "building": (building.x, building.y),
+                "currentCell": (currentCell.x, currentCell.y),
+                "extinguishCounter": extinguishCounter,
+                "waterCounter": waterCounter
+                })
 
 
 def chat(message):
@@ -102,12 +103,16 @@ def chat(message):
                 "message": message})
 
 
-def owner(username, cell, owner):
+def owner(username, row):
     encodeJSON({"header": "owner",
                 "username": username,
-                "x": cell.x,
-                "y": cell.y,
-                "owner": owner})
+                "row": row})
+
+
+def owner_single(cell, owner):
+    return ({"x": cell.x,
+            "y": cell.y,
+             "owner": owner})
 
 
 def governor(username, num_player, cell):
@@ -117,60 +122,73 @@ def governor(username, num_player, cell):
                 "x": cell.x,
                 "y": cell.y})
 
-   
-   
-def chat(message) :
-   encodeJSON({"header" : "chat", 
-      "message" : message})
-   
-def pchat(message, username) :
-   encodeJSON({"header" : "pchat", 
-      "message" : message,
-      "username" : username})
-   
-def duel_request(username, my_name) :
-   encodeJSON({"header" : "duel_request",
-      "username" : username,
-      "my_name" : my_name})
 
-def duel_answer(answer,username) : 
-   encodeJSON({"header" : "duel_answer", 
-      "accept" : answer,
-      "username" : username}) # 1 accept or 2 decline
-   
-def update_round(score) :
-   encodeJSON({"header" : "update_round", 
-      "score" : score})
-
-def finish_duel() :
-   encodeJSON({"header" : "finish_duel"})
-
-def send_bet(value) : 
-    encodeJSON({"header" : "send_bet",
-        "value" : value})
+def chat(message):
+    encodeJSON({"header": "chat",
+                "message": message})
 
 
-def pillage(username, player) :
-    encodeJSON({"header" : "pillage",
-        "username" : username,
-        "player" : player})
+def pchat(message, username):
+    encodeJSON({"header": "pchat",
+                "message": message,
+                "username": username})
 
-def gain_stack(username) :
-    encodeJSON({"header" : "gain_stack",
-        "username" : username})
 
-def quit(Username) : 
-    encodeJSON({"header":"quit","username":Username})
+def duel_request(username, my_name):
+    encodeJSON({"header": "duel_request",
+                "username": username,
+                "my_name": my_name})
+
+
+def duel_answer(answer, username):
+    encodeJSON({"header": "duel_answer",
+                "accept": answer,
+                "username": username})  # 1 accept or 2 decline
+
+
+def update_round(score):
+    encodeJSON({"header": "update_round",
+                "score": score})
+
+
+def finish_duel():
+    encodeJSON({"header": "finish_duel"})
+
+
+def send_bet(value):
+    encodeJSON({"header": "send_bet",
+                "value": value})
+
+
+def pillage(username, player):
+    encodeJSON({"header": "pillage",
+                "username": username,
+                "player": player})
+
+
+def quit(Username):
+    encodeJSON({"header": "quit", "username": Username})
+
+
+def quit(Username):
+    encodeJSON({"header": "quit", "username": Username})
+
+
+def gain_stack(username):
+    encodeJSON({"header": "gain_stack",
+
+                "username": username})
 
 
 class WalkerBuffer:
-    
+
     username = None
     buffer = {"header": "walker", "username": username, "array": []}
 
     def __init__(self, username):
         WalkerBuffer.username = username
-        WalkerBuffer.buffer = {"header": "walker", "username": username, "array": []}
+        WalkerBuffer.buffer = {"header": "walker",
+                               "username": username, "array": []}
 
     def add(action, walker):
         WalkerBuffer.buffer["array"].append({
@@ -183,5 +201,4 @@ class WalkerBuffer:
     def send():
         encodeJSON(WalkerBuffer.buffer)
         WalkerBuffer.buffer = {"header": "walker",
-                       "username": WalkerBuffer.username, "array": []}
-
+                               "username": WalkerBuffer.username, "array": []}

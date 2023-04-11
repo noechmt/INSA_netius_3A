@@ -163,7 +163,6 @@ class Map:  # Un ensemble de cellule
 
     def display_join_message(self, user, new_player):
         if self.name_user == user or self.name_user == new_player:
-            print("In the return")
             return
         WIDTH_SCREEN, HEIGHT_SCREEN = SCREEN.get_size()
         background = pygame.image.load(
@@ -218,8 +217,7 @@ class Map:  # Un ensemble de cellule
                         data_received = json.loads(data)
                         if data_received["header"] == "row_received":
                             if data_received["username"] == user_confirmation:
-                                wrapper.wrap(data)
-                                if self.row_received:
+                                if data_received["received"] == True:
                                     new_player.text = f"{user_confirmation} just landed in the map. Loading : {x}/{75}"
                                     new_player.draw(SCREEN)
                                     pygame.display.flip()
@@ -247,12 +245,43 @@ class Map:  # Un ensemble de cellule
         self.transaction["Done"] = False
 
     def buy_cells(self):
+        num_cell = len(self.transaction["cells"])
+        split = self.size // 2 + 1
+        start = 0
         if self.check_valid_buy():
+            for i in range((num_cell // split) + 1):
+                row = []
+                for index in range(split):
+                    if start + index < num_cell:
+                        row.append(encoder.owner_single(
+                            self.transaction["cells"][start + index], self.name_user))
+                start += split
+                encoder.owner(self.name_user, row)
+                # wait that we got all row_received true
+                received_by_all = False
+                num_reponse_true = 0
+                while not received_by_all:
+                    data = p2p.get_data()
+                    if len(data) != 0:
+                        try:
+                            data_received = json.loads(data)
+                            if data_received["header"] == "row_received":
+                                if data_received["received"] == True:
+                                    num_reponse_true += 1
+                                    if num_reponse_true == self.players_online - 1:
+                                        received_by_all = True
+                                else:
+                                    encoder.owner(self.name_user,
+                                                  row)
+                                    num_reponse_true = 0
+                        except:
+                            pass
+            # Update locally the cells
             for cell in self.transaction["cells"]:
                 cell.owner = self.name_user
                 self.wallet -= cell.price
                 cell.price = cell.price * 2
-                encoder.owner(self.name_user, cell, self.name_user)
+                # encoder.owner(self.name_user, cell, self.name_user)
             self.transaction["Done"] = True
 
         return self.transaction["Done"]
@@ -537,9 +566,9 @@ class Map:  # Un ensemble de cellule
                     return
                 i.crop_grow()
 
-    def update_granary(self) : 
-        for i in self.buildings :
-            if isinstance(i, Granary) :
+    def update_granary(self):
+        for i in self.buildings:
+            if isinstance(i, Granary):
                 self.wallet += 10*i.stack
                 break
 

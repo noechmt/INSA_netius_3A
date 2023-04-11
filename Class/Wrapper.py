@@ -19,9 +19,13 @@ class Wrapper:
         self.panel = panel
 
     def wrap(self, data_json):
+        if len(data_json) == 0:
+            return
         try:
             data = json.loads(data_json)
         except:
+            print("Error in Wrapper loads !")
+            encode.row_received(self.map.name_user, False)
             return
         match data["header"]:
             case 'join':
@@ -30,6 +34,7 @@ class Wrapper:
                 # Add the username to the list of players
                 self.map.players[self.map.players_online -
                                  1] = data["username"]
+                time.sleep(2)
                 encode.joinResponse(self.map.name_user,
                                     self.map.players_online,
                                     self.map.players)
@@ -51,7 +56,8 @@ class Wrapper:
                                   ).owner = data["username"]
             case 'clear':
                 self.map.get_cell(data["x"], data["y"]).clear(data["username"])
-                self.map.get_cell(data["x"], data["y"]).owner = data["username"]
+                self.map.get_cell(data["x"], data["y"]
+                                  ).owner = data["username"]
             case 'levelup':
                 self.map.get_cell(data["x"], data["y"]).nextLevel()
                 self.map.get_cell(data["x"], data["y"]
@@ -60,7 +66,8 @@ class Wrapper:
                     data["x"], data["y"]).level == data["level"])
             case 'risk':
                 if data["type"] == "fire":
-                    building = self.map.get_cell(data["building"][0], data["building"][1])
+                    building = self.map.get_cell(
+                        data["building"][0], data["building"][1])
                     building.risk.happened = True
                     building.risk.fireCounter = data["fireCounter"]
                     if isinstance(self.building, Cell.EngineerPost):
@@ -74,7 +81,8 @@ class Wrapper:
                                 building.map.walkers.remove(
                                     building.engineer)
                 elif data["type"] == "collapse":
-                    building = self.map.get_cell(data["building"][0], data["building"][1])
+                    building = self.map.get_cell(
+                        data["building"][0], data["building"][1])
                     building.risk.happened = True
                     if isinstance(building, Cell.Prefecture):
                         if building.labor_advisor in building.map.walkers:
@@ -91,8 +99,10 @@ class Wrapper:
                     self.map.get_cell(
                         data["building"][0], data["building"][1]).burn()
             case 'extinguish':
-                walker_ghost = self.map.get_cell(data["building"][0], data["building"][1]).prefect
-                walker_ghost.cell_assignement(self.map.get_cell(data["currentCell"][0], data["currentCell"][1]))
+                walker_ghost = self.map.get_cell(
+                    data["building"][0], data["building"][1]).prefect
+                walker_ghost.cell_assignement(self.map.get_cell(
+                    data["currentCell"][0], data["currentCell"][1]))
                 walker_ghost.isWorking = True
                 # walker_ghost.extinguishCounter = data["extinguishCounter"]
                 # walker_ghost.waterCounter = data["waterCounter"]
@@ -100,37 +110,46 @@ class Wrapper:
 
             case 'walker':
                 for walker in data["array"]:
-                    building = self.map.get_cell(walker["building"][0], walker["building"][1])
+                    building = self.map.get_cell(
+                        walker["building"][0], walker["building"][1])
                     if walker["action"] == "move":
                         match walker["type"]:
                             case "Migrant":
                                 if building.migrant == None:
-                                    walker_ghost = Walker.Migrant(building, data["username"])
+                                    walker_ghost = Walker.Migrant(
+                                        building, data["username"])
                                     building.migrant = walker_ghost
                                     self.map.walkers.append(walker_ghost)
-                                building.migrant.cell_assignement(self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1]))
+                                building.migrant.cell_assignement(self.map.get_cell(
+                                    walker["currentCell"][0], walker["currentCell"][1]))
                             case "Labor Advisor":
                                 if building.labor_advisor == None:
-                                    walker_ghost = Walker.LaborAdvisor(building, data["username"])
+                                    walker_ghost = Walker.LaborAdvisor(
+                                        building, data["username"])
                                     building.labor_advisor = walker_ghost
                                     self.map.walkers.append(walker_ghost)
                                 building.labor_advisor.inBuilding = False
-                                building.labor_advisor.cell_assignement(self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1]))
+                                building.labor_advisor.cell_assignement(self.map.get_cell(
+                                    walker["currentCell"][0], walker["currentCell"][1]))
                             case "Prefect":
                                 if building.prefect == None:
-                                    walker_ghost = Walker.Prefect(building, data["username"])
+                                    walker_ghost = Walker.Prefect(
+                                        building, data["username"])
                                     building.prefect = walker_ghost
                                     self.map.walkers.append(walker_ghost)
                                 building.prefect.inBuilding = False
-                                building.prefect.cell_assignement(self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1]))
+                                building.prefect.cell_assignement(self.map.get_cell(
+                                    walker["currentCell"][0], walker["currentCell"][1]))
                             case "Engineer":
                                 if building.engineer == None:
-                                    walker_ghost = Walker.Engineer(building, data["username"])
+                                    walker_ghost = Walker.Engineer(
+                                        building, data["username"])
                                     building.engineer = walker_ghost
                                     self.map.walkers.append(walker_ghost)
                                 building.prefect.inBuilding = False
-                                building.engineer.cell_assignement(self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1]))
-                    
+                                building.engineer.cell_assignement(self.map.get_cell(
+                                    walker["currentCell"][0], walker["currentCell"][1]))
+
                     elif walker["action"] == "enter":
                         match walker["type"]:
                             case 'Migrant':
@@ -171,7 +190,6 @@ class Wrapper:
 
             case 'send_bet':
                 self.panel.duel.bet = data['value']
-                
 
             case 'cell_init':
                 for cell in data["row"]:
@@ -197,12 +215,15 @@ class Wrapper:
             case 'row_received_2':
                 self.map.row_received_2 = data["received"]
             case 'owner':
-                self.map.get_cell(data["x"], data["y"]).owner = data["owner"]
-                self.map.get_cell(data["x"], data["y"]).price = self.map.get_cell(
-                    data["x"], data["y"]).price * 2
-                if (self.map.get_cell(data["x"], data["y"]).owner != data["owner"]):
+                for cell in data["row"]:
                     self.map.get_cell(
-                        data["x"], data["y"]).owner = data["owner"]
+                        cell["x"], cell["y"]).owner = cell["owner"]
+                    self.map.get_cell(cell["x"], cell["y"]).price = self.map.get_cell(
+                        cell["x"], cell["y"]).price * 2
+                    if (self.map.get_cell(cell["x"], cell["y"]).owner != cell["owner"]):
+                        self.map.get_cell(
+                            cell["x"], cell["y"]).owner = cell["owner"]
+                encode.row_received(self.map.name_user, True)
             case 'governor':
                 if self.map.governors[data["num_player"] - 1].owner == None:
                     encode.governor(
@@ -215,16 +236,15 @@ class Wrapper:
                                    1].currentCell = self.map.get_cell(data["x"], data["y"])
                 self.map.governors[data["num_player"] - 1].display()
 
-
-            case 'pillage' : 
-                if self.map.name_user == data['username'] : 
+            case 'pillage':
+                if self.map.name_user == data['username']:
                     Cell.Granary.pillaged = True
                     Cell.Granary.pillager = data['player']
 
-            case 'gain_stack' :
-                if self.map.name_user == data['username'] :Cell.Granary.stack += 1
-        
-                
+            case 'gain_stack':
+                if self.map.name_user == data['username']:
+                    Cell.Granary.stack += 1
+
             case 'quit':
-                self.map.players_online -= 1 
+                self.map.players_online -= 1
                 print("Player on line = ", self.map.players_online)
