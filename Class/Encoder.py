@@ -140,7 +140,6 @@ def send_bet(value) :
         "value" : value})
 
 
-<<<<<<< HEAD
 def pillage(username, player) :
     encodeJSON({"header" : "pillage",
         "username" : username,
@@ -150,10 +149,8 @@ def gain_stack(username) :
     encodeJSON({"header" : "gain_stack",
         "username" : username})
 
-=======
 def quit(Username) : 
     encodeJSON({"header":"quit","username":Username})
->>>>>>> Clean
 
 
 class WalkerBuffer:
