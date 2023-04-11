@@ -209,28 +209,29 @@ class Map:  # Un ensemble de cellule
                     row.append(self.array[x][y].encode(self.array[x][y].level))
                 else:
                     row.append(self.array[x][y].encode())
+            time.sleep(0.1)
             encoder.cell_init_row(self.name_user, row, self.players_online)
-            while not response:
-                data = p2p.get_data()
-                if len(data) != 0:
-                    try:
-                        data_received = json.loads(data)
-                        if data_received["header"] == "row_received":
-                            if data_received["username"] == user_confirmation:
-                                if data_received["received"] == True:
-                                    new_player.text = f"{user_confirmation} just landed in the map. Loading : {x}/{75}"
-                                    new_player.draw(SCREEN)
-                                    pygame.display.flip()
-                                    response = True
-                                else:
-                                    encoder.cell_init_row(
-                                        self.name_user, row, self.players_online)
-                        elif data_received["header"] == 'governor' and data_received["username"] == user_confirmation:
-                            response = True
-                            self.init_ownership(self.players_online)
-                            return
-                    except:
-                        pass
+            # while not response:
+            #     data = p2p.get_data()
+            #     if len(data) != 0:
+            #         try:
+            #             data_received = json.loads(data)
+            #             if data_received["header"] == "row_received":
+            #                 if data_received["username"] == user_confirmation:
+            #                     if data_received["received"] == True:
+            #                         new_player.text = f"{user_confirmation} just landed in the map. Loading : {x}/{75}"
+            #                         new_player.draw(SCREEN)
+            #                         pygame.display.flip()
+            #                         response = True
+            #                     else:
+            #                         encoder.cell_init_row(
+            #                             self.name_user, row, self.players_online)
+            #             elif data_received["header"] == 'governor' and data_received["username"] == user_confirmation:
+            #                 response = True
+            #                 self.init_ownership(self.players_online)
+            #                 return
+            #         except:
+            #             pass
         self.init_ownership(self.players_online)
 
     def add_transaction(self, cell):
@@ -257,25 +258,26 @@ class Map:  # Un ensemble de cellule
                             self.transaction["cells"][start + index], self.name_user))
                 start += split
                 encoder.owner(self.name_user, row)
+                time.sleep(0.1)
                 # wait that we got all row_received true
-                received_by_all = False
-                num_reponse_true = 0
-                while not received_by_all:
-                    data = p2p.get_data()
-                    if len(data) != 0:
-                        try:
-                            data_received = json.loads(data)
-                            if data_received["header"] == "row_received":
-                                if data_received["received"] == True:
-                                    num_reponse_true += 1
-                                    if num_reponse_true == 1:
-                                        received_by_all = True
-                                else:
-                                    encoder.owner(self.name_user,
-                                                  row)
-                                    num_reponse_true = 0
-                        except:
-                            pass
+                # received_by_all = False
+                # num_reponse_true = 0
+                # while not received_by_all:
+                #     data = p2p.get_data()
+                #     if len(data) != 0:
+                #         try:
+                #             data_received = json.loads(data)
+                #             if data_received["header"] == "row_received":
+                #                 if data_received["received"] == True:
+                #                     num_reponse_true += 1
+                #                     if num_reponse_true == self.players_online - 1:
+                #                         received_by_all = True
+                #                 else:
+                #                     encoder.owner(self.name_user,
+                #                                   row)
+                #                     num_reponse_true = 0
+                #         except:
+                #             pass
             # Update locally the cells
             for cell in self.transaction["cells"]:
                 cell.owner = self.name_user
@@ -296,38 +298,6 @@ class Map:  # Un ensemble de cellule
                         if i.owner == self.name_user:
                             return True
         return False
-
-    def clear(self, cells):
-        num_cell = len(cells)
-        split = self.size // 2 + 1
-        start = 0
-        for i in range((num_cell // split) + 1):
-            row = []
-            for index in range(split):
-                if start + index < num_cell:
-                    row.append(encoder.clear_single(cells[start + index]))
-            start += split
-            encoder.clear(self.name_user, row)
-            # wait that we got all row_received true
-            received_by_all = False
-            num_reponse_true = 0
-            while not received_by_all:
-                data = p2p.get_data()
-                if len(data) != 0:
-                    try:
-                        data_received = json.loads(data)
-                        if data_received["header"] == "row_received":
-                            if data_received["received"] == True:
-                                num_reponse_true += 1
-                                if num_reponse_true == 1:
-                                    received_by_all = True
-                            else:
-                                encoder.clear(self.name_user, row)
-                                num_reponse_true = 0
-                    except:
-                        pass
-        for cell in cells:
-            self.get_cell(cell[0], cell[1]).clear(self.name_user)
 
     # Permet d'initialiser le chemin de terre sur la map.
 

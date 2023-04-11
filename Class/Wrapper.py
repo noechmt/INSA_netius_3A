@@ -60,7 +60,6 @@ class Wrapper:
                         data["username"])
                     self.map.get_cell(cell["x"], cell["y"]
                                       ).owner = data["username"]
-                encode.row_received(self.map.name_user, True)
             case 'levelup':
                 self.map.get_cell(data["x"], data["y"]).nextLevel()
                 self.map.get_cell(data["x"], data["y"]
@@ -165,7 +164,8 @@ class Wrapper:
                                 building.engineer.enter_building()
 
             case 'chat':
-                if self.map.players_online > 1 : self.panel.chat.history_append(data['message'])
+                if self.map.players_online > 1:
+                    self.panel.chat.history_append(data['message'])
 
             case 'pchat':
                 if self.map.players_online > 1 and self.map.name_user == data['username']:
@@ -227,7 +227,6 @@ class Wrapper:
                     if (self.map.get_cell(cell["x"], cell["y"]).owner != cell["owner"]):
                         self.map.get_cell(
                             cell["x"], cell["y"]).owner = cell["owner"]
-                encode.row_received(self.map.name_user, True)
             case 'governor':
                 if self.map.governors[data["num_player"] - 1].owner == None:
                     encode.governor(
@@ -250,7 +249,7 @@ class Wrapper:
                     Cell.Granary.stack += 1
 
             case 'crop_state':
-                if self.map.players_online > 1 :
+                if self.map.players_online > 1:
                     for i in self.map.buildings:
                         if isinstance(i, Cell.Crop) and i.x == data['x'] and i.y == data['y']:
                             self.map.get_cell(
