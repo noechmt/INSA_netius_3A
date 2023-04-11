@@ -286,11 +286,11 @@ def game_screen(first_online=False):
                             speed = speeds[speed_index]
                             panel.set_played_button()
 
-                    if (panel.get_pause_button().is_hovered(pos)):
-                        if paused == 0:
-                            paused = 1
-                            speed = speeds[0]
-                            panel.set_paused_button()
+                    # if (panel.get_pause_button().is_hovered(pos)):
+                    #     if paused == 0:
+                    #         paused = 1
+                    #         speed = speeds[0]
+                    #         panel.set_paused_button()
 
                         else:
                             paused = 0
