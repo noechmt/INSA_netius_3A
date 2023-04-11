@@ -9,6 +9,7 @@
 #include <sys/select.h>
 #include <errno.h>
 #include <string.h>
+#include <sys/types.h>
 
 struct player {
     char* ip_adress;

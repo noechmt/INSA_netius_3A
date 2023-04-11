@@ -105,8 +105,8 @@ void receiving(int fd)
                 if (i == fd)
                 {
                     int client_socket;
-                    if ((client_socket = accept(fd, (struct sockaddr *)&address,
-                                                (socklen_t *)&addrlen)) < 0)
+                    if ((client_socket = accept4(fd, (struct sockaddr *)&address,
+                                                (socklen_t *)&addrlen, SOCK_CLOEXEC)) < 0)
                     {
                         perror("accept");
                         exit(EXIT_FAILURE);
