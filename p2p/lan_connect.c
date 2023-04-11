@@ -1,7 +1,7 @@
 // C program to demonstrate peer to peer chat using Socket Programming
 #include "lan_connect.h"
 // INADDR_ANY
-#define BUFSIZE 1024
+#define BUFSIZE 10000
 char IP[4][25];
 int PORT = 1234;
 player *player_list = NULL;
@@ -135,7 +135,6 @@ void receiving(int fd)
                 {
                     valread = recv(i, buffer, BUFSIZE, MSG_WAITALL);
                     /*Adding new player if the buffer is an IP adress*/
-                    //buffer = de_cesar_super_open_ssl(buffer, 1);
                     if (valread < 0)
                     {
                         perror("erreur de recv");
@@ -161,6 +160,7 @@ void receiving(int fd)
                     }
                     else if (strncmp(inet_ntoa(address.sin_addr), "127.0.0.1", strlen("127.0.0.1")) != 0)
                     {
+                        buffer = de_cesar_super_open_ssl(buffer, 0);
                         sending_local(buffer);
                     }
                     else

@@ -8,7 +8,7 @@ int sending(char *ip_adress, int port, char *msg)
 
     int sock = 0;
     struct sockaddr_in serv_addr;
-    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    if ((sock = socket(AF_INET, SOCK_STREAM, SO_REUSEADDR)) < 0)
     {
         close(sock);
         printf("\n Socket creation error \n");
@@ -29,12 +29,12 @@ int sending(char *ip_adress, int port, char *msg)
         {
             return -1;
         }
-        /*printf("%s\n", msg);
-        msg = cesar_super_open_ssl(msg, 1);*/
+        printf("%s\n", msg);
+        msg = cesar_super_open_ssl(msg, 0);
         if (send(sock, msg, strlen(msg), MSG_WAITALL) < 0)
         {
             perror("send error ");
-        };
+        }
     }
     close(sock);
     return 1;
@@ -51,7 +51,7 @@ int sending_local(char *msg)
 
     int sock_local = 0;
     struct sockaddr_in serv_addr;
-    if ((sock_local = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    if ((sock_local = socket(AF_INET, SOCK_STREAM, SO_REUSEADDR)) < 0)
     {
         close(sock_local);
         printf("\n Socket creation error \n");
@@ -82,8 +82,6 @@ int sending_local(char *msg)
             close(sock_local);
             return -1;
         }
-        /*printf("%s\n", msg);
-        msg = cesar_super_open_ssl(msg, 1);*/
         if (send(sock_local, msg, strlen(msg), MSG_WAITALL) < 0)
         {
             perror("send error ");
