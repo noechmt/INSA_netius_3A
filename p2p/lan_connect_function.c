@@ -62,6 +62,7 @@ int sending_local(char *msg)
         printf("\n Socket creation error \n");
         return -1;
     }
+    printf("socket fd local : %i\n", sock_local);
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); // INADDR_ANY always gives an IP of 0.0.0.0
     serv_addr.sin_port = htons(1235);

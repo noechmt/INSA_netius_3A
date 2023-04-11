@@ -140,6 +140,7 @@ void receiving(int fd)
                         }
                         sending(player_list->ip_adress, 1234, "maj");
                     }
+                    close(client_socket);
                 }
                 else
                 {
