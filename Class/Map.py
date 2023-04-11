@@ -66,6 +66,7 @@ class Map:  # Un ensemble de cellule
                     if json.loads(data)["header"] == "responseJoin":
                         wrapper.wrap(data)
                         receive_num = True
+                        print("Received num")
         self.num_player = self.players_online
         # TO-DO put names in array and do function to fill it after init
         self.name_user = username
@@ -81,6 +82,7 @@ class Map:  # Un ensemble de cellule
         self.buildings = []
         self.path_graph = nx.DiGraph()
         self.init_paths()
+        print("Before first online")
         if not first_online:
             print("In cell_init")
             if load_map:
