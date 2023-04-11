@@ -180,7 +180,7 @@ class Wrapper:
                     self.map.wallet -= self.panel.duel.bet
 
             case 'update_round':
-                self.panel.duel.enemy_game_round += 1
+                if self.panel.duel.duel_round > self.panel.duel.enemy_game_round : self.panel.duel.enemy_game_round += 1
                 self.panel.duel.enemy_score = data['score']
 
             case 'finish_duel':

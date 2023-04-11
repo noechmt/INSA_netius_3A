@@ -509,14 +509,15 @@ def game_screen(first_online=False):
                         panel.duel.duel_accepted = 1
                         panel.duel.update_name(panel.duel.enemy_name)
                         panel.chat.input.message_to_send = ''
+                        if panel.duel.bet > 0:
+                            map.wallet -= panel.duel.bet
 
                     if (command != [] and command[0] == '/decline') and panel.duel.duel_request > 0:
                         # send refusal for duel
                         duel_answer(2, panel.duel.enemy_name)
                         panel.duel.init_duel()
                         panel.chat.input.message_to_send = ''
-                        if panel.duel.bet > 0:
-                            map.wallet -= panel.duel.bet
+                        
 
                 panel.chat.handle_history_scroll(event)
                 # print(panel.chat.history_index)
