@@ -165,7 +165,7 @@ class Wrapper:
                                 building.engineer.enter_building()
 
             case 'chat':
-                if self.map.players_online > 1 and self.panel.chat.history_append(data['message'])
+                if self.map.players_online > 1 : self.panel.chat.history_append(data['message'])
 
             case 'pchat':
                 if self.map.players_online > 1 and self.map.name_user == data['username']:
