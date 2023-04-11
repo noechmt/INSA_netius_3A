@@ -221,6 +221,7 @@ class Wrapper:
                     if (self.map.get_cell(cell["x"], cell["y"]).owner != cell["owner"]):
                         self.map.get_cell(
                             cell["x"], cell["y"]).owner = cell["owner"]
+                encode.row_received(self.map.name_user, True)
             case 'governor':
                 if self.map.governors[data["num_player"] - 1].owner == None:
                     encode.governor(
