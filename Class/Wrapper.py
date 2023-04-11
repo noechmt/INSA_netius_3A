@@ -78,25 +78,25 @@ class Wrapper:
                         building = self.map.get_cell(walker["building"][0], walker["building"][1])
                         match walker["type"]:
                             case "Migrant":
-                                if building.migrant != None:
+                                if building.migrant == None:
                                     walker_ghost = Walker.Migrant(building, data["username"])
                                     building.migrant = walker_ghost
                                     self.map.walkers.append(walker_ghost)
                                 building.migrant.cell_assignement(self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1]))
                             case "Labor Advisor":
-                                if building.labor_advisor != None:
+                                if building.labor_advisor == None:
                                     walker_ghost = Walker.LaborAdvisor(building, data["username"])
                                     building.labor_advisor = walker_ghost
                                     self.map.walkers.append(walker_ghost)
                                 building.labor_advisor.cell_assignement(self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1]))
                             case "Prefect":
-                                if building.prefect != None:
+                                if building.prefect == None:
                                     walker_ghost = Walker.Prefect(building, data["username"])
                                     building.prefect = walker_ghost
                                     self.map.walkers.append(walker_ghost)
                                 building.prefect.cell_assignement(self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1]))
                             case "Engineer":
-                                if building.engineer != None:
+                                if building.engineer == None:
                                     walker_ghost = Walker.Engineer(building, data["username"])
                                     building.engineer = walker_ghost
                                     self.map.walkers.append(walker_ghost)
