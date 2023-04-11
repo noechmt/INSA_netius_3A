@@ -305,7 +305,7 @@ class Map:  # Un ensemble de cellule
             row = []
             for index in range(split):
                 if start + index < num_cell:
-                    row.append(encoder.clear_init(cells[start + index]))
+                    row.append(encoder.clear_single(cells[start + index]))
             start += split
             encoder.clear(self.name_user, row)
             # wait that we got all row_received true
