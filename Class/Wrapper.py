@@ -58,6 +58,7 @@ class Wrapper:
                         data["username"])
                     self.map.get_cell(data["x"], data["y"]
                                       ).owner = data["username"]
+                encode.row_received(self.map.name_user, True)
             case 'levelup':
                 self.map.get_cell(data["x"], data["y"]).nextLevel()
                 self.map.get_cell(data["x"], data["y"]
