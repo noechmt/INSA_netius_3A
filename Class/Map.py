@@ -391,7 +391,7 @@ class Map:  # Un ensemble de cellule
             if walker.owner == self.name_user:
                 walker.move()
                 if self.players_online > 1:
-                    walkerBuffer.add("move", walker)
+                    encode.WalkerBuffer.add("move", walker)
             elif isinstance(walker, Prefect) and walker.isWorking == True:
                 walker.extinguishFire()
 

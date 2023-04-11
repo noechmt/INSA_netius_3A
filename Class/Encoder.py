@@ -108,13 +108,15 @@ def governor(username, num_player, cell):
 
 
 class WalkerBuffer:
+    
+    username = username
+    buffer = {"header": "walker", "username": username, "array": []}
 
     def __init__(self, username):
-        self.username = username
-        self.buffer = {"header": "walker", "username": username, "array": []}
+        WalkerBuffer.username = username
 
-    def add(self, action, walker):
-        self.buffer["array"].append({
+    def add(action, walker):
+        WalkerBuffer.buffer["array"].append({
             "action": action,
             "building": (walker.building.x, walker.building.y),
             "currentCell": (walker.currentCell.x, walker.currentCell.y) if walker.currentCell != None else None,
@@ -123,5 +125,5 @@ class WalkerBuffer:
 
     def send(self):
         encodeJSON(self.buffer)
-        self.buffer = {"header": "walker",
+        WalkerBuffer.buffer = {"header": "walker",
                        "username": self.username, "array": []}
