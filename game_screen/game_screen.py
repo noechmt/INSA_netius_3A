@@ -493,7 +493,7 @@ def game_screen(first_online=False):
                             panel.chat.input.message_to_send = ''
                             panel.duel.update_name(command[1])
                             pchat(
-                                map.name_user + " veut te tabasser le fiac dans un duel de gambling !", command[1])
+                                map.name_user + " veut te défier dans un duel !", command[1])
 
                             if panel.duel.bet != 0:
                                 panel.chat.history_append(

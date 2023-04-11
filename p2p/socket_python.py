@@ -61,7 +61,6 @@ def send_data(data, addr="127.0.0.1", port=1236):
     Socket = MySocket()
     Socket.connect(addr, port)
     Socket.mysend(data.encode())
-    Socket.close()
 
 
 def recv_data(server_socket, freq=.001):

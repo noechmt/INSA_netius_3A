@@ -165,20 +165,20 @@ class Wrapper:
                                 building.engineer.enter_building()
 
             case 'chat':
-                self.panel.chat.history_append(data['message'])
+                if self.map.players_online > 1 and self.panel.chat.history_append(data['message'])
 
             case 'pchat':
-                if self.map.name_user == data['username']:
+                if self.map.players_online > 1 and self.map.name_user == data['username']:
                     self.panel.chat.history_append(data['message'])
 
             case 'duel_request':
-                if self.panel.duel.player_name == data['username'] and self.panel.duel.duel_request == 0:
+                if self.map.players_online > 1 and self.panel.duel.player_name == data['username'] and self.panel.duel.duel_request == 0:
                     self.panel.duel.enemy_name = data['my_name']
                     print("afezafzafazaf", self.panel.duel.enemy_name)
                     self.panel.duel.duel_request += 1
 
             case 'duel_answer':
-                if data['username'] == self.panel.duel.player_name:
+                if self.map.players_online > 1 and data['username'] == self.panel.duel.player_name:
                     self.panel.duel.duel_accepted = data['accept']
                     # self.panel.duel.enemy_name = data['username']
                     self.panel.duelON = True
@@ -241,19 +241,20 @@ class Wrapper:
                 self.map.governors[data["num_player"] - 1].display()
 
             case 'pillage':
-                if self.map.name_user == data['username']:
+                if self.map.players_online > 1 and self.map.name_user == data['username']:
                     Cell.Granary.pillaged = True
                     Cell.Granary.pillager = data['player']
 
             case 'gain_stack':
-                if self.map.name_user == data['username']:
+                if self.map.players_online > 1 and self.map.name_user == data['username']:
                     Cell.Granary.stack += 1
 
             case 'crop_state':
-                for i in self.map.buildings:
-                    if isinstance(i, Cell.Crop) and i.x == data['x'] and i.y == data['y']:
-                        self.map.get_cell(
-                            data['x'], data['y']).grow_state = data['state']
+                if self.map.players_online > 1 :
+                    for i in self.map.buildings:
+                        if isinstance(i, Cell.Crop) and i.x == data['x'] and i.y == data['y']:
+                            self.map.get_cell(
+                                data['x'], data['y']).grow_state = data['state']
 
             case 'quit':
                 self.map.players_online -= 1
