@@ -536,7 +536,7 @@ class Map:  # Un ensemble de cellule
                     return
                 i.crop_grow()
 
-                encoder.crop_state(i.x, i.y, states)
+                
 
     def update_granary(self) : 
         for i in self.buildings :

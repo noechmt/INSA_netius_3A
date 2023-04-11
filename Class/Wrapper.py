@@ -172,7 +172,7 @@ class Wrapper:
 
             case 'crop_state' : 
                 for i in self.map.buildings :
-                    if isinstance(i, Cell.Farm) and i.x == data['x'] and i.y == data['y'] :
+                    if isinstance(i, Cell.Crop) and i.x == data['x'] and i.y == data['y'] :
                         self.map.get_cell(data['x'], data['y']).grow_state = data['state'] 
                             
 
