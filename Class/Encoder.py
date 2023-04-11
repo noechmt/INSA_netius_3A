@@ -33,12 +33,13 @@ def end_join(username):
                 "username": username})
 
 
-def cell_init_single(x, y, type, type_empty, owner):
+def cell_init_single(x, y, type, type_empty, owner, level):
     return ({"x": x,
             "y": y,
              "type": type,
              "type_empty": type_empty,
-             "owner": owner})
+             "owner": owner,
+             "level": level})
 
 
 def cell_init_row(username, row, num_online):

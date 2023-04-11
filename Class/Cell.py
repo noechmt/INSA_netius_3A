@@ -68,11 +68,12 @@ class Cell:  # Une case de la map
         self.price = 5
         self.explored = False
 
-    def encode(self):
+    def encode(self, level=0):
         return encode.cell_init_single(self.x, self.y, self.type,
                                        self.type_empty if isinstance(
                                            self, Empty) else "",
-                                       self.owner)
+                                       self.owner, 
+                                       level)
 
     def update_sprite_size(self):
         pass

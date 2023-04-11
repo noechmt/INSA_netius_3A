@@ -206,7 +206,10 @@ class Map:  # Un ensemble de cellule
             response = False
             data_received = []
             for y in range(self.size):
-                row.append(self.array[x][y].encode())
+                if(isinstance(self.array[x][y], House)):
+                    row.append(self.array[x][y].encode(self.array[x][y].level))
+                else:
+                    row.append(self.array[x][y].encode())
             encoder.cell_init_row(self.name_user, row, self.players_online)
             while not response:
                 data = p2p.get_data()
