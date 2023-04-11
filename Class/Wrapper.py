@@ -138,6 +138,8 @@ class Wrapper:
                             cell["x"], cell["y"]).init_random_sprites()
                     self.map.get_cell(
                         cell["x"], cell["y"]).owner = cell["owner"]
+                    if isinstance(self.map.get_cell(cell["x"], cell["y"]), Cell.House):
+                        self.map.get_cell(cell["x"], cell["y"]).level = cell["level"]
             case 'row_received':
                 self.map.row_received = data["received"]
             case 'row_received_2':
