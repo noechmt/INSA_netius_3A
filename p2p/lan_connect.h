@@ -25,6 +25,7 @@ void local_connect(int local_fd);
 void receiving(int fd);
 void *receive_thread(void *fd);
 int sending_local(char *msg);
+void receiving_other_player(int fd);
 void initialize_player(player* play);
 void so_linger(int server_fd, int local_fd);
 void server_connect(int server_fd);
