@@ -64,8 +64,6 @@ class Wrapper:
                 self.map.get_cell(data["x"], data["y"]).nextLevel()
                 self.map.get_cell(data["x"], data["y"]
                                   ).owner = data["username"]
-                assert (self.map.get_cell(
-                    data["x"], data["y"]).level == data["level"])
             case 'risk':
                 if data["type"] == "fire":
                     building = self.map.get_cell(
