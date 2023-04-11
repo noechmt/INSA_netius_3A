@@ -75,7 +75,7 @@ def recv_data(server_socket, freq=.001):
         readable, writable, exceptional = select.select(inputs, [], [])
 
         # Traiter les connexions prêtes à être lues
-
+        print(input)
         for s in readable:
 
             if s is server_socket.getSock():
@@ -84,10 +84,11 @@ def recv_data(server_socket, freq=.001):
                 client_socket = server_socket.accept()
                 Server.data = client_socket.recv(10000)
                 Server.data = Server.data.decode()
-
+                client_socket.close()
 
                 # Ajouter la connexion cliente à la liste de surveillance
-                inputs.append(client_socket)
+                #inputs.append(client_socket)
+
 
             else:
                 print("Else")
