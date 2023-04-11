@@ -5,7 +5,7 @@ void so_linger(int server_fd, int local_fd){
 
     struct linger so_linger;
     so_linger.l_onoff = 1;
-    so_linger.l_linger = 0.001;
+    so_linger.l_linger = 1;
     if (setsockopt(server_fd, SOL_SOCKET, SO_LINGER, &so_linger, sizeof(so_linger)) == -1)
     {
         perror("erreur solinger");

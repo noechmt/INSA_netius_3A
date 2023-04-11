@@ -75,7 +75,7 @@ def recv_data(server_socket, freq=.001):
         readable, writable, exceptional = select.select(inputs, [], [])
 
         # Traiter les connexions prêtes à être lues
-
+        print(input)
         for s in readable:
 
             if s is server_socket.getSock():

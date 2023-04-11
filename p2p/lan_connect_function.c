@@ -55,6 +55,7 @@ int sending_local(char *msg)
 {
 
     int sock_local = 0;
+    int opt=1;
     struct sockaddr_in serv_addr;
     if ((sock_local = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
@@ -70,7 +71,7 @@ int sending_local(char *msg)
     struct linger so_linger;
     so_linger.l_onoff = 1;
     so_linger.l_linger = 1;
-    if (setsockopt(sock_local, SOL_SOCKET, SO_LINGER, &so_linger, sizeof(so_linger)) == -1)
+    if (setsockopt(sock_local, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
     {
         close(sock_local);
     }
