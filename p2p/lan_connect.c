@@ -183,6 +183,7 @@ void receiving(int fd)
                             send_players = send_players->next_player;
                         }
                     }
+                    close(i);
                     bzero(buffer, BUFSIZE);
                     FD_CLR(i, &current_sockets);
                 }
