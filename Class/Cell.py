@@ -757,19 +757,16 @@ class Empty(Cell):
             super().display()
 
     def clear(self, username):
-        if self.owner == username:
-            if self.map.players_online > 1 and self.owner == self.map.name_user:
-                encode.clear(self.owner, self)
-            if self.type_empty == "tree":
-                self.type_empty = "dirt"
-                self.type_sprite = "dirt"
-                self.path_sprite = "game_screen/game_screen_sprites/" + \
-                    self.type_sprite + "_" + str(self.aleatoire) + ".png"
-                self.sprite = pygame.image.load(
-                    self.path_sprite).convert_alpha()
-                self.map.wallet -= 2
-            self.update_sprite_size()
-            self.display()
+        if self.type_empty == "tree":
+            self.type_empty = "dirt"
+            self.type_sprite = "dirt"
+            self.path_sprite = "game_screen/game_screen_sprites/" + \
+                self.type_sprite + "_" + str(self.aleatoire) + ".png"
+            self.sprite = pygame.image.load(
+                self.path_sprite).convert_alpha()
+            self.map.wallet -= 2
+        self.update_sprite_size()
+        self.display()
 
     def canBuild(self):
         return self.type_empty == "dirt"
