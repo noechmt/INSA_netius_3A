@@ -308,9 +308,11 @@ def game_screen(first_online=False):
                         text_last_save = fps_font.render(
                             current_time, 1, (255, 255, 255))
                     if panel.get_exit_button().is_hovered(pos):
+                        quit(map.name_user)
                         spy.Spython.endThread()
                         spy.Spython.endLanProcess()
                         spy.Server.socket.close()
+                        print("Je quite : ", map.name_user)
                         
                         run = False
 

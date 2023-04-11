@@ -160,6 +160,7 @@ class Wrapper:
                 self.map.governors[data["num_player"] -
                                    1].currentCell = self.map.get_cell(data["x"], data["y"])
                 self.map.governors[data["num_player"] - 1].display()
+<<<<<<< HEAD
 
 
             case 'pillage' : 
@@ -170,3 +171,9 @@ class Wrapper:
             case 'gain_stack' :
                 if self.map.name_user == data['username'] :Cell.Granary.stack += 1
         
+=======
+                
+            case 'quit':
+                self.map.players_online -= 1 
+                print("Player on line = ", self.map.players_online)
+>>>>>>> Clean
