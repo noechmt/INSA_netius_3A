@@ -205,7 +205,7 @@ class Map:  # Un ensemble de cellule
             response = False
             data_received = []
             for y in range(self.size):
-                if(isinstance(self.array[x][y], House)):
+                if (isinstance(self.array[x][y], House)):
                     row.append(self.array[x][y].encode(self.array[x][y].level))
                 else:
                     row.append(self.array[x][y].encode())
@@ -478,14 +478,13 @@ class Map:  # Un ensemble de cellule
                 walker.extinguishFire()
                 walker.display()
 
-
             # if self.get_overlay() not in ("fire", "collapse") and not isinstance(walker, Prefect) or (isinstance(walker, Prefect) and not walker.isWorking):
             #    walker.display()
             """if not isinstance(i, Migrant):
                 if i.previousCell is not None:
                     i.previousCell.display()"""
 
-        if self.players_online > 1 and len(self.walkers) and len(walkerBuffer.buffer["array"])> 0:
+        if self.players_online > 1 and len(self.walkers) and len(walkerBuffer.buffer["array"]) > 0:
             encode.WalkerBuffer.send()
 
         for i in self.buildings:
