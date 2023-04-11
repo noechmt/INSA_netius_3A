@@ -85,6 +85,7 @@ void receiving(int fd)
     FD_ZERO(&current_sockets);
     FD_SET(fd, &current_sockets);
     int k = 0;
+    int opt=1;
     while (1)
     {
         k++;
@@ -110,6 +111,11 @@ void receiving(int fd)
                         perror("accept");
                         exit(EXIT_FAILURE);
                     }
+                    if (setsockopt(client_socket, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0)
+                    {
+                        perror("sock option problem ");
+                    }
+                    printf("client socket %i\n", client_socket);
                     FD_SET(client_socket, &current_sockets);
                     /*check if IP is in the list*/
                     player *add_player_list = player_list;
@@ -140,13 +146,16 @@ void receiving(int fd)
                         }
                         sending(player_list->ip_adress, 1234, "maj");
                     }
-                    close(client_socket);
+                    /*FD_CLR(client_socket, &current_sockets);*/
+                    // close(client_socket);
                 }
                 else
                 {
+                    printf("socket fd in main : %i\n", i);
                     valread = recv(i, buffer, BUFSIZE, MSG_WAITALL);
                     /*Adding new player if the buffer is an IP adress*/
                     // buffer = de_cesar_super_open_ssl(buffer, 1);
+                    close(i);
                     if (valread < 0)
                     {
                         perror("erreur de recv");
@@ -184,7 +193,7 @@ void receiving(int fd)
                             send_players = send_players->next_player;
                         }
                     }
-                    close(i);
+
                     bzero(buffer, BUFSIZE);
                     FD_CLR(i, &current_sockets);
                 }

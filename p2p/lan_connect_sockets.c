@@ -5,7 +5,7 @@ void so_linger(int server_fd, int local_fd){
 
     struct linger so_linger;
     so_linger.l_onoff = 1;
-    so_linger.l_linger = 1;
+    so_linger.l_linger = 0.001;
     if (setsockopt(server_fd, SOL_SOCKET, SO_LINGER, &so_linger, sizeof(so_linger)) == -1)
     {
         perror("erreur solinger");
@@ -26,8 +26,6 @@ void server_connect(int server_fd)
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(1234);
 
-    
-
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
     {
         perror("bind failed");
@@ -41,6 +39,7 @@ void server_connect(int server_fd)
         exit(EXIT_FAILURE);
     }
 }
+
 void local_connect(int local_fd)
 {
 
