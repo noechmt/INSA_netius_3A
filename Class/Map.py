@@ -327,7 +327,7 @@ class Map:  # Un ensemble de cellule
                     except:
                         pass
         for cell in cells:
-            cell.clear(self.name_user)
+            self.get_cell(cell[0], cell[1]).clear(self.name_user)
 
     # Permet d'initialiser le chemin de terre sur la map.
 
