@@ -8,7 +8,7 @@ int sending(char *ip_adress, int port, char *msg)
 
     int sock = 0;
     struct sockaddr_in serv_addr;
-    if ((sock = socket(AF_INET, SOCK_STREAM, SO_REUSEADDR)) < 0)
+    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         close(sock);
         printf("\n Socket creation error \n");
@@ -52,7 +52,7 @@ int sending_local(char *msg)
 
     int sock_local = 0;
     struct sockaddr_in serv_addr;
-    if ((sock_local = socket(AF_INET, SOCK_STREAM, SO_REUSEADDR)) < 0)
+    if ((sock_local = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         close(sock_local);
         printf("\n Socket creation error \n");

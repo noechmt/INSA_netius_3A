@@ -6,12 +6,12 @@ void so_linger(int server_fd, int local_fd){
     struct linger so_linger;
     so_linger.l_onoff = 1;
     so_linger.l_linger = 1;
-    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &so_linger, sizeof(so_linger)) == -1)
+    if (setsockopt(server_fd, SOL_SOCKET, SO_LINGER, &so_linger, sizeof(so_linger)) == -1)
     {
         perror("erreur solinger");
         close(server_fd);
     }
-    if (setsockopt(local_fd, SOL_SOCKET, SO_REUSEADDR, &so_linger, sizeof(so_linger)) == -1)
+    if (setsockopt(local_fd, SOL_SOCKET, SO_LINGER, &so_linger, sizeof(so_linger)) == -1)
     {
         perror("erreur solinger");
         close(local_fd);
