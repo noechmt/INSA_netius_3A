@@ -3,7 +3,7 @@
 // Sending messages to port
 int sending(char *ip_adress, int port, char *msg)
 {
-
+    int opt = 1;
     // Fetching port number
 
     int sock = 0;
@@ -14,9 +14,14 @@ int sending(char *ip_adress, int port, char *msg)
         printf("\n Socket creation error \n");
         return -1;
     }
+    printf("socket fd : %i\n", sock);
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = inet_addr(ip_adress); // INADDR_ANY always gives an IP of 0.0.0.0
     serv_addr.sin_port = htons(port);
+    if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0)
+    {
+        perror("sock option problem ");
+    }
     // printf("Waiting for connection\n");
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
@@ -53,6 +58,7 @@ int sending_local(char *msg)
 {
 
     int sock_local = 0;
+    int opt=1;
     struct sockaddr_in serv_addr;
     if ((sock_local = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
@@ -60,6 +66,7 @@ int sending_local(char *msg)
         printf("\n Socket creation error \n");
         return -1;
     }
+    printf("socket fd local : %i\n", sock_local);
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); // INADDR_ANY always gives an IP of 0.0.0.0
     serv_addr.sin_port = htons(1235);
@@ -67,7 +74,7 @@ int sending_local(char *msg)
     struct linger so_linger;
     so_linger.l_onoff = 1;
     so_linger.l_linger = 1;
-    if (setsockopt(sock_local, SOL_SOCKET, SO_LINGER, &so_linger, sizeof(so_linger)) == -1)
+    if (setsockopt(sock_local, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
     {
         close(sock_local);
     }

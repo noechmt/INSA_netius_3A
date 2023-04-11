@@ -109,6 +109,7 @@ int main(int argc, char **argv)
     de_cesar_super_open_ssl(msg, 5);
     printf("%s\n", msg);*/
     // initialisation du premier joueur
+    int opt = 1;
     player *first_player = calloc(sizeof(player), 1);
     initialize_player(first_player);
     first_player->next_player = player_list;
@@ -125,6 +126,11 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
     local_connect(local_fd);
+
+    if (setsockopt(local_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0)
+    {
+        perror("sock option problem ");
+    }
     /*-----------------------------------------------------*/
 
     /*preparation de la connexion avec les autres*/
@@ -135,6 +141,10 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
     server_connect(server_fd);
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0)
+    {
+        perror("sock option problem ");
+    }
     /*-----------------------------------------------------*/
     so_linger(server_fd, local_fd);
     if (argc > 1)
@@ -147,8 +157,8 @@ int main(int argc, char **argv)
     }
     pthread_t tid;
     printf("Listening for other players... \n");
-    pthread_create(&tid, NULL, &receive_thread, &server_fd); // Creating thread to keep receiving message in real time
-    receive_thread(&local_fd);
+    pthread_create(&tid, NULL, &receive_thread, &local_fd); // Creating thread to keep receiving message in real time
+    receive_thread(&server_fd);
     close(server_fd);
     close(local_fd);
 }
@@ -156,6 +166,7 @@ int main(int argc, char **argv)
 // Receiving messages on our port
 void receiving(int fd)
 {
+    int client_socket=6;
     struct sockaddr_in address;
     int valread;
     char *buffer = calloc(BUFSIZE, 1);
@@ -166,6 +177,7 @@ void receiving(int fd)
     FD_ZERO(&current_sockets);
     FD_SET(fd, &current_sockets);
     int k = 0;
+    int opt=1;
     while (1)
     {
         k++;
@@ -184,13 +196,17 @@ void receiving(int fd)
 
                 if (i == fd)
                 {
-                    int client_socket;
                     if ((client_socket = accept(fd, (struct sockaddr *)&address,
                                                 (socklen_t *)&addrlen)) < 0)
                     {
                         perror("accept");
                         exit(EXIT_FAILURE);
                     }
+                    if (setsockopt(client_socket, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0)
+                    {
+                        perror("sock option problem ");
+                    }
+                    printf("client socket %i\n", client_socket);
                     FD_SET(client_socket, &current_sockets);
                     /*check if IP is in the list*/
                     player *add_player_list = player_list;
@@ -221,12 +237,16 @@ void receiving(int fd)
                         }
                         sending(player_list->ip_adress, 1234, "maj");
                     }
+                    //FD_CLR(client_socket, &current_sockets);
+                    // close(client_socket);
                 }
                 else
                 {
+                    printf("socket fd in main : %i\n", i);
                     valread = recv(i, buffer, BUFSIZE, MSG_WAITALL);
                     /*Adding new player if the buffer is an IP adress*/
-                    //buffer = de_cesar_super_open_ssl(buffer, 1);
+                    // buffer = de_cesar_super_open_ssl(buffer, 1);
+                    close(i);
                     if (valread < 0)
                     {
                         perror("erreur de recv");
@@ -285,9 +305,10 @@ void receiving(int fd)
                                 
                         }
                     }
-                    
 
                     bzero(buffer, BUFSIZE);
+                    close(client_socket);
+                    FD_CLR(client_socket, &current_sockets);
                     FD_CLR(i, &current_sockets);
                 }
             }
