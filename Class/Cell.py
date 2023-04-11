@@ -1255,6 +1255,7 @@ class Farm(Building):
         if all(i.grow_state >= 49 for i in self.crops):
             for i in self.crops:
                 i.grow_state = 0
+                encode.crop_state(i.x, i.y, i.grow_state)
             # if all(not isinstance(i, Granary) for i in self.map.buildings):
             #     print("allo ? ")
             #     return
