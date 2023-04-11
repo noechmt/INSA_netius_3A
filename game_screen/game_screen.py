@@ -301,7 +301,8 @@ def game_screen(first_online=False):
                         spy.Spython.endThread()
                         spy.Spython.endLanProcess()
                         spy.Server.socket.close()
-                        
+                        print("Je quite : ", map.name_user)
+                        quit(map.name_user)
                         run = False
 
                 if zoom_update > 0 and not panel.chatON:

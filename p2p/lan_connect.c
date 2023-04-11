@@ -9,6 +9,93 @@ char name[20];
 int LOCAL_PORT = 1236;
 int PORT_PYTHON = 1235;
 
+void flushPlayerList(){
+
+    player *current_player = player_list;   
+    while (current_player != NULL) {
+        struct player *next_player = current_player->next_player;
+        free(current_player->ip_adress);
+        free(current_player);
+        current_player = next_player;
+    }
+}
+
+int IQuit(const char* ip_address){
+    printf("MyIp :-%s\n",ip_address);
+    struct ifaddrs *ifaddr, *ifa;
+    char host[NI_MAXHOST];
+    int family, s, status;
+
+    // Récupération de la liste des interfaces réseau de la machine
+    if (getifaddrs(&ifaddr) == -1) {
+        perror("getifaddrs");
+        exit(EXIT_FAILURE);
+    }
+
+    // Parcours de la liste des interfaces réseau et comparaison des adresses IP
+    for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+        if (ifa->ifa_addr == NULL) {
+            continue;
+        }
+
+        // Obtention du type d'adresse IP (IPv4 ou IPv6)
+        family = ifa->ifa_addr->sa_family;
+
+        // Ignorer les interfaces qui ne sont pas de type IPv4 ou IPv6
+        if (family != AF_INET && family != AF_INET6) {
+            continue;
+        }
+
+        // Conversion de l'adresse IP en chaîne de caractères
+        s = getnameinfo(ifa->ifa_addr, (family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6), host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+        if (s != 0) {
+            printf("getnameinfo() failed: %s\n", gai_strerror(s));
+            exit(EXIT_FAILURE);
+        }
+
+        // Comparaison de l'adresse IP avec l'adresse IP fournie en argument
+        if (strcmp(ip_address, host) == 0) {
+            // L'adresse IP fournie correspond à l'adresse IP de la machine locale
+            freeifaddrs(ifaddr);
+            printf("It's my Ip \n");
+            return 1;
+        }
+    }
+
+    // L'adresse IP fournie ne correspond pas à l'adresse IP de la machine locale
+    freeifaddrs(ifaddr);
+    printf("Not my Ip \n");
+    return 0;
+}
+
+void print_ip_addresses() {
+    printf("Show PlayerList:\n");
+    struct player *current = player_list;
+
+    while (current != NULL) {
+        printf("%s\n", current->ip_adress);
+        current = current->next_player;
+    }
+}
+
+
+void removePlayer(char * playerIp){
+    player * tmp = player_list ;
+    player * prev = player_list ;
+    while (tmp != NULL ){
+
+        if (strlen(tmp->ip_adress) == strlen(playerIp)){
+            if( strncmp(tmp->ip_adress,playerIp,strlen(tmp->ip_adress)) == 0 ){
+                prev->next_player = tmp->next_player ;
+                free(tmp);
+                return ;
+            }
+        }
+        prev = tmp ;
+        tmp = tmp->next_player ;
+    }
+}
+
 int main(int argc, char **argv)
 {
     // initialisation du premier joueur
@@ -155,18 +242,40 @@ void receiving(int fd)
                     }
                     else if (strncmp(inet_ntoa(address.sin_addr), "127.0.0.1", strlen("127.0.0.1")) != 0)
                     {
+
+                        if ( strncmp(buffer,"{\"header\": \"quit\"",strlen("{\"header\": \"quit\"")) == 0 ){
+                                printf("%s Has quit the game \n",inet_ntoa(address.sin_addr));
+                                removePlayer(inet_ntoa(address.sin_addr));
+                                
+                        }
+
                         sending_local(buffer);
                     }
                     else
                     {
+
+
+                        
+
+                        print_ip_addresses();
                         player *send_players = player_list;
-                        while (send_players->next_player != NULL)
+                        while (send_players->next_player != NULL && player_list != NULL )
                         {
                             printf("send to %s\n : ", send_players->ip_adress);
                             sending(send_players->ip_adress, 1234, buffer);
                             send_players = send_players->next_player;
                         }
+
+                        
+                        if ( strncmp(buffer,"{\"header\": \"quit\"",strlen("{\"header\": \"quit\"")) == 0 ){
+                                printf("Good bye\n");
+                                flushPlayerList(inet_ntoa(address.sin_addr));
+                                return ;
+                                
+                        }
                     }
+                    
+
                     bzero(buffer, 10000);
                     FD_CLR(i, &current_sockets);
                 }

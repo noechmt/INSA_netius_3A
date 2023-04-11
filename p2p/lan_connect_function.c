@@ -44,6 +44,9 @@ void initialize_player(player *play)
     bzero(play->ip_adress, 15);
 }
 
+
+
+
 int sending_local(char *msg)
 {
 

@@ -128,7 +128,8 @@ def send_bet(value) :
         "value" : value})
 
 
-
+def quit(Username) : 
+    encodeJSON({"header":"quit","username":Username})
 
 
 
