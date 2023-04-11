@@ -248,7 +248,7 @@ class Map:  # Un ensemble de cellule
         split = self.size // 2 + 1
         start = 0
         if self.check_valid_buy():
-            for i in range((num_cell // split)):
+            for i in range((num_cell // split) + 1):
                 row = []
                 for index in range(split):
                     if start + index < num_cell:

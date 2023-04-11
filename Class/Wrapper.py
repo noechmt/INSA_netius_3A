@@ -19,6 +19,8 @@ class Wrapper:
         self.panel = panel
 
     def wrap(self, data_json):
+        if len(data_json) == 0:
+            return
         try:
             data = json.loads(data_json)
         except:
