@@ -88,27 +88,28 @@ class Wrapper:
                                     walker_ghost = Walker.LaborAdvisor(building, data["username"])
                                     building.labor_advisor = walker_ghost
                                     self.map.walkers.append(walker_ghost)
-                                walker_ghost.inBuilding = False
+                                building.labor_advisor.inBuilding = False
                                 building.labor_advisor.cell_assignement(self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1]))
                             case "Prefect":
                                 if building.prefect == None:
                                     walker_ghost = Walker.Prefect(building, data["username"])
                                     building.prefect = walker_ghost
                                     self.map.walkers.append(walker_ghost)
-                                walker_ghost.inBuilding = False
+                                building.prefect.inBuilding = False
                                 building.prefect.cell_assignement(self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1]))
                             case "Engineer":
                                 if building.engineer == None:
                                     walker_ghost = Walker.Engineer(building, data["username"])
                                     building.engineer = walker_ghost
                                     self.map.walkers.append(walker_ghost)
-                                walker_ghost.inBuilding = False
+                                building.prefect.inBuilding = False
                                 building.engineer.cell_assignement(self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1]))
                     
                     elif walker["action"] == "enter":
                         match walker["type"]:
                             case 'Migrant':
                                 building.migrant.enter_building()
+                                self.map.walkers.remove(building.migrant)
                                 print("Le migrant est entré dans la maison")
                             case 'Labor Advisor':
                                 building.labor_advisor.enter_building()
