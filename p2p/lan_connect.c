@@ -220,7 +220,7 @@ void receiving(int fd)
                     {
                         perror("sock option problem ");
                     }
-                    printf("client socket %i\n", client_socket);
+                    //printf("client socket %i\n", client_socket);
                     FD_SET(client_socket, &current_sockets);
                     /*check if IP is in the list*/
                     player *add_player_list = player_list;
@@ -256,7 +256,7 @@ void receiving(int fd)
                 }
                 else
                 {
-                    printf("socket fd in main : %i\n", i);
+                    //printf("socket fd in main : %i\n", i);
                     valread = recv(i, buffer, BUFSIZE, MSG_WAITALL);
                     /*Adding new player if the buffer is an IP adress*/
                     // buffer = de_cesar_super_open_ssl(buffer, 1);
@@ -265,7 +265,7 @@ void receiving(int fd)
                     {
                         perror("erreur de recv");
                     }
-                    printf("message recu et transmis : %s\n", buffer);
+                    printf("%s\n", buffer);
 
                     if (strncmp(buffer, "192.168", strlen("192.168")) == 0)
                     {
@@ -301,7 +301,7 @@ void receiving(int fd)
                         player *send_players = player_list;
                         while (send_players->next_player != NULL && player_list != NULL)
                         {
-                            printf("send to %s\n : ", send_players->ip_adress);
+                            //printf("send to %s\n : ", send_players->ip_adress);
                             sending(send_players->ip_adress, 1234, buffer);
                             send_players = send_players->next_player;
                         }
