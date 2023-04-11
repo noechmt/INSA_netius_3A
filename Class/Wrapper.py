@@ -21,8 +21,10 @@ class Wrapper:
     def wrap(self, data_json):
         if len(data_json) == 0:
             return
+        print("WRAPPING")
         try:
             data = json.loads(data_json)
+            print(data)
         except:
             encode.row_received(self.map.name_user, False)
             return
@@ -33,6 +35,7 @@ class Wrapper:
                 # Add the username to the list of players
                 self.map.players[self.map.players_online -
                                  1] = data["username"]
+                print("Recu Join et futur responseJoin")
                 encode.joinResponse(self.map.name_user,
                                     self.map.players_online,
                                     self.map.players)

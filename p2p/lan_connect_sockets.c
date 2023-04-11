@@ -1,11 +1,11 @@
 #include "lan_connect.h"
 
-
-void so_linger(int server_fd, int local_fd){
+void so_linger(int server_fd, int local_fd)
+{
 
     struct linger so_linger;
     so_linger.l_onoff = 1;
-    so_linger.l_linger = 1;
+    so_linger.l_linger = 10;
     if (setsockopt(server_fd, SOL_SOCKET, SO_LINGER, &so_linger, sizeof(so_linger)) == -1)
     {
         perror("erreur solinger");
@@ -16,7 +16,6 @@ void so_linger(int server_fd, int local_fd){
         perror("erreur solinger");
         close(local_fd);
     }
-
 }
 
 void server_connect(int server_fd)
