@@ -1193,8 +1193,10 @@ class FarmPart(Building):
 class Farm(Building):
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width, map, owner)
-        if self.owner == self.map.name_user:
-            self.farmer = Farmer(self, owner)
+        # if self.owner == self.map.name_user:
+        #     self.farmer = Farmer(self, owner)
+        # else:
+        #     self.farmer = None
         self.risk = RiskEvent("prout", self)
         self.path_sprite = "game_screen/game_screen_sprites/farm.png"
         self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
@@ -1253,32 +1255,32 @@ class Farm(Building):
         if all(i.grow_state >= 49 for i in self.crops):
             for i in self.crops:
                 i.grow_state = 0
-            if all(not isinstance(i, Granary) for i in self.map.buildings):
-                print("allo ? ")
-                return
-
-            self.farmer.delivering = True
-            # print("aslureagzea")
-            ingraph = self.farmer.leave_building()
-            # if not ingraph :
-            #     print("salut")
+            # if all(not isinstance(i, Granary) for i in self.map.buildings):
+            #     print("allo ? ")
             #     return
+
+            # self.farmer.delivering = True
+            # # print("aslureagzea")
+            # ingraph = self.farmer.leave_building()
+            # # if not ingraph :
+            # #     print("salut")
+            # #     return
             
-            for i in self.map.buildings:
-                if isinstance(i, Granary):
-                    try :
-                        print("allo")
-                        tmpPath = nx.dijkstra_path(
-                            self.map.path_graph, self.farmer.currentCell, i)
-                    except :
-                        print("et là?")
-                        tmpPath = [] 
-                    # print(tmpPath)
-                    if len(self.farmer.path) == 0 or len(self.farmer.path) > len(tmpPath):
-                        self.farmer.path = tmpPath
+            # for i in self.map.buildings:
+            #     if isinstance(i, Granary):
+            #         try :
+            #             print("allo")
+            #             tmpPath = nx.dijkstra_path(
+            #                 self.map.path_graph, self.farmer.currentCell, i)
+            #         except :
+            #             print("et là?")
+            #             tmpPath = [] 
+            #         # print(tmpPath)
+            #         if len(self.farmer.path) == 0 or len(self.farmer.path) > len(tmpPath):
+            #             self.farmer.path = tmpPath
                         
             
-            if len(self.farmer.path) != 0 : pass
+            # if len(self.farmer.path) != 0 : pass
             Granary.stack += 1
 
 

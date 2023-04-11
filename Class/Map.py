@@ -561,8 +561,8 @@ class Map:  # Un ensemble de cellule
     def update_farm(self):
         for i in self.buildings:
             if isinstance(i, Farm):
-                if i.farmer.isWandering:
-                    return
+                # if i.farmer.isWandering:
+                #     return
                 i.crop_grow()
 
     def update_granary(self):
