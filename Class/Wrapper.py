@@ -65,37 +65,42 @@ class Wrapper:
                     self.map.get_cell(
                         data["building"][0], data["building"][1]).burn()
             case 'extinguish':
-                walker_ghost = Walker.Prefect(self.map.get_cell(walker["building"][0], walker["building"][1]), data["username"])
-                walker_ghost.currentCell = self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1])
+                walker_ghost = self.map.get_cell(walker["building"][0], walker["building"][1]).prefect
+                walker_ghost.cell_assignement(self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1]))
                 walker_ghost.isWorking = True
-                walker_ghost.extinguishCounter = walker["extinguishCounter"]
-                walker_ghost.waterCounter = walker["waterCounter"]
+                # walker_ghost.extinguishCounter = walker["extinguishCounter"]
+                # walker_ghost.waterCounter = walker["waterCounter"]
                 walker_ghost.extinguishFire()
 
             case 'walker':
                 for walker in data["array"]:
                     if walker["action"] == "move":
+                        building = self.map.get_cell(walker["building"][0], walker["building"][1])
                         match walker["type"]:
                             case "Migrant":
-                                walker_ghost = Walker.Migrant(self.map.get_cell(
-                                    walker["building"][0], walker["building"][1]), data["username"])
+                                if building.migrant != None:
+                                    walker_ghost = Walker.Migrant(building, data["username"])
+                                    building.migrant = walker_ghost
+                                    self.map.walkers.append(walker_ghost)
+                                building.migrant.cell_assignement(self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1]))
                             case "Labor Advisor":
-                                walker_ghost = Walker.LaborAdvisor(self.map.get_cell(
-                                    walker["building"][0], walker["building"][1]), data["username"])
+                                if building.labor_advisor != None:
+                                    walker_ghost = Walker.LaborAdvisor(building, data["username"])
+                                    building.labor_advisor = walker_ghost
+                                    self.map.walkers.append(walker_ghost)
+                                building.labor_advisor.cell_assignement(self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1]))
                             case "Prefect":
-                                walker_ghost = Walker.Prefect(self.map.get_cell(
-                                    walker["building"][0], walker["building"][1]), data["username"])
+                                if building.prefect != None:
+                                    walker_ghost = Walker.Prefect(building, data["username"])
+                                    building.prefect = walker_ghost
+                                    self.map.walkers.append(walker_ghost)
+                                building.prefect.cell_assignement(self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1]))
                             case "Engineer":
-                                walker_ghost = Walker.Engineer(self.map.get_cell(
-                                    walker["building"][0], walker["building"][1]), data["username"])
-
-                        walker_ghost.inBuilding = False
-                        walker_ghost.currentCell = self.map.get_cell(
-                            walker["currentCell"][0], walker["currentCell"][1])
-                        walker_ghost.previousCell = self.map.get_cell(
-                            walker["previousCell"][0], walker["previousCell"][1])
-                        self.map.walkers.append(walker_ghost)
-                        walker_ghost.display()
+                                if building.engineer != None:
+                                    walker_ghost = Walker.Engineer(building, data["username"])
+                                    building.engineer = walker_ghost
+                                    self.map.walkers.append(walker_ghost)
+                                building.engineer.cell_assignement(self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1]))
 
             case 'chat':
                 self.panel.chat.history_append(data['message'])

@@ -817,6 +817,8 @@ class House(Building):  # la maison fils de building (?)
         self.risk = RiskEvent("fire", self)
         if owner == map.name_user:
             self.migrant = Migrant(self, owner)
+        else:
+            self.migrant = None
         # Temporary
         self.path_sprite = "game_screen/game_screen_sprites/house_" + \
             str(self.level) + ".png"
@@ -932,12 +934,16 @@ class Well(Building):
 class Prefecture(Building):
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width, map, owner)
-        self.labor_advisor = LaborAdvisor(self, self.owner)
+        
         self.employees = 0
         self.requiredEmployees = 5
         self.risk = RiskEvent("collapse", self)
         if self.owner == self.map.name_user:
+            self.labor_advisor = LaborAdvisor(self, self.owner)
             self.prefect = Prefect(self, owner)
+        else:
+            self.labor_advisor = None
+            self.prefect = None
         self.path_sprite = "game_screen/game_screen_sprites/prefecture.png"
         self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
         self.sprite_display = ""
@@ -987,12 +993,15 @@ class Prefecture(Building):
 class EngineerPost(Building):
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width, map, owner)
-        self.labor_advisor = LaborAdvisor(self, self.owner)
         self.employees = 0
         self.requiredEmployees = 5
         self.risk = RiskEvent("fire", self)
         if self.owner == self.map.name_user:
+            self.labor_advisor = LaborAdvisor(self, self.owner)
             self.engineer = Engineer(self, owner)
+        else:
+            self.labor_advisor = None
+            self.engineer = None
         self.path_sprite = "game_screen/game_screen_sprites/engineerpost.png"
         self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
         self.sprite_display = ""

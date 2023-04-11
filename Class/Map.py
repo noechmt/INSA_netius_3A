@@ -392,8 +392,9 @@ class Map:  # Un ensemble de cellule
                 walker.move()
                 if self.players_online > 1:
                     walkerBuffer.add("move", walker)
-            else:
-                self.walkers.remove(walker)
+            elif isinstance(walker, Prefect) and walker.isWorking == True:
+                walker.extinguishFire()
+
 
             # if self.get_overlay() not in ("fire", "collapse") and not isinstance(walker, Prefect) or (isinstance(walker, Prefect) and not walker.isWorking):
             #    walker.display()
