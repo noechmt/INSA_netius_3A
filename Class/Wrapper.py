@@ -239,9 +239,16 @@ class Wrapper:
                     Cell.Granary.pillaged = True
                     Cell.Granary.pillager = data['player']
 
-            case 'gain_stack':
-                if self.map.name_user == data['username']:
-                    Cell.Granary.stack += 1
+            case 'gain_stack' :
+                if self.map.name_user == data['username'] :Cell.Granary.stack += 1
+
+            case 'crop_state' : 
+                for i in self.map.buildings :
+                    if isinstance(i, Cell.Crop) and i.x == data['x'] and i.y == data['y'] :
+                        self.map.get_cell(data['x'], data['y']).grow_state = data['state'] 
+                            
+
+
 
             case 'quit':
                 self.map.players_online -= 1

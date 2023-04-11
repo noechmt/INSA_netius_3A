@@ -168,10 +168,12 @@ def pillage(username, player):
 
 def quit(Username):
     encodeJSON({"header": "quit", "username": Username})
-
-
-def quit(Username):
-    encodeJSON({"header": "quit", "username": Username})
+    
+def crop_state(x, y, state) : 
+    encodeJSON({"header" : "cropt_state",
+        "x" : x, 
+        "y" : y,
+        "state" : state })
 
 
 def gain_stack(username):
