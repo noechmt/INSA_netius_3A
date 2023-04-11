@@ -30,7 +30,7 @@ int sending(char *ip_adress, int port, char *msg)
             return -1;
         }
         printf("%s\n", msg);
-        cesar_super_open_ssl(msg, 1);
+        msg = cesar_super_open_ssl(msg, 1);
         if (send(sock, msg, strlen(msg), MSG_WAITALL) < 0)
         {
             perror("send error ");
@@ -83,7 +83,7 @@ int sending_local(char *msg)
             return -1;
         }
         printf("%s\n", msg);
-        cesar_super_open_ssl(msg, 1);
+        msg = cesar_super_open_ssl(msg, 1);
         if (send(sock_local, msg, strlen(msg), MSG_WAITALL) < 0)
         {
             perror("send error ");
