@@ -106,12 +106,12 @@ class Walker():
     def enter_building(self):
         # assert self.building in self.currentCell.check_cell_around(
         #     type(self.building))
-        if self.building.map.players_online > 0 and self.building.owner == self.building.map.name_user:
-            encode.WalkerBuffer.add("enter", self)
         self.cell_assignement(self.building)
         self.inBuilding = True
         self.currentCell.display()
         self.previousCell.display()
+        if self.building.map.players_online > 0 and self.building.owner == self.building.map.name_user:
+            encode.WalkerBuffer.add("enter", self)
 
         if not isinstance(self, Prefect) and not isinstance(self, Engineer) and not isinstance(self, Farmer):
             self.building.map.walkers.remove(self)
