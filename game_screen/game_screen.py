@@ -482,7 +482,6 @@ def game_screen(first_online=False):
                                 if command != [] and len(command) >=3 and int(command[2]) : 
                                     if int(command[2]) > 0 :
                                         panel.duel.bet = int(command[2])
-                                        map.wallet -= panel.duel.bet
                                         send_bet(panel.duel.bet)
 
                                 
