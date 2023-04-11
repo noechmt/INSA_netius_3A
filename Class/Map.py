@@ -425,7 +425,7 @@ class Map:  # Un ensemble de cellule
                                                    (i.currentCell.width, i.currentCell.height)), (i.currentCell.left, i.currentCell.top))
                 waitfornext = True
             elif i.spawnCount == 100:
-                i.building.clear()
+                i.building.clear(i.building.owner)
             else:
                 i.spawnCount += 1
 
@@ -444,9 +444,11 @@ class Map:  # Un ensemble de cellule
             if walker.owner == self.name_user:
                 walker.move()
                 if self.players_online > 1:
-                    walkerBuffer.add("move", walker)
-            else:
-                self.walkers.remove(walker)
+                    encode.WalkerBuffer.add("move", walker)
+            elif isinstance(walker, Prefect) and walker.isWorking == True:
+                walker.extinguishFire()
+                walker.display()
+
 
             # if self.get_overlay() not in ("fire", "collapse") and not isinstance(walker, Prefect) or (isinstance(walker, Prefect) and not walker.isWorking):
             #    walker.display()
@@ -454,8 +456,8 @@ class Map:  # Un ensemble de cellule
                 if i.previousCell is not None:
                     i.previousCell.display()"""
 
-        if self.players_online > 1 and len(self.walkers) > 0:
-            walkerBuffer.send()
+        if self.players_online > 1 and len(self.walkers) and len(walkerBuffer.buffer["array"])> 0:
+            encode.WalkerBuffer.send()
 
         for i in self.buildings:
             if i.risk and not i.risk.happened and i.owner == self.name_user:
@@ -475,15 +477,11 @@ class Map:  # Un ensemble de cellule
         for i in self.buildings:
             if i.risk and i.risk.happened and i.risk.type == "fire":
                 i.risk.burn()
-                if self.players_online > 1 and i.owner == self.name_user:
-                    encode.risk(self.name_user, "burn", i, i.risk.fireCounter)
 
     def update_collapse(self):
         for i in self.buildings:
             if i.risk and i.risk.happened and i.risk.type == "collapse":
                 i.risk.collapse()
-                if self.map.players_online > 1 and i.owner == self.map.name_user:
-                    encode.risk(self.name_user, "collapse", i, None)
 
     def set_cell_array(self, x, y, cell):
         self.array[x][y] = cell

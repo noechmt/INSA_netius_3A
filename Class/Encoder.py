@@ -80,11 +80,21 @@ def clear(username, cell):
 
 
 def risk(username, type, building, fireCounter):
-    encodeJSON({"header": type,
+    encodeJSON({"header": "risk",
                 "username": username,
+                "type": type,
                 "building": (building.x, building.y),
                 "fireCounter": fireCounter
                 })
+    
+def extinguish(username, building, currentCell, extinguishCounter, waterCounter):
+    encodeJSON({"header": "extinguish",
+        "username": username,
+        "building": (building.x, building.y),
+        "currentCell": (currentCell.x, currentCell.y),
+        "extinguishCounter": extinguishCounter,
+        "waterCounter": waterCounter
+    })
 
 
 def chat(message):
@@ -154,20 +164,24 @@ def quit(Username) :
 
 
 class WalkerBuffer:
+    
+    username = None
+    buffer = {"header": "walker", "username": username, "array": []}
 
     def __init__(self, username):
-        self.username = username
-        self.buffer = {"header": "walker", "username": username, "array": []}
+        WalkerBuffer.username = username
+        WalkerBuffer.buffer = {"header": "walker", "username": username, "array": []}
 
-    def add(self, action, walker):
-        self.buffer["array"].append({
+    def add(action, walker):
+        WalkerBuffer.buffer["array"].append({
             "action": action,
             "building": (walker.building.x, walker.building.y),
             "currentCell": (walker.currentCell.x, walker.currentCell.y) if walker.currentCell != None else None,
             "previousCell": (walker.previousCell.x, walker.previousCell.y) if walker.previousCell != None else None,
             "type": str(walker)})
 
-    def send(self):
-        encodeJSON(self.buffer)
-        self.buffer = {"header": "walker",
-                       "username": self.username, "array": []}
+    def send():
+        encodeJSON(WalkerBuffer.buffer)
+        WalkerBuffer.buffer = {"header": "walker",
+                       "username": WalkerBuffer.username, "array": []}
+

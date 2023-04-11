@@ -333,14 +333,14 @@ class Cell:  # Une case de la map
                     draw_polygon_alpha(SCREEN, (0, 0, 255, 85),
                                        self.get_points_polygone())
 
-    def clear(self):
+    def clear(self, username):
         if isinstance(self, Path) and self.x == self.map.governor.currentCell.x and self.y == self.map.governor.currentCell.y:
             pass
         if isinstance(self, CityHall) or isinstance(self, CityHallPart) or isinstance(self, GranaryPart) or isinstance(self, FarmPart):
             pass
         elif not isinstance(self, Empty) and self.type_empty != "rock" and self.type_empty != "water":
-            if self.owner == self.map.name_user:
-                if self.map.players_online > 1:
+            if self.owner == username:
+                if self.map.players_online > 1 and self.owner == self.map.name_user:
                     encode.clear(self.owner, self)
                 for i in self.map.walkers:
                     if i.building == self:
@@ -751,9 +751,9 @@ class Empty(Cell):
             self.display_overlay()
             super().display()
 
-    def clear(self):
-        if self.owner == self.map.name_user:
-            if self.map.players_online > 1:
+    def clear(self, username):
+        if self.owner == username:
+            if self.map.players_online > 1 and self.owner == self.map.name_user:
                 encode.clear(self.owner, self)
             if self.type_empty == "tree":
                 self.type_empty = "dirt"
@@ -793,9 +793,9 @@ class Building(Cell):  # un fils de cellule (pas encore sûr de l'utilité)
         path_around = self.check_cell_around(Path)
         house_around = self.check_cell_around(House)
         self.path_sprite = ""
+        self.map.buildings.append(self)
 
         if self.owner == self.map.name_user:
-            self.map.buildings.append(self)
             for j in path_around:
                 # if isinstance
                 self.map.path_graph.add_edge(j, self)
@@ -819,6 +819,8 @@ class House(Building):  # la maison fils de building (?)
         self.risk = RiskEvent("fire", self)
         if owner == map.name_user:
             self.migrant = Migrant(self, owner)
+        else:
+            self.migrant = None
         # Temporary
         self.path_sprite = "game_screen/game_screen_sprites/house_" + \
             str(self.level) + ".png"
@@ -935,12 +937,16 @@ class Well(Building):
 class Prefecture(Building):
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width, map, owner)
-        self.labor_advisor = LaborAdvisor(self, self.owner)
+        
         self.employees = 0
         self.requiredEmployees = 5
         self.risk = RiskEvent("collapse", self)
         if self.owner == self.map.name_user:
+            self.labor_advisor = LaborAdvisor(self, self.owner)
             self.prefect = Prefect(self, owner)
+        else:
+            self.labor_advisor = None
+            self.prefect = None
         self.path_sprite = "game_screen/game_screen_sprites/prefecture.png"
         self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
         self.sprite_display = ""
@@ -990,12 +996,15 @@ class Prefecture(Building):
 class EngineerPost(Building):
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width, map, owner)
-        self.labor_advisor = LaborAdvisor(self, self.owner)
         self.employees = 0
         self.requiredEmployees = 5
         self.risk = RiskEvent("fire", self)
         if self.owner == self.map.name_user:
+            self.labor_advisor = LaborAdvisor(self, self.owner)
             self.engineer = Engineer(self, owner)
+        else:
+            self.labor_advisor = None
+            self.engineer = None
         self.path_sprite = "game_screen/game_screen_sprites/engineerpost.png"
         self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
         self.sprite_display = ""

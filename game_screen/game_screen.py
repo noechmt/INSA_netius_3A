@@ -334,7 +334,7 @@ def game_screen(first_online=False):
                     for i in selection["cells"]:
                         selected_cell = map.get_cell(i[0], i[1])
                         if map.get_shoveled():
-                            selected_cell.clear()
+                            selected_cell.clear(map.name_user)
                         elif map.get_housed() and selected_cell.isBuildable():
                             selected_cell.build("house")
                         elif map.get_road_button_activated() and selected_cell.isBuildable():

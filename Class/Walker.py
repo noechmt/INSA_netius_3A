@@ -110,7 +110,9 @@ class Walker():
         self.inBuilding = True
         self.currentCell.display()
         self.previousCell.display()
-
+        if self.building.map.players_online > 0 and self.building.owner == self.building.map.name_user:
+            encode.WalkerBuffer.add("enter", self)
+            encode.WalkerBuffer.send()
         if not isinstance(self, Prefect) and not isinstance(self, Engineer) and not isinstance(self, Farmer):
             self.building.map.walkers.remove(self)
 
@@ -177,7 +179,7 @@ class Migrant(Walker):
             self.cell_assignement(self.currentCell.map.spawn_cells[self.currentCell.map.num_player - 1])
             self.currentCell.map.migrantQueue.append(self)
             self.spawnCount = 0
-            self.previousCell = None
+        self.previousCell = None
         # building.map.walkers.append(self)
         self.walker_sprites = dict((k, pygame.image.load(
             "walker_sprites/migrant_sprites/mg_" + k + ".png").convert_alpha()) for k in ["top", "bot", "left", "right"])
@@ -264,7 +266,8 @@ class LaborAdvisor(Walker):
     def __init__(self, building, owner):
         super().__init__("labor advisor", building, True, owner)
         # self.leave_building()
-        self.building.map.laborAdvisorQueue.append(self)
+        if self.building != None and self.building.map.name_user == owner:
+            self.building.map.laborAdvisorQueue.append(self)
         self.walker_sprites = dict((k, [0, 0])
                                    for k in ["top", "bot", "left", "right"])
         for i in self.walker_sprites:
@@ -400,6 +403,8 @@ class Prefect(Walker):
                     j.risk.resetEvent()
 
     def extinguishFire(self, update=1):
+        # if self.building.players_online > 1 and self.building.owner == self.building.map.name_user:
+        #     encode.extinguish(self.building.owner, self.currentCell, self.extinguishCounter, self.waterCounter)
         if self.extinguishCounter < 36:
             self.currentCell.display()
             SCREEN.blit(pygame.transform.scale(self.prefect_working_sprites[self.orientation][self.extinguishCounter % 6], (
