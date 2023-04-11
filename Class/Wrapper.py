@@ -64,6 +64,14 @@ class Wrapper:
                         data["building"][0], data["building"][1]).risk.fireCounter = data["fireCounter"]
                     self.map.get_cell(
                         data["building"][0], data["building"][1]).burn()
+            case 'extinguish':
+                walker_ghost = Walker.Prefect(self.map.get_cell(walker["building"][0], walker["building"][1]), data["username"])
+                walker_ghost.currentCell = self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1])
+                walker_ghost.isWorking = True
+                walker_ghost.extinguishCounter = walker["extinguishCounter"]
+                walker_ghost.waterCounter = walker["waterCounter"]
+                walker_ghost.extinguishFire()
+
             case 'walker':
                 for walker in data["array"]:
                     if walker["action"] == "move":

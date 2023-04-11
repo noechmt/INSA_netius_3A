@@ -77,6 +77,15 @@ def risk(username, type, building, fireCounter):
                 "building": (building.x, building.y),
                 "fireCounter": fireCounter
                 })
+    
+def extinguish(username, building, currentCell, extinguishCounter, waterCounter):
+    encodeJSON({"header": "extinguish",
+        "username": username,
+        "building": (building.x, building.y),
+        "currentCell": (currentCell.x, currentCell.y),
+        "extinguishCounter": extinguishCounter,
+        "waterCounter": waterCounter
+    })
 
 
 def chat(message):
