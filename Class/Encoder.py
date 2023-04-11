@@ -91,12 +91,16 @@ def chat(message):
                 "message": message})
 
 
-def owner(username, cell, owner):
+def owner(username, row):
     encodeJSON({"header": "owner",
                 "username": username,
-                "x": cell.x,
-                "y": cell.y,
-                "owner": owner})
+                "row": row})
+
+
+def owner_single(cell, owner):
+    return ({"x": cell.x,
+            "y": cell.y,
+             "owner": owner})
 
 
 def governor(username, num_player, cell):
@@ -106,48 +110,53 @@ def governor(username, num_player, cell):
                 "x": cell.x,
                 "y": cell.y})
 
-   
-   
-def chat(message) :
-   encodeJSON({"header" : "chat", 
-      "message" : message})
-   
-def pchat(message, username) :
-   encodeJSON({"header" : "pchat", 
-      "message" : message,
-      "username" : username})
-   
-def duel_request(username, my_name) :
-   encodeJSON({"header" : "duel_request",
-      "username" : username,
-      "my_name" : my_name})
 
-def duel_answer(answer,username) : 
-   encodeJSON({"header" : "duel_answer", 
-      "accept" : answer,
-      "username" : username}) # 1 accept or 2 decline
-   
-def update_round(score) :
-   encodeJSON({"header" : "update_round", 
-      "score" : score})
-
-def finish_duel() :
-   encodeJSON({"header" : "finish_duel"})
-
-def send_bet(value) : 
-    encodeJSON({"header" : "send_bet",
-        "value" : value})
+def chat(message):
+    encodeJSON({"header": "chat",
+                "message": message})
 
 
-def pillage(username, player) :
-    encodeJSON({"header" : "pillage",
-        "username" : username,
-        "player" : player})
+def pchat(message, username):
+    encodeJSON({"header": "pchat",
+                "message": message,
+                "username": username})
 
-def gain_stack(username) :
-    encodeJSON({"header" : "gain_stack",
-        "username" : username})
 
+def duel_request(username, my_name):
+    encodeJSON({"header": "duel_request",
+                "username": username,
+                "my_name": my_name})
+
+
+def duel_answer(answer, username):
+    encodeJSON({"header": "duel_answer",
+                "accept": answer,
+                "username": username})  # 1 accept or 2 decline
+
+
+def update_round(score):
+    encodeJSON({"header": "update_round",
+                "score": score})
+
+
+def finish_duel():
+    encodeJSON({"header": "finish_duel"})
+
+
+def send_bet(value):
+    encodeJSON({"header": "send_bet",
+                "value": value})
+
+
+def pillage(username, player):
+    encodeJSON({"header": "pillage",
+                "username": username,
+                "player": player})
+
+
+def gain_stack(username):
+    encodeJSON({"header": "gain_stack",
+                "username": username})
 
 
 class WalkerBuffer:

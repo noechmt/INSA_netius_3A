@@ -22,6 +22,7 @@ class Wrapper:
         try:
             data = json.loads(data_json)
         except:
+            encode.row_received(self.map.name_user, False)
             return
         match data["header"]:
             case 'join':
@@ -120,7 +121,6 @@ class Wrapper:
 
             case 'send_bet':
                 self.panel.duel.bet = data['value']
-                
 
             case 'cell_init':
                 for cell in data["row"]:
@@ -143,12 +143,15 @@ class Wrapper:
             case 'row_received_2':
                 self.map.row_received_2 = data["received"]
             case 'owner':
-                self.map.get_cell(data["x"], data["y"]).owner = data["owner"]
-                self.map.get_cell(data["x"], data["y"]).price = self.map.get_cell(
-                    data["x"], data["y"]).price * 2
-                if (self.map.get_cell(data["x"], data["y"]).owner != data["owner"]):
+                for cell in data["row"]:
                     self.map.get_cell(
-                        data["x"], data["y"]).owner = data["owner"]
+                        cell["x"], cell["y"]).owner = cell["owner"]
+                    self.map.get_cell(cell["x"], cell["y"]).price = self.map.get_cell(
+                        cell["x"], cell["y"]).price * 2
+                    if (self.map.get_cell(cell["x"], cell["y"]).owner != cell["owner"]):
+                        self.map.get_cell(
+                            cell["x"], cell["y"]).owner = cell["owner"]
+                encode.row_received(self.map.name_user, True)
             case 'governor':
                 if self.map.governors[data["num_player"] - 1].owner == None:
                     encode.governor(
@@ -161,12 +164,11 @@ class Wrapper:
                                    1].currentCell = self.map.get_cell(data["x"], data["y"])
                 self.map.governors[data["num_player"] - 1].display()
 
-
-            case 'pillage' : 
-                if self.map.name_user == data['username'] : 
+            case 'pillage':
+                if self.map.name_user == data['username']:
                     Cell.Granary.pillaged = True
                     Cell.Granary.pillager = data['player']
 
-            case 'gain_stack' :
-                if self.map.name_user == data['username'] :Cell.Granary.stack += 1
-        
+            case 'gain_stack':
+                if self.map.name_user == data['username']:
+                    Cell.Granary.stack += 1

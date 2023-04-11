@@ -244,12 +244,43 @@ class Map:  # Un ensemble de cellule
         self.transaction["Done"] = False
 
     def buy_cells(self):
+        num_cell = len(self.transaction["cells"])
+        split = self.size // 2 + 1
+        start = 0
         if self.check_valid_buy():
+            for i in range((num_cell // split)):
+                row = []
+                for index in range(split):
+                    if start + index < num_cell:
+                        row.append(encoder.owner_single(
+                            self.transaction["cells"][start + index], self.name_user))
+                start += split
+                encoder.owner(self.name_user, row, self.name_user)
+                # wait that we got all row_received true
+                received_by_all = False
+                while not received_by_all:
+                    num_reponse_true = 0
+                    data = p2p.get_data()
+                    if len(data) != 0:
+                        try:
+                            data_received = json.loads(data)
+                            if data_received["header"] == "row_received":
+                                if data_received["received"] == self.name_user:
+                                    num_reponse_true += 1
+                                    if num_reponse_true == len(self.players_online) - 1:
+                                        received_by_all = True
+                                else:
+                                    encoder.owner(self.name_user,
+                                                  row, self.name_user)
+                                    num_reponse_true = 0
+                        except:
+                            pass
+            # Update locally the cells
             for cell in self.transaction["cells"]:
                 cell.owner = self.name_user
                 self.wallet -= cell.price
                 cell.price = cell.price * 2
-                encoder.owner(self.name_user, cell, self.name_user)
+                # encoder.owner(self.name_user, cell, self.name_user)
             self.transaction["Done"] = True
 
         return self.transaction["Done"]
@@ -536,9 +567,9 @@ class Map:  # Un ensemble de cellule
                     return
                 i.crop_grow()
 
-    def update_granary(self) : 
-        for i in self.buildings :
-            if isinstance(i, Granary) :
+    def update_granary(self):
+        for i in self.buildings:
+            if isinstance(i, Granary):
                 self.wallet += 10*i.stack
                 break
 
