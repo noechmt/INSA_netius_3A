@@ -211,27 +211,27 @@ class Map:  # Un ensemble de cellule
                     row.append(self.array[x][y].encode())
             time.sleep(0.1)
             encoder.cell_init_row(self.name_user, row, self.players_online)
-            # while not response:
-            #     data = p2p.get_data()
-            #     if len(data) != 0:
-            #         try:
-            #             data_received = json.loads(data)
-            #             if data_received["header"] == "row_received":
-            #                 if data_received["username"] == user_confirmation:
-            #                     if data_received["received"] == True:
-            #                         new_player.text = f"{user_confirmation} just landed in the map. Loading : {x}/{75}"
-            #                         new_player.draw(SCREEN)
-            #                         pygame.display.flip()
-            #                         response = True
-            #                     else:
-            #                         encoder.cell_init_row(
-            #                             self.name_user, row, self.players_online)
-            #             elif data_received["header"] == 'governor' and data_received["username"] == user_confirmation:
-            #                 response = True
-            #                 self.init_ownership(self.players_online)
-            #                 return
-            #         except:
-            #             pass
+            while not response:
+                data = p2p.get_data()
+                if len(data) != 0:
+                    try:
+                        data_received = json.loads(data)
+                        if data_received["header"] == "row_received":
+                            if data_received["username"] == user_confirmation:
+                                if data_received["received"] == True:
+                                    new_player.text = f"{user_confirmation} just landed in the map. Loading : {x}/{75}"
+                                    new_player.draw(SCREEN)
+                                    pygame.display.flip()
+                                    response = True
+                                else:
+                                    encoder.cell_init_row(
+                                        self.name_user, row, self.players_online)
+                        elif data_received["header"] == 'governor' and data_received["username"] == user_confirmation:
+                            response = True
+                            self.init_ownership(self.players_online)
+                            return
+                    except:
+                        pass
         self.init_ownership(self.players_online)
 
     def add_transaction(self, cell):
