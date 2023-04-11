@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-Player1
-=======
 Governor
->>>>>>> crop_network

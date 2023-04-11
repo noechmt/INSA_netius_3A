@@ -334,8 +334,7 @@ def game_screen(first_online=False):
             if event.type == pygame.MOUSEBUTTONUP:
                 if selection["is_active"]:
                     if map.get_shoveled():
-                        map.clear(selected_cell)
-                        selected_cell.clear(map.name_user)
+                        map.clear(selection["cells"])
                     for i in selection["cells"]:
                         selected_cell = map.get_cell(i[0], i[1])
                         if map.get_housed() and selected_cell.isBuildable():
