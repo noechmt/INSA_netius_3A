@@ -402,7 +402,7 @@ class Map:  # Un ensemble de cellule
                 if i.previousCell is not None:
                     i.previousCell.display()"""
 
-        if self.players_online > 1 and len(self.walkers) > 0:
+        if self.players_online > 1 and len(self.walkers) and len(walkerBuffer.buffer["array"])> 0:
             walkerBuffer.send()
 
         for i in self.buildings:
