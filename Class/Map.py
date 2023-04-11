@@ -227,6 +227,8 @@ class Map:  # Un ensemble de cellule
                                         self.name_user, row, self.players_online)
                         elif data_received["header"] == 'end_join':
                             response = True
+                            self.init_ownership(self.players_online)
+                            return
                     except:
                         pass
         self.init_ownership(self.players_online)
