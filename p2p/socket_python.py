@@ -145,3 +145,7 @@ class Spython :
         
     
     def endLanProcess() : Spython.LanProcess.kill()
+    
+    def quit() : pass
+    
+    
