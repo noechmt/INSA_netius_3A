@@ -109,11 +109,12 @@ def governor(username, num_player, cell):
 
 class WalkerBuffer:
     
-    username = username
+    username = None
     buffer = {"header": "walker", "username": username, "array": []}
 
     def __init__(self, username):
         WalkerBuffer.username = username
+        WalkerBuffer.buffer = {"header": "walker", "username": username, "array": []}
 
     def add(action, walker):
         WalkerBuffer.buffer["array"].append({

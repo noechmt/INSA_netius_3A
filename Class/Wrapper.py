@@ -74,8 +74,8 @@ class Wrapper:
 
             case 'walker':
                 for walker in data["array"]:
+                    building = self.map.get_cell(walker["building"][0], walker["building"][1])
                     if walker["action"] == "move":
-                        building = self.map.get_cell(walker["building"][0], walker["building"][1])
                         match walker["type"]:
                             case "Migrant":
                                 if building.migrant == None:
@@ -88,33 +88,34 @@ class Wrapper:
                                     walker_ghost = Walker.LaborAdvisor(building, data["username"])
                                     building.labor_advisor = walker_ghost
                                     self.map.walkers.append(walker_ghost)
-                                    walker_ghost.inBuilding = False
+                                walker_ghost.inBuilding = False
                                 building.labor_advisor.cell_assignement(self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1]))
                             case "Prefect":
                                 if building.prefect == None:
                                     walker_ghost = Walker.Prefect(building, data["username"])
                                     building.prefect = walker_ghost
                                     self.map.walkers.append(walker_ghost)
-                                    walker_ghost.inBuilding = False
+                                walker_ghost.inBuilding = False
                                 building.prefect.cell_assignement(self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1]))
                             case "Engineer":
                                 if building.engineer == None:
                                     walker_ghost = Walker.Engineer(building, data["username"])
                                     building.engineer = walker_ghost
                                     self.map.walkers.append(walker_ghost)
-                                    walker_ghost.inBuilding = False
+                                walker_ghost.inBuilding = False
                                 building.engineer.cell_assignement(self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1]))
                     
                     elif walker["action"] == "enter":
                         match walker["type"]:
                             case 'Migrant':
-                                self.map.get_cell(walker["building"][0], walker["building"][1]).migrant.enter_building()
+                                building.migrant.enter_building()
+                                print("Le migrant est entré dans la maison")
                             case 'Labor Advisor':
-                                self.map.get_cell(walker["building"][0], walker["building"][1]).labor_advisor.enter_building()
+                                building.labor_advisor.enter_building()
                             case 'Prefect':
-                                self.map.get_cell(walker["building"][0], walker["building"][1]).prefect.enter_building()
+                                building.prefect.enter_building()
                             case 'Engineer':
-                                self.map.get_cell(walker["building"][0], walker["building"][1]).engineer.enter_building()
+                                building.engineer.enter_building()
 
             case 'chat':
                 self.panel.chat.history_append(data['message'])
