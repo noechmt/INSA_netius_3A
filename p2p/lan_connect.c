@@ -135,7 +135,7 @@ void receiving(int fd)
                 {
                     valread = recv(i, buffer, 10000, 0);
                     /*Adding new player if the buffer is an IP adress*/
-                    de_cesar_super_open_ssl(buffer, 3);
+                    //de_cesar_super_open_ssl(buffer, 3);
                     if (valread < 0)
                     {
                         perror("erreur de recv");
