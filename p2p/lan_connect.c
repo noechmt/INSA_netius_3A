@@ -1,7 +1,7 @@
 // C program to demonstrate peer to peer chat using Socket Programming
 #include "lan_connect.h"
 // INADDR_ANY
-#define BUFSIZE 1024
+#define BUFSIZE 10000
 char IP[4][25];
 int PORT = 1234;
 player *player_list = NULL;
