@@ -72,7 +72,7 @@ class Cell:  # Une case de la map
         return encode.cell_init_single(self.x, self.y, self.type,
                                        self.type_empty if isinstance(
                                            self, Empty) else "",
-                                       self.owner, 
+                                       self.owner,
                                        level)
 
     def update_sprite_size(self):
@@ -332,6 +332,11 @@ class Cell:  # Une case de la map
                 if self.water and self.map.get_welled() and self.type != "well":
                     draw_polygon_alpha(SCREEN, (0, 0, 255, 85),
                                        self.get_points_polygone())
+
+    def clear_encode(self, username):
+        if self.owner == username:
+            if self.map.players_online > 1 and self.owner == self.map.name_user:
+                return encode.clear_init(self)
 
     def clear(self, username):
         if isinstance(self, Path) and self.x == self.map.governor.currentCell.x and self.y == self.map.governor.currentCell.y:
@@ -937,7 +942,7 @@ class Well(Building):
 class Prefecture(Building):
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width, map, owner)
-        
+
         self.employees = 0
         self.requiredEmployees = 5
         self.risk = RiskEvent("collapse", self)
@@ -1243,9 +1248,12 @@ class Farm(Building):
         for i in self.crops:
             if i.grow_state < 49:
                 i.grow_state += 1
-                if i.grow_state == 0 : encode.crop_state(i.x, i.y, i.grow_state)
-                if i.grow_state == 25 : encode.crop_state(i.x, i.y, i.grow_state)
-                if i.grow_state == 48 : encode.crop_state(i.x, i.y, i.grow_state)
+                if i.grow_state == 0:
+                    encode.crop_state(i.x, i.y, i.grow_state)
+                if i.grow_state == 25:
+                    encode.crop_state(i.x, i.y, i.grow_state)
+                if i.grow_state == 48:
+                    encode.crop_state(i.x, i.y, i.grow_state)
                 i.display()
                 break
         # print(i.x, i.y, i.grow_state)
@@ -1263,22 +1271,22 @@ class Farm(Building):
             # if not ingraph :
             #     print("salut")
             #     return
-            
+
             for i in self.map.buildings:
                 if isinstance(i, Granary):
-                    try :
+                    try:
                         print("allo")
                         tmpPath = nx.dijkstra_path(
                             self.map.path_graph, self.farmer.currentCell, i)
-                    except :
+                    except:
                         print("et là?")
-                        tmpPath = [] 
+                        tmpPath = []
                     # print(tmpPath)
                     if len(self.farmer.path) == 0 or len(self.farmer.path) > len(tmpPath):
                         self.farmer.path = tmpPath
-                        
-            
-            if len(self.farmer.path) != 0 : pass
+
+            if len(self.farmer.path) != 0:
+                pass
             Granary.stack += 1
 
 
@@ -1286,6 +1294,7 @@ class Granary(Building):
     stack = 0
     pillaged = False
     pillager = ""
+
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width, map, owner)
         self.risk = RiskEvent("prout", self)
@@ -1295,9 +1304,6 @@ class Granary(Building):
         ), pygame.image.load(self.path_sprite2).convert_alpha()]
         self.sprite_display = [None, None]
         self.update_sprite_size()
-        
-
-        
 
         self.map.array[self.x - 1][self.y] = GranaryPart(
             self.x - 1, self.y, height, width, map, owner, self)

@@ -333,11 +333,12 @@ def game_screen(first_online=False):
 
             if event.type == pygame.MOUSEBUTTONUP:
                 if selection["is_active"]:
+                    if map.get_shoveled():
+                        map.clear(selected_cell)
+                        selected_cell.clear(map.name_user)
                     for i in selection["cells"]:
                         selected_cell = map.get_cell(i[0], i[1])
-                        if map.get_shoveled():
-                            selected_cell.clear(map.name_user)
-                        elif map.get_housed() and selected_cell.isBuildable():
+                        if map.get_housed() and selected_cell.isBuildable():
                             selected_cell.build("house")
                         elif map.get_road_button_activated() and selected_cell.isBuildable():
                             selected_cell.build("path")
@@ -517,7 +518,6 @@ def game_screen(first_online=False):
                         duel_answer(2, panel.duel.enemy_name)
                         panel.duel.init_duel()
                         panel.chat.input.message_to_send = ''
-                        
 
                 panel.chat.handle_history_scroll(event)
                 # print(panel.chat.history_index)
