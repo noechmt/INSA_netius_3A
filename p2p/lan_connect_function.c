@@ -3,7 +3,7 @@
 // Sending messages to port
 int sending(char *ip_adress, int port, char *msg)
 {
-
+    int opt = 1;
     // Fetching port number
 
     int sock = 0;
@@ -14,9 +14,14 @@ int sending(char *ip_adress, int port, char *msg)
         printf("\n Socket creation error \n");
         return -1;
     }
+    printf("socket fd : %i\n", sock);
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = inet_addr(ip_adress); // INADDR_ANY always gives an IP of 0.0.0.0
     serv_addr.sin_port = htons(port);
+    if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0)
+    {
+        perror("sock option problem ");
+    }
     // printf("Waiting for connection\n");
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
