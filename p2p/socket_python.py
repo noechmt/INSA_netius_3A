@@ -1,9 +1,9 @@
 import socket
 from time import sleep
 import select
-
+import threading as thread
 MSGLEN = 10
-
+import subprocess
 
 class MySocket:
 
@@ -65,9 +65,10 @@ def send_data(data, addr="127.0.0.1", port=1236):
 
 def recv_data(server_socket, freq=.0001):
 
-    while True:
+    while not Spython.stopEvent.is_set():
         sleep(freq)
-        print(server_socket)
+
+
         inputs = [server_socket.getSock()]
 
         # Utiliser select pour surveiller les canaux prêts à être lus
@@ -83,7 +84,7 @@ def recv_data(server_socket, freq=.0001):
                 client_socket = server_socket.accept()
                 Server.data = client_socket.recv(10000)
                 Server.data = Server.data.decode()
-                print(f"Data received: ", Server.data)
+
 
                 # Ajouter la connexion cliente à la liste de surveillance
                 inputs.append(client_socket)
@@ -96,7 +97,7 @@ def recv_data(server_socket, freq=.0001):
                 print(data)
                 if data:
                     # Traiter les données reçues
-                    print(f"Data received: {data}")
+                    pass
                 else:
                     # Fermer la connexion et la retirer de la liste de surveillance
                     s.close()
@@ -114,3 +115,33 @@ def get_data():
 
 def close_socket(socket):
     socket.close()
+
+
+
+stopEvent = thread.Event()
+
+class Spython :
+    
+    thread_recv = None
+    LanProcess = None
+    stopEvent = None
+    
+    
+    def __init__(self) :
+        Spython.stopEvent = thread.Event()
+    
+    def startThread() : 
+        Spython.thread_recv = thread.Thread(target=recv_data, args=(Server.socket,))
+        Spython.thread_recv.start()
+    
+    
+    def startLanProcess(txt) : Spython.LanProcess = subprocess.Popen(['p2p/lan_connect',txt])
+      
+    def endThread() : 
+        Spython.stopEvent.set()
+        sleep(.1)
+        send_data("Bye",port=1235)
+        
+        
+    
+    def endLanProcess() : Spython.LanProcess.kill()

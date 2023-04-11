@@ -33,9 +33,14 @@ class Wrapper:
                 encode.joinResponse(self.map.name_user,
                                     self.map.players_online,
                                     self.map.players)
-                time.sleep(3)
-                self.map.encode()
+                time.sleep(1)
+                encode.join_start(self.map.name_user, data["username"])
+                self.map.encode(data["username"])
+                encode.end_join(self.map.name_user)
                 print(self.map.players)
+            case 'start_join':
+                self.map.display_join_message(
+                    data["username"], data["new_player"])
             case 'responseJoin':
                 self.map.players_online = data["players_online"]
                 self.map.players = data["players"]
@@ -93,17 +98,17 @@ class Wrapper:
                 if self.map.name_user == data['username']:
                     self.panel.chat.history_append(data['message'])
 
-            case 'duel_request' :
-               if self.panel.duel.player_name == data['username'] and self.panel.duel.duel_request == 0:
-                  self.panel.duel.enemy_name = data['my_name']
-                  print("afezafzafazaf", self.panel.duel.enemy_name)
-                  self.panel.duel.duel_request += 1
+            case 'duel_request':
+                if self.panel.duel.player_name == data['username'] and self.panel.duel.duel_request == 0:
+                    self.panel.duel.enemy_name = data['my_name']
+                    print("afezafzafazaf", self.panel.duel.enemy_name)
+                    self.panel.duel.duel_request += 1
 
-            case 'duel_answer' :
-               if data['username'] == self.panel.duel.player_name : 
-                  self.panel.duel.duel_accepted = data['accept']
-                  self.panel.duel.enemy_name = data['username']
-                  self.panel.duelON = True
+            case 'duel_answer':
+                if data['username'] == self.panel.duel.player_name:
+                    self.panel.duel.duel_accepted = data['accept']
+                    self.panel.duel.enemy_name = data['username']
+                    self.panel.duelON = True
 
             case 'update_round':
                 self.panel.duel.enemy_game_round += 1

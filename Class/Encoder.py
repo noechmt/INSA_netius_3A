@@ -1,5 +1,6 @@
 import json
 import p2p.socket_python as p2p
+import time
 
 
 def encodeJSON(data):
@@ -17,19 +18,32 @@ def joinResponse(username, players_online, players):
     encodeJSON({"header": "responseJoin",
                 "username": username,
                 "players_online": players_online,
-                "players" : players
+                "players": players
                 })
 
 
+def join_start(username, new_player):
+    encodeJSON({"header": "start_join",
+                "username": username,
+                "new_player": new_player})
+
+
+def end_join(username):
+    encodeJSON({"header": "end_join",
+                "username": username})
+
+
 def cell_init_single(x, y, type, type_empty, owner):
-    return {"x": x,
+    return ({"x": x,
             "y": y,
-            "type": type,
-            "type_empty": type_empty,
-            "owner": owner}
+             "type": type,
+             "type_empty": type_empty,
+             "owner": owner})
 
 
-def cell_init_row(username, row):
+def cell_init_row(username, row, num_online):
+    if num_online > 2:
+        time.sleep(0.25)
     encodeJSON({"header": "cell_init",
                 "username": username,
                 "row": row})
@@ -37,12 +51,6 @@ def cell_init_row(username, row):
 
 def row_received(username, received):
     encodeJSON({"header": "row_received",
-                "username": username,
-                "received": received})
-
-
-def row_received_2(username, received):
-    encodeJSON({"header": "row_received_2",
                 "username": username,
                 "received": received})
 
@@ -82,12 +90,14 @@ def chat(message):
     encodeJSON({"header": "chat",
                 "message": message})
 
+
 def owner(username, cell, owner):
     encodeJSON({"header": "owner",
                 "username": username,
                 "x": cell.x,
                 "y": cell.y,
                 "owner": owner})
+
 
 def governor(username, num_player, cell):
     encodeJSON({"header": "governor",
@@ -96,6 +106,7 @@ def governor(username, num_player, cell):
                 "x": cell.x,
                 "y": cell.y})
 
+   
    
 def chat(message) :
    encodeJSON({"header" : "chat", 
@@ -139,7 +150,7 @@ def gain_stack(username) :
 
 
 
-class WalkerBuffer:  
+class WalkerBuffer:
 
     def __init__(self, username):
         self.username = username

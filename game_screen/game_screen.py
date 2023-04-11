@@ -8,7 +8,7 @@ from Class.Button import Button
 from Class.Map import *
 from Class.Panel import Panel
 from Class.Wrapper import Wrapper
-import p2p.socket_python as p2p
+import p2p.socket_python as spy
 import time
 from datetime import datetime
 from Class.Encoder import *
@@ -308,6 +308,10 @@ def game_screen(first_online=False):
                         text_last_save = fps_font.render(
                             current_time, 1, (255, 255, 255))
                     if panel.get_exit_button().is_hovered(pos):
+                        spy.Spython.endThread()
+                        spy.Spython.endLanProcess()
+                        spy.Server.socket.close()
+                        
                         run = False
 
                 if zoom_update > 0 and not panel.chatON:
