@@ -516,6 +516,7 @@ def game_screen(first_online=False):
                  # print(panel.chat.history_index)
 
         if Granary.pillaged : 
+            print("allo")
             if Granary.stack > 0  :
                 Granary.stack -= 1
                 gain_stack(Granary.pillager)
