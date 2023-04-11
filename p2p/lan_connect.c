@@ -11,6 +11,12 @@ int PORT_PYTHON = 1235;
 
 int main(int argc, char **argv)
 {
+    /*char* msg = calloc(1024, 1);
+    strncpy(msg, "coucou", strlen("coucou"));
+    cesar_super_open_ssl(msg, 5);
+    printf("%s\n", msg);
+    de_cesar_super_open_ssl(msg, 5);
+    printf("%s\n", msg);*/
     // initialisation du premier joueur
     player *first_player = calloc(sizeof(player), 1);
     initialize_player(first_player);
@@ -129,7 +135,7 @@ void receiving(int fd)
                 {
                     valread = recv(i, buffer, 10000, 0);
                     /*Adding new player if the buffer is an IP adress*/
-
+                    de_cesar_super_open_ssl(buffer, 3);
                     if (valread < 0)
                     {
                         perror("erreur de recv");
