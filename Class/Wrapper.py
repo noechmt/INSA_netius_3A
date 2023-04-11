@@ -169,4 +169,12 @@ class Wrapper:
 
             case 'gain_stack' :
                 if self.map.name_user == data['username'] :Cell.Granary.stack += 1
+
+            case 'crop_state' : 
+                for i in self.map.buildings :
+                    if isinstance(i, Cell.Farm) and i.x == data['x'] and i.y == data['y'] :
+                        self.map.get_cell(data['x'], data['y']).grow_state = data['state'] 
+                            
+
+
         

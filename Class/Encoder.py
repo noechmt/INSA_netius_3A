@@ -147,6 +147,12 @@ def pillage(username, player) :
 def gain_stack(username) :
     encodeJSON({"header" : "gain_stack",
         "username" : username})
+    
+def crop_state(x, y, state) : 
+    encodeJSON({"header" : "cropt_state",
+        "x" : x, 
+        "y" : y,
+        "state" : state })
 
 
 
