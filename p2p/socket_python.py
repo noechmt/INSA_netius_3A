@@ -1,9 +1,10 @@
+import subprocess
 import socket
 from time import sleep
 import select
 import threading as thread
 MSGLEN = 10
-import subprocess
+
 
 class MySocket:
 
@@ -68,7 +69,6 @@ def recv_data(server_socket, freq=.001):
     while not Spython.stopEvent.is_set():
         sleep(freq)
 
-
         inputs = [server_socket.getSock()]
 
         # Utiliser select pour surveiller les canaux prêts à être lus
@@ -84,11 +84,10 @@ def recv_data(server_socket, freq=.001):
                 client_socket = server_socket.accept()
                 Server.data = client_socket.recv(10000)
                 Server.data = Server.data.decode()
-                client_socket.close()
+                # client_socket.close()
 
                 # Ajouter la connexion cliente à la liste de surveillance
-                #inputs.append(client_socket)
-
+                inputs.append(client_socket)
 
             else:
                 print("Else")
@@ -118,34 +117,29 @@ def close_socket(socket):
     socket.close()
 
 
-
 stopEvent = thread.Event()
 
-class Spython :
-    
+
+class Spython:
+
     thread_recv = None
     LanProcess = None
     stopEvent = None
-    
-    
-    def __init__(self) :
+
+    def __init__(self):
         Spython.stopEvent = thread.Event()
-    
-    def startThread() : 
-        Spython.thread_recv = thread.Thread(target=recv_data, args=(Server.socket,))
+
+    def startThread():
+        Spython.thread_recv = thread.Thread(
+            target=recv_data, args=(Server.socket,))
         Spython.thread_recv.start()
-    
-    
-    def startLanProcess(txt) : Spython.LanProcess = subprocess.Popen(['p2p/lan_connect',txt])
-      
-    def endThread() : 
+
+    def startLanProcess(txt): Spython.LanProcess = subprocess.Popen(
+        ['p2p/lan_connect', txt])
+
+    def endThread():
         Spython.stopEvent.set()
         sleep(.1)
-        send_data("Bye",port=1235)
-        
-        
-    
-    def endLanProcess() : Spython.LanProcess.kill()
-    
+        send_data("Bye", port=1235)
 
-    
+    def endLanProcess(): Spython.LanProcess.kill()

@@ -33,6 +33,7 @@ class Wrapper:
                 # Add the username to the list of players
                 self.map.players[self.map.players_online -
                                  1] = data["username"]
+                print("Recu Join et futur responseJoin")
                 encode.joinResponse(self.map.name_user,
                                     self.map.players_online,
                                     self.map.players)
