@@ -255,23 +255,24 @@ class Map:  # Un ensemble de cellule
                         row.append(encoder.owner_single(
                             self.transaction["cells"][start + index], self.name_user))
                 start += split
-                encoder.owner(self.name_user, row, self.name_user)
+                encoder.owner(self.name_user, row)
                 # wait that we got all row_received true
                 received_by_all = False
+                num_reponse_true = 0
                 while not received_by_all:
-                    num_reponse_true = 0
                     data = p2p.get_data()
                     if len(data) != 0:
                         try:
                             data_received = json.loads(data)
                             if data_received["header"] == "row_received":
-                                if data_received["received"] == self.name_user:
+                                print(data_received["received"] == True)
+                                if data_received["received"] == True:
                                     num_reponse_true += 1
-                                    if num_reponse_true == len(self.players_online) - 1:
+                                    if num_reponse_true == self.players_online - 1:
                                         received_by_all = True
                                 else:
                                     encoder.owner(self.name_user,
-                                                  row, self.name_user)
+                                                  row)
                                     num_reponse_true = 0
                         except:
                             pass
