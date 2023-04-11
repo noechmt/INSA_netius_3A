@@ -68,7 +68,7 @@ class Wrapper:
                         data["building"][0], data["building"][1])
                     building.risk.happened = True
                     building.risk.fireCounter = data["fireCounter"]
-                    if isinstance(self.building, Cell.EngineerPost):
+                    if isinstance(building, Cell.EngineerPost):
                         if building.labor_advisor in building.map.walkers:
                             building.labor_advisor.currentCell.display()
                             building.map.walkers.remove(
