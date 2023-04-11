@@ -1245,7 +1245,6 @@ class Farm(Building):
         for i in self.crops:
             if i.grow_state < 49:
                 i.grow_state += 1
-                if i.grow_state == 0 : encode.crop_state(i.x, i.y, i.grow_state)
                 if i.grow_state == 25 : encode.crop_state(i.x, i.y, i.grow_state)
                 if i.grow_state == 48 : encode.crop_state(i.x, i.y, i.grow_state)
                 i.display()
