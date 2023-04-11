@@ -26,13 +26,20 @@ int sending(char *ip_adress, int port, char *msg)
         sleep(0.01);
         return 1;
     }
+    SSL_CTX *ctx = SSL_CTX_new(SSLv23_method());
+    SSL *ssl;
+    BIO *bio;
+    bio = BIO_new_socket(sock, BIO_NOCLOSE);
+    ssl = SSL_new(ctx);
+    SSL_set_bio(ssl, bio, bio);
+    SSL_accept(ssl);
     if (strlen(msg) != 0)
     {
         if (strncmp(msg, "/quit", strlen("/quit")) == 0)
         {
             return -1;
         }
-        if (send(sock, msg, strlen(msg), 0) < 0)
+        if (SSL_write(ssl, msg, strlen(msg)) < 0)
         {
             perror("send error ");
         };

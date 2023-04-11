@@ -1,5 +1,6 @@
 // C program to demonstrate peer to peer chat using Socket Programming
 #include "lan_connect.h"
+
 // INADDR_ANY
 
 char IP[4][25];
@@ -8,9 +9,20 @@ player *player_list = NULL;
 char name[20];
 int LOCAL_PORT = 1236;
 int PORT_PYTHON = 1235;
+SSL_CTX *ctx;
+
+
+
+
 
 int main(int argc, char **argv)
 {
+
+    // Initialisation du contexte SSL
+    SSL_library_init();
+    ctx = SSL_CTX_new(SSLv23_method());
+    
+
     // initialisation du premier joueur
     player *first_player = calloc(sizeof(player), 1);
     initialize_player(first_player);
@@ -94,6 +106,7 @@ void receiving(int fd)
                         perror("accept");
                         exit(EXIT_FAILURE);
                     }
+                    // Initialisation de la connexion SSL
                     FD_SET(client_socket, &current_sockets);
                     /*check if IP is in the list*/
                     player *add_player_list = player_list;
@@ -126,7 +139,14 @@ void receiving(int fd)
                 }
                 else
                 {
-                    valread = recv(i, buffer, 1024, 0);
+                    ctx = SSL_CTX_new(SSLv23_method());
+                    SSL *ssl;
+                    BIO *bio;
+                    bio = BIO_new_socket(i, BIO_NOCLOSE);
+                    ssl = SSL_new(ctx);
+                    SSL_set_bio(ssl, bio, bio);
+                    SSL_accept(ssl);
+                    valread = SSL_read(ssl, buffer, 1024);
                     /*Adding new player if the buffer is an IP adress*/
                     
                     if (valread < 0)

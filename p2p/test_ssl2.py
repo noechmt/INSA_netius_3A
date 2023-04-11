@@ -3,7 +3,7 @@ from OpenSSL import SSL
 
 # adresse IP et port de l'hôte distant
 remote_host = '127.0.0.1'
-remote_port = 1236
+remote_port = 1234
 
 def ssl_wrap_socket(sock):
     # créer un contexte SSL/TLS

@@ -9,6 +9,9 @@
 #include <sys/select.h>
 #include <errno.h>
 #include <string.h>
+#include <openssl/ssl.h>
+#include <openssl/bio.h>
+#include <openssl/err.h>
 
 struct player {
     char* ip_adress;
