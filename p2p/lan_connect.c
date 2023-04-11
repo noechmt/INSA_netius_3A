@@ -97,6 +97,7 @@ void removePlayer(char * playerIp){
         prev = tmp ;
         tmp = tmp->next_player ;
     }
+    
 }
 
 int main(int argc, char **argv)
