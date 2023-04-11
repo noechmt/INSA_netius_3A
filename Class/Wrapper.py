@@ -109,6 +109,7 @@ class Wrapper:
                     self.panel.duel.duel_accepted = data['accept']
                     # self.panel.duel.enemy_name = data['username']
                     self.panel.duelON = True
+                    self.map.wallet -= self.panel.duel.bet
 
             case 'update_round':
                 self.panel.duel.enemy_game_round += 1

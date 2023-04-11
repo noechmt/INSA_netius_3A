@@ -514,6 +514,7 @@ def game_screen(first_online=False):
                         duel_answer(2, panel.duel.enemy_name) #send refusal for duel
                         panel.duel.init_duel()
                         panel.chat.input.message_to_send = ''
+                        if panel.duel.bet > 0 : map.wallet -= panel.duel.bet
 
                         
 
@@ -537,7 +538,7 @@ def game_screen(first_online=False):
                 panel.duel.init_duel()
 
             if panel.duel.duel_accepted == 1 :
-                map.wallet -= panel.duel.bet
+                
 
                 panel.duel.handle_duel_round()
                 if panel.duel.handle_winner() :
