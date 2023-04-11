@@ -221,7 +221,7 @@ class Map:  # Un ensemble de cellule
                         if data_received["header"] == "row_received":
                             if data_received["username"] == user_confirmation:
                                 wrapper.wrap(data)
-                                if self.row_received:
+                                if data_received["received"] == True:
                                     new_player.text = f"{user_confirmation} just landed in the map. Loading : {x}/{75}"
                                     new_player.draw(SCREEN)
                                     pygame.display.flip()
