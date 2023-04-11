@@ -12,7 +12,7 @@ from time import sleep
 def join_game():
 
     pygame.init()
-    spy.Server(1235, 4)
+    server = spy.Server(1235, 4)
     spy.Spython()
     spy.Spython.startThread()
 
@@ -138,6 +138,8 @@ def join_game():
                 text_connect.handle_hover_text(pos, SCREEN)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if text_back.is_hovered(pos):
+                    spy.Spython.endThread()
+                    spy.Server.socket.close()
                     return (False, False)
                 if text_connect.is_hovered(pos):
                     if input_pseudo.get_text() != '':

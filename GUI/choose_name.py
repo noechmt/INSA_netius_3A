@@ -104,6 +104,8 @@ def choose_name():
                 text_continue.handle_hover_text(pos, SCREEN)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if text_back.is_hovered(pos):
+                    spy.Spython.endThread()
+                    spy.Server.socket.close()
                     return (False, False)
                 if text_continue.is_hovered(pos):
                     if input_name.get_text() != '':
