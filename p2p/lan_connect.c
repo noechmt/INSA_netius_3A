@@ -18,6 +18,7 @@ int main(int argc, char **argv)
     de_cesar_super_open_ssl(msg, 5);
     printf("%s\n", msg);*/
     // initialisation du premier joueur
+    int opt = 1;
     player *first_player = calloc(sizeof(player), 1);
     initialize_player(first_player);
     first_player->next_player = player_list;
@@ -34,6 +35,11 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
     local_connect(local_fd);
+
+    if (setsockopt(local_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0)
+    {
+        perror("sock option problem ");
+    }
     /*-----------------------------------------------------*/
 
     /*preparation de la connexion avec les autres*/
@@ -44,6 +50,10 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
     server_connect(server_fd);
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0)
+    {
+        perror("sock option problem ");
+    }
     /*-----------------------------------------------------*/
     so_linger(server_fd, local_fd);
     if (argc > 1)
@@ -135,7 +145,7 @@ void receiving(int fd)
                 {
                     valread = recv(i, buffer, BUFSIZE, MSG_WAITALL);
                     /*Adding new player if the buffer is an IP adress*/
-                    //buffer = de_cesar_super_open_ssl(buffer, 1);
+                    // buffer = de_cesar_super_open_ssl(buffer, 1);
                     if (valread < 0)
                     {
                         perror("erreur de recv");
