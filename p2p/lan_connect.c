@@ -66,8 +66,8 @@ int main(int argc, char **argv)
     }
     pthread_t tid;
     printf("Listening for other players... \n");
-    pthread_create(&tid, NULL, &receive_thread, &server_fd); // Creating thread to keep receiving message in real time
-    receive_thread(&local_fd);
+    pthread_create(&tid, NULL, &receive_thread, &local_fd); // Creating thread to keep receiving message in real time
+    receive_thread(&server_fd);
     close(server_fd);
     close(local_fd);
 }
@@ -75,6 +75,7 @@ int main(int argc, char **argv)
 // Receiving messages on our port
 void receiving(int fd)
 {
+    int client_socket=6;
     struct sockaddr_in address;
     int valread;
     char *buffer = calloc(BUFSIZE, 1);
@@ -104,9 +105,8 @@ void receiving(int fd)
 
                 if (i == fd)
                 {
-                    int client_socket;
-                    if ((client_socket = accept4(fd, (struct sockaddr *)&address,
-                                                (socklen_t *)&addrlen, SOCK_CLOEXEC)) < 0)
+                    if ((client_socket = accept(fd, (struct sockaddr *)&address,
+                                                (socklen_t *)&addrlen)) < 0)
                     {
                         perror("accept");
                         exit(EXIT_FAILURE);
@@ -146,7 +146,7 @@ void receiving(int fd)
                         }
                         sending(player_list->ip_adress, 1234, "maj");
                     }
-                    /*FD_CLR(client_socket, &current_sockets);*/
+                    //FD_CLR(client_socket, &current_sockets);
                     // close(client_socket);
                 }
                 else
