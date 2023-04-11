@@ -15,7 +15,7 @@ def socket_init():
 
 os.system("make clean -C p2p")
 os.system("make -C p2p")
-LanProcess = subprocess.Popen(['./p2p/lan_connect',"192.168.7.165"])
+LanProcess = subprocess.Popen(['./p2p/lan_connect',"192.168.7.31"])
 sleep(1)
 encode.quit("Governor")
 sleep(1)
