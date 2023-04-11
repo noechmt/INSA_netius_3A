@@ -1115,7 +1115,7 @@ class CityHallPart(Building):
 class CityHall(Building):
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width, map, owner)
-        self.risk = None
+        self.risk = RiskEvent("prout", self)
         self.path_sprite = "game_screen/game_screen_sprites/cityhall.png"
         self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
         self.sprite_display = ""

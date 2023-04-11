@@ -59,7 +59,7 @@ class Wrapper:
                 elif data["type"] == "collapse":
                     self.map.get_cell(
                         data["building"][0], data["building"][1]).risk.happened = True
-                else:
+                elif data["type"] == "burnt":
                     self.map.get_cell(
                         data["building"][0], data["building"][1]).risk.fireCounter = data["fireCounter"]
                     self.map.get_cell(
