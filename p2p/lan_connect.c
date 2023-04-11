@@ -133,7 +133,7 @@ void receiving(int fd)
                 }
                 else
                 {
-                    valread = recv(i, buffer, 10000, 0);
+                    valread = recv(i, buffer, 10000, MSG_WAITALL);
                     /*Adding new player if the buffer is an IP adress*/
                     //de_cesar_super_open_ssl(buffer, 3);
                     if (valread < 0)
