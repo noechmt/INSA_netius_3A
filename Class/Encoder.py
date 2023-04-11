@@ -79,8 +79,8 @@ def clear(username, row):
 
 
 def clear_single(cell):
-    return ({"x": cell.x,
-            "y": cell.y})
+    return ({"x": cell[0],
+            "y": cell[1]})
 
 
 def risk(username, type, building, fireCounter):
