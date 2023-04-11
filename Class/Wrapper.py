@@ -119,7 +119,7 @@ class Wrapper:
 
             case 'send_bet':
                 self.panel.duel.bet = data['value']
-                self.map.wallet -= self.panel.duel.bet
+                
 
             case 'cell_init':
                 for cell in data["row"]:

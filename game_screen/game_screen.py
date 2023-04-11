@@ -537,6 +537,7 @@ def game_screen(first_online=False):
                 panel.duel.init_duel()
 
             if panel.duel.duel_accepted == 1 :
+                map.wallet -= panel.duel.bet
 
                 panel.duel.handle_duel_round()
                 if panel.duel.handle_winner() :
