@@ -19,13 +19,9 @@ class Wrapper:
         self.panel = panel
 
     def wrap(self, data_json):
-        if len(data_json) == 0:
-            return
         try:
             data = json.loads(data_json)
         except:
-            print("Error in Wrapper loads !")
-            encode.row_received(self.map.name_user, False)
             return
         match data["header"]:
             case 'join':
@@ -34,7 +30,6 @@ class Wrapper:
                 # Add the username to the list of players
                 self.map.players[self.map.players_online -
                                  1] = data["username"]
-                time.sleep(2)
                 encode.joinResponse(self.map.name_user,
                                     self.map.players_online,
                                     self.map.players)
@@ -223,7 +218,6 @@ class Wrapper:
                     if (self.map.get_cell(cell["x"], cell["y"]).owner != cell["owner"]):
                         self.map.get_cell(
                             cell["x"], cell["y"]).owner = cell["owner"]
-                encode.row_received(self.map.name_user, True)
             case 'governor':
                 if self.map.governors[data["num_player"] - 1].owner == None:
                     encode.governor(
