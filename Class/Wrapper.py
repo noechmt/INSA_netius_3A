@@ -65,12 +65,12 @@ class Wrapper:
                     self.map.get_cell(
                         data["building"][0], data["building"][1]).burn()
             case 'extinguish':
-                walker_ghost = self.map.get_cell(walker["building"][0], walker["building"][1]).prefect
-                walker_ghost.cell_assignement(self.map.get_cell(walker["currentCell"][0], walker["currentCell"][1]))
+                walker_ghost = self.map.get_cell(data["building"][0], data["building"][1]).prefect
+                walker_ghost.cell_assignement(self.map.get_cell(data["currentCell"][0], data["currentCell"][1]))
                 walker_ghost.isWorking = True
-                # walker_ghost.extinguishCounter = walker["extinguishCounter"]
-                # walker_ghost.waterCounter = walker["waterCounter"]
-                walker_ghost.extinguishFire()
+                # walker_ghost.extinguishCounter = data["extinguishCounter"]
+                # walker_ghost.waterCounter = data["waterCounter"]
+                # walker_ghost.extinguishFire()
 
             case 'walker':
                 for walker in data["array"]:

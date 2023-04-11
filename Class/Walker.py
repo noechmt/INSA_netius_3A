@@ -401,8 +401,8 @@ class Prefect(Walker):
                     j.risk.resetEvent()
 
     def extinguishFire(self, update=1):
-        if self.building.players_online > 1 and self.building.owner == self.building.map.name_user:
-            encode.extinguish(self.building.owner, self.currentCell, self.extinguishCounter, self.waterCounter)
+        # if self.building.players_online > 1 and self.building.owner == self.building.map.name_user:
+        #     encode.extinguish(self.building.owner, self.currentCell, self.extinguishCounter, self.waterCounter)
         if self.extinguishCounter < 36:
             self.currentCell.display()
             SCREEN.blit(pygame.transform.scale(self.prefect_working_sprites[self.orientation][self.extinguishCounter % 6], (
