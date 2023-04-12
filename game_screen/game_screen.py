@@ -504,6 +504,7 @@ def game_screen(first_online=False):
                     if (command != [] and command[0] == '/accept') and panel.duel.duel_request > 0:
 
                         # send confirmation for duel
+                        print("aaaaalo")
                         duel_answer(1, panel.duel.enemy_name)
                         panel.duelON = True
                         panel.duel.duel_accepted = 1

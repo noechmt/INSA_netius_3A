@@ -1282,7 +1282,7 @@ class Farm(Building):
             #             self.farmer.path = tmpPath
 
             # if len(self.farmer.path) != 0 : pass
-            Granary.stack += 1
+            if self.owner == self.map.name_user : Granary.stack += 1
 
 
 class Granary(Building):
