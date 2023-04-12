@@ -146,7 +146,7 @@ class Wrapper:
                                         building, data["username"])
                                     building.engineer = walker_ghost
                                     self.map.walkers.append(walker_ghost)
-                                building.engineer.inBuilding = False
+                                building.prefect.inBuilding = False
                                 building.engineer.cell_assignement(self.map.get_cell(
                                     walker["currentCell"][0], walker["currentCell"][1]))
 
