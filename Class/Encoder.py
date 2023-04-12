@@ -5,7 +5,9 @@ import time
 
 def encodeJSON(data):
     print("Sending :" + str(len(json.dumps(data))) + " bytes")
-    p2p.send_data(json.dumps(data))
+    if data["header"] != "cell_init":
+        for i in range(3):
+            p2p.send_data(json.dumps(data))
 
 
 def join(username):

@@ -24,7 +24,6 @@ class Wrapper:
         try:
             data = json.loads(data_json)
         except:
-            encode.row_received(self.map.name_user, False)
             return
         match data["header"]:
             case 'join':
