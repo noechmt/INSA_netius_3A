@@ -97,7 +97,7 @@ class Wrapper:
                     self.map.get_cell(
                         data["building"][0], data["building"][1]).risk.fireCounter = data["fireCounter"]
                     self.map.get_cell(
-                        data["building"][0], data["building"][1]).burn()
+                        data["building"][0], data["building"][1]).risk.burn()
             case 'extinguish':
                 walker_ghost = self.map.get_cell(
                     data["building"][0], data["building"][1]).prefect

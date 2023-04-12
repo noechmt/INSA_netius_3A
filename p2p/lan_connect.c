@@ -265,7 +265,7 @@ void receiving(int fd)
                     {
                         perror("erreur de recv");
                     }
-                    printf("%s\n", buffer);
+                    printf("message recu et transmis %s\n", buffer);
 
                     if (strncmp(buffer, "192.168", strlen("192.168")) == 0)
                     {
@@ -316,8 +316,8 @@ void receiving(int fd)
                     }
 
                     bzero(buffer, BUFSIZE);
-                    close(client_socket);
-                    FD_CLR(client_socket, &current_sockets);
+                    //close(client_socket);
+                    //FD_CLR(client_socket, &current_sockets);
                     FD_CLR(i, &current_sockets);
                 }
             }
