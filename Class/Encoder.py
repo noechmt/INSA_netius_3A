@@ -5,7 +5,8 @@ import time
 
 def encodeJSON(data):
     print("Sending :" + str(len(json.dumps(data))) + " bytes")
-    if data["header"] != "cell_init" and data["header"] != "row_received":
+
+    if data["header"] != "cell_init" and data["header"] != "row_received" and data["header"] != "walker":
         for i in range(3):
             time.sleep(0.01)
             p2p.send_data(json.dumps(data))
