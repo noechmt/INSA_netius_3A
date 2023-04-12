@@ -575,7 +575,7 @@ def game_screen(first_online=False):
         #     fire_upadte_count = 0
 
         walker_update_count += 1
-        if walker_update_count >= update_speed // 2:
+        if walker_update_count >= update_speed * 1.5:
             # print(walker_update_count)
             map.update_walkers()
             speed_counter_text = fps_font.render(
@@ -591,7 +591,7 @@ def game_screen(first_online=False):
             granary_update_count = 0
 
         governor_update_count += 1
-        if governor_update_count >= update_speed // 4:
+        if governor_update_count >= update_speed // 2:
             if map.governor.move():
                 map.center_camera_governor()
             governor_update_count = 0
