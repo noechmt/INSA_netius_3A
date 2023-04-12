@@ -268,7 +268,7 @@ class Map:  # Un ensemble de cellule
                             if data_received["header"] == "row_received":
                                 if data_received["received"] == True:
                                     num_reponse_true += 1
-                                    if num_reponse_true == self.players_online - 1:
+                                    if num_reponse_true == 1:
                                         received_by_all = True
                                 else:
                                     encoder.owner(self.name_user,
@@ -319,7 +319,7 @@ class Map:  # Un ensemble de cellule
                         if data_received["header"] == "row_received":
                             if data_received["received"] == True:
                                 num_reponse_true += 1
-                                if num_reponse_true == self.players_online - 1:
+                                if num_reponse_true == 1:
                                     received_by_all = True
                             else:
                                 encoder.clear(self.name_user, row)
