@@ -256,8 +256,12 @@ void receiving(int fd)
                     {
 
                         if ( strncmp(buffer,"{\"header\": \"join\"",strlen("{\"header\": \"join\"")) != 0 && 
-                        strncmp(buffer,"{\"header\": \"cell_init\"",strlen("{\"header\": \"cell_init\"")) != 0 &&
-                        strncmp(buffer,"{\"header\": \"responseJoin\"",strlen("{\"header\": \"responseJoin\"")) != 0 ){
+                            strncmp(buffer,"{\"header\": \"cell_init\"",strlen("{\"header\": \"cell_init\"")) != 0 &&
+                            strncmp(buffer,"{\"header\": \"responseJoin\"",strlen("{\"header\": \"responseJoin\"")) != 0 &&
+                            strncmp(buffer,"{\"header\": \"row_received\"",strlen("{\"header\": \"row_received\"")) != 0 &&
+                            strncmp(buffer,"new pelo",strlen("new pelo")) != 0 
+                            
+                            ){
                             printf("Reset sender map\n");
                             memset(addrToSendMap,0,sizeof(struct sockaddr_in));
                         }
@@ -288,8 +292,7 @@ void receiving(int fd)
                                 sending(send_players->ip_adress, 1234, buffer);
                                 send_players = send_players->next_player;
                             }
-                            printf("Do I quit ?\n");
-                            print_ip_addresses();
+
                             if ( strncmp(buffer,"{\"header\": \"quit\"",strlen("{\"header\": \"quit\"")) == 0 ){
                                     printf("Good bye\n");
                                     flushPlayerList(inet_ntoa(address.sin_addr));
