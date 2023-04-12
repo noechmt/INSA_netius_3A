@@ -8,6 +8,8 @@ def encodeJSON(data):
     if data["header"] != "cell_init":
         for i in range(3):
             p2p.send_data(json.dumps(data))
+    else:
+        p2p.send_data(json.dumps(data))
 
 
 def join(username):
