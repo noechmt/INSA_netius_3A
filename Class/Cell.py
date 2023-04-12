@@ -68,11 +68,12 @@ class Cell:  # Une case de la map
         self.price = 5
         self.explored = False
 
-    def encode(self):
+    def encode(self, level=0):
         return encode.cell_init_single(self.x, self.y, self.type,
                                        self.type_empty if isinstance(
                                            self, Empty) else "",
-                                       self.owner)
+                                       self.owner,
+                                       level)
 
     def update_sprite_size(self):
         pass
@@ -332,15 +333,18 @@ class Cell:  # Une case de la map
                     draw_polygon_alpha(SCREEN, (0, 0, 255, 85),
                                        self.get_points_polygone())
 
-    def clear(self):
+    def clear_encode(self, username):
+        if self.owner == username:
+            if self.map.players_online > 1 and self.owner == self.map.name_user:
+                return encode.clear_init(self)
+
+    def clear(self, username):
         if isinstance(self, Path) and self.x == self.map.governor.currentCell.x and self.y == self.map.governor.currentCell.y:
             pass
         if isinstance(self, CityHall) or isinstance(self, CityHallPart) or isinstance(self, GranaryPart) or isinstance(self, FarmPart):
             pass
         elif not isinstance(self, Empty) and self.type_empty != "rock" and self.type_empty != "water":
-            if self.owner == self.map.name_user:
-                if self.map.players_online > 1:
-                    encode.clear(self.owner, self)
+            if self.owner == username:
                 for i in self.map.walkers:
                     if i.building == self:
                         self.map.walkers.remove(i)
@@ -750,19 +754,17 @@ class Empty(Cell):
             self.display_overlay()
             super().display()
 
-    def clear(self):
-        if self.owner == self.map.name_user:
-            if self.map.players_online > 1:
-                encode.clear(self.owner, self)
-            if self.type_empty == "tree":
-                self.type_empty = "dirt"
-                self.type_sprite = "dirt"
-                self.path_sprite = "game_screen/game_screen_sprites/" + \
-                    self.type_sprite + "_" + str(self.aleatoire) + ".png"
-                self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
-                self.map.wallet -= 2
-            self.update_sprite_size()
-            self.display()
+    def clear(self, username):
+        if self.type_empty == "tree":
+            self.type_empty = "dirt"
+            self.type_sprite = "dirt"
+            self.path_sprite = "game_screen/game_screen_sprites/" + \
+                self.type_sprite + "_" + str(self.aleatoire) + ".png"
+            self.sprite = pygame.image.load(
+                self.path_sprite).convert_alpha()
+            self.map.wallet -= 2
+        self.update_sprite_size()
+        self.display()
 
     def canBuild(self):
         return self.type_empty == "dirt"
@@ -791,9 +793,9 @@ class Building(Cell):  # un fils de cellule (pas encore sûr de l'utilité)
         path_around = self.check_cell_around(Path)
         house_around = self.check_cell_around(House)
         self.path_sprite = ""
+        self.map.buildings.append(self)
 
         if self.owner == self.map.name_user:
-            self.map.buildings.append(self)
             for j in path_around:
                 # if isinstance
                 self.map.path_graph.add_edge(j, self)
@@ -817,6 +819,8 @@ class House(Building):  # la maison fils de building (?)
         self.risk = RiskEvent("fire", self)
         if owner == map.name_user:
             self.migrant = Migrant(self, owner)
+        else:
+            self.migrant = None
         # Temporary
         self.path_sprite = "game_screen/game_screen_sprites/house_" + \
             str(self.level) + ".png"
@@ -845,7 +849,8 @@ class House(Building):  # la maison fils de building (?)
         super().display()
 
     def nextLevel(self):
-        if self.map.players_online > 1 and self.owner == self.map.name_user: encode.levelup(self.owner, self, self.level+1)
+        if self.map.players_online > 1 and self.owner == self.map.name_user:
+            encode.levelup(self.owner, self, self.level+1)
         self.level += 1
         self.path_sprite = "game_screen/game_screen_sprites/house_" + \
             str(self.level) + ".png"
@@ -932,12 +937,16 @@ class Well(Building):
 class Prefecture(Building):
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width, map, owner)
-        self.labor_advisor = LaborAdvisor(self, self.owner)
+
         self.employees = 0
         self.requiredEmployees = 5
         self.risk = RiskEvent("collapse", self)
         if self.owner == self.map.name_user:
+            self.labor_advisor = LaborAdvisor(self, self.owner)
             self.prefect = Prefect(self, owner)
+        else:
+            self.labor_advisor = None
+            self.prefect = None
         self.path_sprite = "game_screen/game_screen_sprites/prefecture.png"
         self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
         self.sprite_display = ""
@@ -987,12 +996,15 @@ class Prefecture(Building):
 class EngineerPost(Building):
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width, map, owner)
-        self.labor_advisor = LaborAdvisor(self, self.owner)
         self.employees = 0
         self.requiredEmployees = 5
         self.risk = RiskEvent("fire", self)
         if self.owner == self.map.name_user:
+            self.labor_advisor = LaborAdvisor(self, self.owner)
             self.engineer = Engineer(self, owner)
+        else:
+            self.labor_advisor = None
+            self.engineer = None
         self.path_sprite = "game_screen/game_screen_sprites/engineerpost.png"
         self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
         self.sprite_display = ""
@@ -1115,7 +1127,7 @@ class CityHallPart(Building):
 class CityHall(Building):
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width, map, owner)
-        self.risk =RiskEvent("prout", self)
+        self.risk = RiskEvent("prout", self)
         self.path_sprite = "game_screen/game_screen_sprites/cityhall.png"
         self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
         self.sprite_display = ""
@@ -1181,8 +1193,10 @@ class FarmPart(Building):
 class Farm(Building):
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width, map, owner)
-        if self.owner == self.map.name_user:
-            self.farmer = Farmer(self, owner)
+        # if self.owner == self.map.name_user:
+        #     self.farmer = Farmer(self, owner)
+        # else:
+        #     self.farmer = None
         self.risk = RiskEvent("prout", self)
         self.path_sprite = "game_screen/game_screen_sprites/farm.png"
         self.sprite = pygame.image.load(self.path_sprite).convert_alpha()
@@ -1231,6 +1245,10 @@ class Farm(Building):
         for i in self.crops:
             if i.grow_state < 49:
                 i.grow_state += 1
+                if i.grow_state == 25:
+                    encode.crop_state(i.x, i.y, i.grow_state)
+                if i.grow_state == 48:
+                    encode.crop_state(i.x, i.y, i.grow_state)
                 i.display()
                 break
         # print(i.x, i.y, i.grow_state)
@@ -1238,26 +1256,40 @@ class Farm(Building):
         if all(i.grow_state >= 49 for i in self.crops):
             for i in self.crops:
                 i.grow_state = 0
-            if all(not isinstance(i, Granary) for i in self.map.buildings):
-                print("allo ? ")
-                return
-
-            self.farmer.delivering = True
-            # print("aslureagzea")
-            ingraph = self.farmer.leave_building()
-            # if not ingraph :
-            #     print("salut")
+                encode.crop_state(i.x, i.y, i.grow_state)
+            # if all(not isinstance(i, Granary) for i in self.map.buildings):
+            #     print("allo ? ")
             #     return
-            for i in self.map.buildings:
-                if isinstance(i, Granary):
-                    tmpPath = nx.dijkstra_path(
-                        self.map.path_graph, self.farmer.currentCell, i)
-                    # print(tmpPath)
-                    if len(self.farmer.path) == 0 or len(self.farmer.path) > len(tmpPath):
-                        self.farmer.path = tmpPath
+
+            # self.farmer.delivering = True
+            # # print("aslureagzea")
+            # ingraph = self.farmer.leave_building()
+            # # if not ingraph :
+            # #     print("salut")
+            # #     return
+
+            # for i in self.map.buildings:
+            #     if isinstance(i, Granary):
+            #         try :
+            #             print("allo")
+            #             tmpPath = nx.dijkstra_path(
+            #                 self.map.path_graph, self.farmer.currentCell, i)
+            #         except :
+            #             print("et là?")
+            #             tmpPath = []
+            #         # print(tmpPath)
+            #         if len(self.farmer.path) == 0 or len(self.farmer.path) > len(tmpPath):
+            #             self.farmer.path = tmpPath
+
+            # if len(self.farmer.path) != 0 : pass
+            Granary.stack += 1
 
 
 class Granary(Building):
+    stack = 0
+    pillaged = False
+    pillager = ""
+
     def __init__(self, x, y, height, width, map, owner):
         super().__init__(x, y, height, width, map, owner)
         self.risk = RiskEvent("prout", self)

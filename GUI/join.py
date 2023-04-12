@@ -71,7 +71,7 @@ def join_game():
     input_ip_font = pygame.font.Font(
         "GUI/Fonts/Title Screen/Berry Rotunda.ttf", 25)
     input_ip = InputBox(left_input_ip, top_input_ip, width_input_ip,
-                        height_input_ip, input_ip_font, 25, "")
+                        height_input_ip, input_ip_font, 25, "192.168.")
     input_ip.draw(SCREEN)
 
     # Text pseudo

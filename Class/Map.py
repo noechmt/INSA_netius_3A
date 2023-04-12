@@ -11,6 +11,7 @@ from Class.Wrapper import *
 import p2p.socket_python as p2p
 import json
 import Class.Encoder as encoder
+from Class.Button import Button
 
 SCREEN = None
 
@@ -43,8 +44,20 @@ class Map:  # Un ensemble de cellule
         self.players_online = 1
         self.row_received = False
         self.row_received_2 = False
+        WIDTH_SCREEN, HEIGHT_SCREEN = SCREEN.get_size()
+        self.fps_font = pygame.font.Font(
+            "GUI/Fonts/Title Screen/Berry Rotunda.ttf", 50)
+        background = pygame.image.load(
+            "game_screen/game_screen_sprites/loading_map.png")
+        background = pygame.transform.scale(
+            background, (SCREEN.get_width(), SCREEN.get_height()))
         if not first_online:
-            print("In responseJoin")
+            text_loading = self.fps_font.render(
+                f"Load map : {0}/{self.size}", 1, (0, 0, 0))
+            SCREEN.blit(background, (0, 0))
+            SCREEN.blit(text_loading, (WIDTH_SCREEN/2 - text_loading.get_width()/2,
+                                       HEIGHT_SCREEN/2 - text_loading.get_height()/2))
+            pygame.display.flip()
             wrapper = Wrapper(self, None)
             receive_num = False
             while not receive_num:
@@ -79,33 +92,37 @@ class Map:  # Un ensemble de cellule
 
                 # Online version : reading from the requests
                 num_cell_init = 0
-                while num_cell_init != self.size * 2:
+                while num_cell_init != self.size:
                     # protocol to receive packet and if it's cell_init header, decode it
                     data = p2p.get_data()
                     if len(data) != 0:
                         try:
                             header = json.loads(data)["header"]
                             if header == "cell_init":
+                                encoder.row_received(self.name_user, True)
                                 wrapper.wrap(data)
                                 print("num_cell_init =", num_cell_init)
-                                if num_cell_init % 2 == 0:
-                                    encoder.row_received(self.name_user, True)
-                                else:
-                                    encoder.row_received_2(
-                                        self.name_user, True)
+                                SCREEN.blit(background, (0, 0))
+                                SCREEN.blit(text_loading, (WIDTH_SCREEN/2 - text_loading.get_width()/2,
+                                                           HEIGHT_SCREEN/2 - text_loading.get_height()/2))
+                                pygame.display.flip()
+                                text_loading = self.fps_font.render(
+                                    f"Load map : {num_cell_init}/{self.size}", 1, (0, 0, 0))
                                 num_cell_init += 1
                             else:
-                                if num_cell_init % 2 == 0:
-                                    encoder.row_received(self.name_user, False)
-                                else:
-                                    encoder.row_received_2(
-                                        self.name_user, False)
-                        except:
-                            if num_cell_init % 2 == 0:
+                                SCREEN.blit(background, (0, 0))
+                                SCREEN.blit(text_loading, (WIDTH_SCREEN/2 - text_loading.get_width()/2,
+                                                           HEIGHT_SCREEN/2 - text_loading.get_height()/2))
+                                pygame.display.flip()
                                 encoder.row_received(self.name_user, False)
-                            else:
-                                encoder.row_received_2(
-                                    self.name_user, False)
+                        except:
+                            SCREEN.blit(background, (0, 0))
+                            SCREEN.blit(text_loading, (WIDTH_SCREEN/2 - text_loading.get_width()/2,
+                                                       HEIGHT_SCREEN/2 - text_loading.get_height()/2))
+                            pygame.display.flip()
+                            encoder.row_received(self.name_user, False)
+                    if num_cell_init == self.size:
+                        encoder.end_join(self.name_user)
         self.init_ownership()
         self.spawn_cells = [self.array[0][self.size//10],
                             self.array[0][self.size - self.size//10],
@@ -144,45 +161,74 @@ class Map:  # Un ensemble de cellule
     def set_spawn_point_governor(self):
         Governor.currentCell = self.spawn_cells[self.num_player - 1]
 
-    def encode(self):
+    def display_join_message(self, user, new_player):
+        if self.name_user == user or self.name_user == new_player:
+            return
+        WIDTH_SCREEN, HEIGHT_SCREEN = SCREEN.get_size()
+        background = pygame.image.load(
+            "game_screen/game_screen_sprites/chat_background.jpg")
+        new_player = Button(WIDTH_SCREEN/4, HEIGHT_SCREEN/3,
+                            WIDTH_SCREEN/2, HEIGHT_SCREEN/3,
+                            text=f"{new_player} just landed in the map. Waiting for him to load the map...",
+                            image=background)
+        new_player.draw(SCREEN)
+        pygame.display.flip()
+        done = False
+        while not done:
+            # Wait for the end_join protocol to arrive
+            data = p2p.get_data()
+            if len(data) != 0:
+                try:
+                    header = json.loads(data)["header"]
+                    if header == "end_join":
+                        done = True
+                except:
+                    pass
+
+    def encode(self, user_confirmation):
         wrapper = Wrapper(self, None)
+        WIDTH_SCREEN, HEIGHT_SCREEN = SCREEN.get_size()
+        background = pygame.image.load(
+            "game_screen/game_screen_sprites/chat_background.jpg")
+        new_player = Button(WIDTH_SCREEN/4, HEIGHT_SCREEN/3,
+                            WIDTH_SCREEN/2, HEIGHT_SCREEN/3,
+                            text=f"{user_confirmation} just landed in the map. Loading : 0/75",
+                            image=background)
+        new_player.draw(SCREEN)
+        pygame.display.flip()
+        time.sleep(1)
         for x in range(self.size):
+            new_player.draw(SCREEN)
+            pygame.display.flip()
             row = []
             self.row_received = False
             response = False
-            self.row_received_2 = False
-            row_2 = []
-            response_2 = False
-            for y in range(self.size//2):
-                row.append(self.array[x][y].encode())
-            encoder.cell_init_row(self.name_user, row)
+            data_received = []
+            for y in range(self.size):
+                if (isinstance(self.array[x][y], House)):
+                    row.append(self.array[x][y].encode(self.array[x][y].level))
+                else:
+                    row.append(self.array[x][y].encode())
+            encoder.cell_init_row(self.name_user, row, self.players_online)
             while not response:
                 data = p2p.get_data()
                 if len(data) != 0:
                     try:
-                        header = json.loads(data)["header"]
-                        if header == "row_received":
-                            wrapper.wrap(data)
-                            if self.row_received:
-                                response = True
-                            else:
-                                encoder.cell_init_row(self.name_user, row)
-                    except:
-                        pass
-            for y in range(self.size//2, self.size):
-                row_2.append(self.array[x][y].encode())
-            encoder.cell_init_row(self.name_user, row_2)
-            while not response_2:
-                data = p2p.get_data()
-                if len(data) != 0:
-                    try:
-                        header = json.loads(data)["header"]
-                        if header == "row_received_2":
-                            wrapper.wrap(data)
-                            if self.row_received_2:
-                                response_2 = True
-                            else:
-                                encoder.cell_init_row(self.name_user, row_2)
+                        data_received = json.loads(data)
+                        if data_received["header"] == "row_received":
+                            if data_received["username"] == user_confirmation:
+                                if data_received["received"] == True:
+                                    new_player.text = f"{user_confirmation} just landed in the map. Loading : {x}/{75}"
+                                    new_player.draw(SCREEN)
+                                    pygame.display.flip()
+                                    response = True
+                                else:
+                                    encoder.cell_init_row(
+                                        self.name_user, row, self.players_online)
+                        elif data_received["header"] == 'governor' and data_received["username"] == user_confirmation:
+                            response = True
+                            self.init_ownership(self.players_online)
+                            return
                     except:
                         pass
         self.init_ownership(self.players_online)
@@ -199,12 +245,43 @@ class Map:  # Un ensemble de cellule
         self.transaction["Done"] = False
 
     def buy_cells(self):
+        num_cell = len(self.transaction["cells"])
+        split = self.size // 2 + 1
+        start = 0
         if self.check_valid_buy():
+            for i in range((num_cell // split) + 1):
+                row = []
+                for index in range(split):
+                    if start + index < num_cell:
+                        row.append(encoder.owner_single(
+                            self.transaction["cells"][start + index], self.name_user))
+                start += split
+                encoder.owner(self.name_user, row)
+                # wait that we got all row_received true
+                received_by_all = False
+                num_reponse_true = 0
+                while not received_by_all:
+                    data = p2p.get_data()
+                    if len(data) != 0:
+                        try:
+                            data_received = json.loads(data)
+                            if data_received["header"] == "row_received":
+                                if data_received["received"] == True:
+                                    num_reponse_true += 1
+                                    if num_reponse_true == self.players_online - 1:
+                                        received_by_all = True
+                                else:
+                                    encoder.owner(self.name_user,
+                                                  row)
+                                    num_reponse_true = 0
+                        except:
+                            pass
+            # Update locally the cells
             for cell in self.transaction["cells"]:
                 cell.owner = self.name_user
                 self.wallet -= cell.price
                 cell.price = cell.price * 2
-                encoder.owner(self.name_user, cell, self.name_user)
+                # encoder.owner(self.name_user, cell, self.name_user)
             self.transaction["Done"] = True
 
         return self.transaction["Done"]
@@ -219,6 +296,38 @@ class Map:  # Un ensemble de cellule
                         if i.owner == self.name_user:
                             return True
         return False
+
+    def clear(self, cells):
+        num_cell = len(cells)
+        split = self.size // 2 + 1
+        start = 0
+        for i in range((num_cell // split) + 1):
+            row = []
+            for index in range(split):
+                if start + index < num_cell:
+                    row.append(encoder.clear_single(cells[start + index]))
+            start += split
+            encoder.clear(self.name_user, row)
+            # wait that we got all row_received true
+            received_by_all = False
+            num_reponse_true = 0
+            while not received_by_all:
+                data = p2p.get_data()
+                if len(data) != 0:
+                    try:
+                        data_received = json.loads(data)
+                        if data_received["header"] == "row_received":
+                            if data_received["received"] == True:
+                                num_reponse_true += 1
+                                if num_reponse_true == self.players_online - 1:
+                                    received_by_all = True
+                            else:
+                                encoder.clear(self.name_user, row)
+                                num_reponse_true = 0
+                    except:
+                        pass
+        for cell in cells:
+            self.get_cell(cell[0], cell[1]).clear(self.name_user)
 
     # Permet d'initialiser le chemin de terre sur la map.
 
@@ -377,7 +486,7 @@ class Map:  # Un ensemble de cellule
                                                    (i.currentCell.width, i.currentCell.height)), (i.currentCell.left, i.currentCell.top))
                 waitfornext = True
             elif i.spawnCount == 100:
-                i.building.clear()
+                i.building.clear(i.building.owner)
             else:
                 i.spawnCount += 1
 
@@ -396,9 +505,10 @@ class Map:  # Un ensemble de cellule
             if walker.owner == self.name_user:
                 walker.move()
                 if self.players_online > 1:
-                    walkerBuffer.add("move", walker)
-            else:
-                self.walkers.remove(walker)
+                    encode.WalkerBuffer.add("move", walker)
+            elif isinstance(walker, Prefect) and walker.isWorking == True:
+                walker.extinguishFire()
+                walker.display()
 
             # if self.get_overlay() not in ("fire", "collapse") and not isinstance(walker, Prefect) or (isinstance(walker, Prefect) and not walker.isWorking):
             #    walker.display()
@@ -406,8 +516,8 @@ class Map:  # Un ensemble de cellule
                 if i.previousCell is not None:
                     i.previousCell.display()"""
 
-        if self.players_online > 1 and len(self.walkers) > 0:
-            walkerBuffer.send()
+        if self.players_online > 1 and len(self.walkers) and len(walkerBuffer.buffer["array"]) > 0:
+            encode.WalkerBuffer.send()
 
         for i in self.buildings:
             if i.risk and not i.risk.happened and i.owner == self.name_user:
@@ -427,15 +537,11 @@ class Map:  # Un ensemble de cellule
         for i in self.buildings:
             if i.risk and i.risk.happened and i.risk.type == "fire":
                 i.risk.burn()
-                if self.players_online > 1 and i.owner == self.name_user:
-                    encode.risk(self.name_user, "burn", i, i.risk.fireCounter)
 
     def update_collapse(self):
         for i in self.buildings:
             if i.risk and i.risk.happened and i.risk.type == "collapse":
                 i.risk.collapse()
-                if self.map.players_online > 1 and i.owner == self.map.name_user:
-                    encode.risk(self.name_user, "collapse", i, None)
 
     def set_cell_array(self, x, y, cell):
         self.array[x][y] = cell
@@ -487,9 +593,15 @@ class Map:  # Un ensemble de cellule
     def update_farm(self):
         for i in self.buildings:
             if isinstance(i, Farm):
-                if i.farmer.isWandering:
-                    return
+                # if i.farmer.isWandering:
+                #     return
                 i.crop_grow()
+
+    def update_granary(self):
+        for i in self.buildings:
+            if isinstance(i, Granary):
+                self.wallet += 10*i.stack
+                break
 
     def get_housed(self):
         return self.button_activated["house"]

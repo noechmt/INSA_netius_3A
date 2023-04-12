@@ -1,9 +1,10 @@
+import subprocess
 import socket
 from time import sleep
 import select
 import threading as thread
 MSGLEN = 10
-import subprocess
+
 
 class MySocket:
 
@@ -60,14 +61,12 @@ def send_data(data, addr="127.0.0.1", port=1236):
     Socket = MySocket()
     Socket.connect(addr, port)
     Socket.mysend(data.encode())
-    Socket.close()
 
 
-def recv_data(server_socket, freq=.0001):
+def recv_data(server_socket, freq=.001):
 
     while not Spython.stopEvent.is_set():
         sleep(freq)
-
 
         inputs = [server_socket.getSock()]
 
@@ -75,7 +74,7 @@ def recv_data(server_socket, freq=.0001):
         readable, writable, exceptional = select.select(inputs, [], [])
 
         # Traiter les connexions prêtes à être lues
-
+        print(input)
         for s in readable:
 
             if s is server_socket.getSock():
@@ -84,7 +83,7 @@ def recv_data(server_socket, freq=.0001):
                 client_socket = server_socket.accept()
                 Server.data = client_socket.recv(10000)
                 Server.data = Server.data.decode()
-
+                # client_socket.close()
 
                 # Ajouter la connexion cliente à la liste de surveillance
                 inputs.append(client_socket)
@@ -117,34 +116,29 @@ def close_socket(socket):
     socket.close()
 
 
-
 stopEvent = thread.Event()
 
-class Spython :
-    
+
+class Spython:
+
     thread_recv = None
     LanProcess = None
     stopEvent = None
-    
-    
-    def __init__(self) :
+
+    def __init__(self):
         Spython.stopEvent = thread.Event()
-    
-    def startThread() : 
-        Spython.thread_recv = thread.Thread(target=recv_data, args=(Server.socket,))
+
+    def startThread():
+        Spython.thread_recv = thread.Thread(
+            target=recv_data, args=(Server.socket,))
         Spython.thread_recv.start()
-    
-    
-    def startLanProcess(txt) : Spython.LanProcess = subprocess.Popen(['p2p/lan_connect',txt])
-      
-    def endThread() : 
+
+    def startLanProcess(txt): Spython.LanProcess = subprocess.Popen(
+        ['p2p/lan_connect', txt])
+
+    def endThread():
         Spython.stopEvent.set()
         sleep(.1)
-        send_data("Bye",port=1235)
-        
-        
-    
-    def endLanProcess() : Spython.LanProcess.kill()
-    
+        send_data("Bye", port=1235)
 
-    
+    def endLanProcess(): Spython.LanProcess.kill()

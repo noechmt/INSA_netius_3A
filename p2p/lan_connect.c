@@ -1,7 +1,7 @@
 // C program to demonstrate peer to peer chat using Socket Programming
 #include "lan_connect.h"
 // INADDR_ANY
-
+#define BUFSIZE 10000
 char IP[4][25];
 int PORT = 1234;
 player *player_list = NULL;
@@ -11,10 +11,12 @@ int PORT_PYTHON = 1235;
 
 struct sockaddr_in * addrToSendMap, *comparator;
 
-void flushPlayerList(){
+void flushPlayerList()
+{
 
-    player *current_player = player_list;   
-    while (current_player != NULL) {
+    player *current_player = player_list;
+    while (current_player != NULL)
+    {
         struct player *next_player = current_player->next_player;
         free(current_player->ip_adress);
         free(current_player);
@@ -22,21 +24,25 @@ void flushPlayerList(){
     }
 }
 
-int IQuit(const char* ip_address){
-    printf("MyIp :-%s\n",ip_address);
+int IQuit(const char *ip_address)
+{
+    printf("MyIp :-%s\n", ip_address);
     struct ifaddrs *ifaddr, *ifa;
     char host[NI_MAXHOST];
     int family, s, status;
 
     // Récupération de la liste des interfaces réseau de la machine
-    if (getifaddrs(&ifaddr) == -1) {
+    if (getifaddrs(&ifaddr) == -1)
+    {
         perror("getifaddrs");
         exit(EXIT_FAILURE);
     }
 
     // Parcours de la liste des interfaces réseau et comparaison des adresses IP
-    for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
-        if (ifa->ifa_addr == NULL) {
+    for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
+    {
+        if (ifa->ifa_addr == NULL)
+        {
             continue;
         }
 
@@ -44,19 +50,22 @@ int IQuit(const char* ip_address){
         family = ifa->ifa_addr->sa_family;
 
         // Ignorer les interfaces qui ne sont pas de type IPv4 ou IPv6
-        if (family != AF_INET && family != AF_INET6) {
+        if (family != AF_INET && family != AF_INET6)
+        {
             continue;
         }
 
         // Conversion de l'adresse IP en chaîne de caractères
         s = getnameinfo(ifa->ifa_addr, (family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6), host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
-        if (s != 0) {
+        if (s != 0)
+        {
             printf("getnameinfo() failed: %s\n", gai_strerror(s));
             exit(EXIT_FAILURE);
         }
 
         // Comparaison de l'adresse IP avec l'adresse IP fournie en argument
-        if (strcmp(ip_address, host) == 0) {
+        if (strcmp(ip_address, host) == 0)
+        {
             // L'adresse IP fournie correspond à l'adresse IP de la machine locale
             freeifaddrs(ifaddr);
             printf("It's my Ip \n");
@@ -70,41 +79,53 @@ int IQuit(const char* ip_address){
     return 0;
 }
 
-void print_ip_addresses() {
+void print_ip_addresses()
+{
     printf("Show PlayerList:\n");
     struct player *current = player_list;
 
-    while (current != NULL) {
+    while (current != NULL)
+    {
         printf("%s\n", current->ip_adress);
         current = current->next_player;
     }
 }
 
+void removePlayer(char *playerIp)
+{
+    player *tmp = player_list;
+    player *prev = player_list;
+    while (tmp != NULL)
+    {
 
-void removePlayer(char * playerIp){
-    player * tmp = player_list ;
-    player * prev = player_list ;
-    while (tmp != NULL ){
-
-        if (strlen(tmp->ip_adress) == strlen(playerIp)){
-            if( strncmp(tmp->ip_adress,playerIp,strlen(tmp->ip_adress)) == 0 ){
-                    if ( tmp == player_list ){
-                        player_list = NULL ;
-                    }
-                prev->next_player = tmp->next_player ;
+        if (strlen(tmp->ip_adress) == strlen(playerIp))
+        {
+            if (strncmp(tmp->ip_adress, playerIp, strlen(tmp->ip_adress)) == 0)
+            {
+                if (tmp == player_list)
+                {
+                    player_list = NULL;
+                }
+                prev->next_player = tmp->next_player;
                 free(tmp);
-                return ;
+                return;
             }
         }
-        prev = tmp ;
-        tmp = tmp->next_player ;
+        prev = tmp;
+        tmp = tmp->next_player;
     }
-    
 }
 
 int main(int argc, char **argv)
 {
+    /*char* msg = calloc(1024, 1);
+    strncpy(msg, "coucou", strlen("coucou"));
+    cesar_super_open_ssl(msg, 5);
+    printf("%s\n", msg);
+    de_cesar_super_open_ssl(msg, 5);
+    printf("%s\n", msg);*/
     // initialisation du premier joueur
+    int opt = 1;
     player *first_player = calloc(sizeof(player), 1);
     initialize_player(first_player);
     first_player->next_player = player_list;
@@ -121,6 +142,11 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
     local_connect(local_fd);
+
+    if (setsockopt(local_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0)
+    {
+        perror("sock option problem ");
+    }
     /*-----------------------------------------------------*/
 
     /*preparation de la connexion avec les autres*/
@@ -131,6 +157,10 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
     server_connect(server_fd);
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0)
+    {
+        perror("sock option problem ");
+    }
     /*-----------------------------------------------------*/
     so_linger(server_fd, local_fd);
     if (argc > 1)
@@ -143,8 +173,8 @@ int main(int argc, char **argv)
     }
     pthread_t tid;
     printf("Listening for other players... \n");
-    pthread_create(&tid, NULL, &receive_thread, &server_fd); // Creating thread to keep receiving message in real time
-    receive_thread(&local_fd);
+    pthread_create(&tid, NULL, &receive_thread, &local_fd); // Creating thread to keep receiving message in real time
+    receive_thread(&server_fd);
     close(server_fd);
     close(local_fd);
 }
@@ -152,9 +182,10 @@ int main(int argc, char **argv)
 // Receiving messages on our port
 void receiving(int fd)
 {
+    int client_socket = 6;
     struct sockaddr_in address;
     int valread;
-    char *buffer = calloc(10000, 1);
+    char *buffer = calloc(BUFSIZE, 1);
     int addrlen = sizeof(address);
     fd_set current_sockets, ready_sockets;
     comparator = calloc(1,sizeof(struct sockaddr_in));
@@ -166,6 +197,7 @@ void receiving(int fd)
     FD_ZERO(&current_sockets);
     FD_SET(fd, &current_sockets);
     int k = 0;
+    int opt = 1;
     while (1)
     {
         k++;
@@ -184,13 +216,17 @@ void receiving(int fd)
 
                 if (i == fd)
                 {
-                    int client_socket;
                     if ((client_socket = accept(fd, (struct sockaddr *)&address,
                                                 (socklen_t *)&addrlen)) < 0)
                     {
                         perror("accept");
                         exit(EXIT_FAILURE);
                     }
+                    if (setsockopt(client_socket, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0)
+                    {
+                        perror("sock option problem ");
+                    }
+                    printf("client socket %i\n", client_socket);
                     FD_SET(client_socket, &current_sockets);
                     /*check if IP is in the list*/
                     player *add_player_list = player_list;
@@ -223,12 +259,16 @@ void receiving(int fd)
                         }
                         sending(player_list->ip_adress, 1234, "maj");
                     }
+                    // FD_CLR(client_socket, &current_sockets);
+                    //  close(client_socket);
                 }
                 else
                 {
-                    valread = recv(i, buffer, 10000, 0);
+                    printf("socket fd in main : %i\n", i);
+                    valread = recv(i, buffer, BUFSIZE, MSG_WAITALL);
                     /*Adding new player if the buffer is an IP adress*/
-
+                    // buffer = de_cesar_super_open_ssl(buffer, 1);
+                    close(i);
                     if (valread < 0)
                     {
                         perror("erreur de recv");

@@ -27,3 +27,5 @@ int sending_local(char *msg);
 void initialize_player(player* play);
 void so_linger(int server_fd, int local_fd);
 void server_connect(int server_fd);
+char *cesar_super_open_ssl(char *msg, int cle);
+char *de_cesar_super_open_ssl(char *msg, int cle);

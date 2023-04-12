@@ -1,7 +1,7 @@
 #include "lan_connect.h"
 
-
-void so_linger(int server_fd, int local_fd){
+void so_linger(int server_fd, int local_fd)
+{
 
     struct linger so_linger;
     so_linger.l_onoff = 1;
@@ -16,7 +16,6 @@ void so_linger(int server_fd, int local_fd){
         perror("erreur solinger");
         close(local_fd);
     }
-
 }
 
 void server_connect(int server_fd)
@@ -25,8 +24,6 @@ void server_connect(int server_fd)
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(1234);
-
-    
 
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
     {
@@ -41,6 +38,7 @@ void server_connect(int server_fd)
         exit(EXIT_FAILURE);
     }
 }
+
 void local_connect(int local_fd)
 {
 
