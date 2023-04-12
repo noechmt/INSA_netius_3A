@@ -53,6 +53,7 @@ class Wrapper:
                     data["type"], data["username"], True)
                 self.map.get_cell(data["x"], data["y"]
                                   ).owner = data["username"]
+                print("J'ai build", data["x"], data["y"], data["type"])
             case 'clear':
                 for cell in data["row"]:
                     self.map.get_cell(cell["x"], cell["y"]).clear(
