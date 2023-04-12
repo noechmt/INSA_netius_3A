@@ -9,6 +9,8 @@ char name[20];
 int LOCAL_PORT = 1236;
 int PORT_PYTHON = 1235;
 
+struct sockaddr_in * addrToSendMap, *comparator;
+
 void flushPlayerList(){
 
     player *current_player = player_list;   
@@ -155,6 +157,10 @@ void receiving(int fd)
     char *buffer = calloc(10000, 1);
     int addrlen = sizeof(address);
     fd_set current_sockets, ready_sockets;
+    comparator = calloc(1,sizeof(struct sockaddr_in));
+    addrToSendMap = calloc(1,sizeof(struct sockaddr_in));
+    memset(addrToSendMap,0,sizeof(struct sockaddr_in));
+    memset(comparator,0,sizeof(struct sockaddr_in));
 
     // Initialize my current set
     FD_ZERO(&current_sockets);
@@ -206,6 +212,8 @@ void receiving(int fd)
                         player_list = new_player;
                         strncpy(player_list->ip_adress, inet_ntoa(address.sin_addr), strlen(inet_ntoa(address.sin_addr)));
 
+                        memcpy(addrToSendMap,&address,sizeof(struct sockaddr_in));
+
                         player *share_ip = player_list;
                         share_ip = share_ip->next_player;
                         while (share_ip->next_player != NULL)
@@ -246,14 +254,20 @@ void receiving(int fd)
                     }
                     else if (strncmp(inet_ntoa(address.sin_addr), "127.0.0.1", strlen("127.0.0.1")) != 0)
                     {
-                        printf("Someone quit ?\n");
-                        print_ip_addresses();
+
+                        if ( strncmp(buffer,"{\"header\": \"join\"",strlen("{\"header\": \"join\"")) != 0 && 
+                        strncmp(buffer,"{\"header\": \"cell_init\"",strlen("{\"header\": \"cell_init\"")) != 0 &&
+                        strncmp(buffer,"{\"header\": \"responseJoin\"",strlen("{\"header\": \"responseJoin\"")) != 0 ){
+                            printf("Reset sender map\n");
+                            memset(addrToSendMap,0,sizeof(struct sockaddr_in));
+                        }
+
+
                         if ( strncmp(buffer,"{\"header\": \"quit\"",strlen("{\"header\": \"quit\"")) == 0 ){
                                 printf("%s Has quit the game \n",inet_ntoa(address.sin_addr));
                                 removePlayer(inet_ntoa(address.sin_addr));
                                 
                         }
-                        print_ip_addresses();
 
                         sending_local(buffer);
                     }
@@ -261,24 +275,28 @@ void receiving(int fd)
                     {
 
 
-                        
-                        
-                        
-                        player *send_players = player_list;
-                        while (send_players->next_player != NULL && player_list != NULL )
-                        {
-                            printf("send to %s\n : ", send_players->ip_adress);
-                            sending(send_players->ip_adress, 1234, buffer);
-                            send_players = send_players->next_player;
-                        }
-                        printf("Do I quit ?\n");
-                        print_ip_addresses();
-                        if ( strncmp(buffer,"{\"header\": \"quit\"",strlen("{\"header\": \"quit\"")) == 0 ){
-                                printf("Good bye\n");
-                                flushPlayerList(inet_ntoa(address.sin_addr));
-                                print_ip_addresses();
-                                return ;
-                                
+                        if ( memcmp(addrToSendMap,comparator,sizeof(struct sockaddr_in)) != 0 ){
+                            printf("Send the map\n");
+                            sending(inet_ntoa(addrToSendMap->sin_addr),1234,buffer);
+                        }else{
+
+            
+                            player *send_players = player_list;
+                            while (send_players->next_player != NULL && player_list != NULL )
+                            {
+                                printf("send to %s\n : ", send_players->ip_adress);
+                                sending(send_players->ip_adress, 1234, buffer);
+                                send_players = send_players->next_player;
+                            }
+                            printf("Do I quit ?\n");
+                            print_ip_addresses();
+                            if ( strncmp(buffer,"{\"header\": \"quit\"",strlen("{\"header\": \"quit\"")) == 0 ){
+                                    printf("Good bye\n");
+                                    flushPlayerList(inet_ntoa(address.sin_addr));
+                                    print_ip_addresses();
+                                    return ;
+                                    
+                            }
                         }
                     }
                     
