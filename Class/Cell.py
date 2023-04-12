@@ -67,6 +67,7 @@ class Cell:  # Une case de la map
         self.path_sprite = ""
         self.price = 5
         self.explored = False
+        self.building = self
 
     def encode(self, level=0):
         return encode.cell_init_single(self.x, self.y, self.type,
@@ -1114,6 +1115,7 @@ class CityHallPart(Building):
         super().__init__(x, y, height, width, map, owner)
         self.cityhall = my_cityhall
         self.risk = self.cityhall.risk
+        self.building = self.cityhall
 
         path_around = self.check_cell_around(Path)
         for i in path_around:
@@ -1139,6 +1141,7 @@ class CityHall(Building):
         self.map.array[self.x - 1][self.y - 1] = CityHallPart(
             self.x - 1, self.y - 1, height, width, map, owner, self)
         self.type = "cityhall"
+        self.building = self
 
     def display(self):
         SCREEN.blit(
@@ -1180,6 +1183,7 @@ class FarmPart(Building):
         super().__init__(x, y, height, width, map, owner)
         self.farm = my_farm
         self.risk = self.farm.risk
+        self.building = self.farm
 
         path_around = self.check_cell_around(Path)
         for i in path_around:
@@ -1228,6 +1232,7 @@ class Farm(Building):
         #     # print(i.x, i.y)
 
         self.update_sprite_size()
+        self.building = self
 
     def __str__(self):
         return "Farm"
@@ -1306,6 +1311,7 @@ class Granary(Building):
             self.x, self.y - 1, height, width, map, owner,  self)
         self.map.array[self.x - 1][self.y - 1] = GranaryPart(
             self.x - 1, self.y - 1, height, width, map, owner, self)
+        self.building = self
 
     def update_sprite_size(self):
 
@@ -1328,6 +1334,7 @@ class GranaryPart(Building):
         super().__init__(x, y, height, width, map, owner)
         self.granary = mygranary
         self.risk = self.granary.risk
+        self.building = self.granary
 
     def display(self):
         super().display()
