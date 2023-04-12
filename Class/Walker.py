@@ -353,7 +353,7 @@ class Prefect(Walker):
         elif self.isWorking:
             self.extinguishFire()
 
-        elif any((i.risk != None and i.risk.type == "fire" and i.risk.fireCounter > 0 and i not in self.currentCell.check_cell_around(Cell.Building))
+        elif any((i.building.owner == self.building.map.name_user and i.risk.type == "fire" and i.risk.fireCounter > 0 and i not in self.currentCell.check_cell_around(Cell.Building))
                  for i in self.current_building.map.buildings) and not self.isWorking and not self.inBuilding:
             print(self.building.map.buildings[0].risk.fireCounter)
             self.building.map.buildings.sort(
